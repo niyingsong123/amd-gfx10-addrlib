@@ -4,506 +4,502 @@
 >
 > 本文刻意**不追求逐行解释源码**，而是回答两个问题：
 > 1. **为什么需要这些计算？**
-> 2. **这些计算整体上是怎样一步一步把一个图像变成 GPU 能使用的内存布局和地址的？**
+> 2. **这些计算整体上怎样一步一步把一个 Surface 变成 GPU 能使用的内存布局和地址？**
 >
-> 本文主要依据 Mesa 官方上游的 AMD AddrLib 代码结构和 GFX10 实现。Mesa 官方文档说明其上游 Git 仓库位于 freedesktop.org；Mesa 源码树中 `src/amd/addrlib` 是“creating images”的 AMD 地址布局代码。本文以 Mesa 26.2.2 作为当前研究基线。citehttps://docs.mesa3d.org/repository.html
+> 本版在上一版基础上增加了多张**根据 GFX10 AddrLib 源码结构重新绘制的示意图**。这些图不是从网上搬来的 GFX10 图片；图中的流程、函数和数据关系以 GFX10 AddrLib 的实际代码为依据，图形本身用于帮助理解。
+>
+> 研究基线采用 Mesa 26.2.2。Mesa 官方说明 `src/amd/addrlib` 是 AMD image creation/address-layout 代码，Mesa 26.2.2 于 2026-09-02 发布。citehttps://docs.mesa3d.org/sourcetree.html citehttps://docs.mesa3d.org/relnotes/26.2.2.html
 
 ---
 
-## 1. 先给结论：AddrLib 到底是干什么的？
+# 1. 先给结论：AddrLib 到底是干什么的？
 
 一句话：
 
-> **AddrLib 是 GPU 图像/纹理“内存地图规划器 + 地址计算器”。**
+> **AddrLib 是 GPU 图像/纹理的“内存地图规划器 + 地址计算器”。**
 
-应用程序只会告诉 GPU：
+上层只需要描述：
 
-- 图像宽度是多少？
-- 高度是多少？
-- 深度是多少？
-- 每个像素多少 bit？
-- 有多少 mip level？
-- 是 2D、3D、array 还是 MSAA？
-- 希望怎样的 tiling / swizzle？
+- width / height / depth
+- format / BPE
+- mip levels
+- 1D / 2D / 3D / array
+- samples / fragments
+- usage / flags
+- 希望使用的 tiling / swizzle
 
-但 GPU 真正访问内存时，需要知道：
+而 GPU 真正访问内存时，需要知道：
 
-> **某个 `(x,y,z,layer,mip,sample)` 到底应该落在哪一个物理地址？**
+> **某个 `(x, y, z, mip, layer, sample)` 最终应该落到哪里。**
 
-而且这个地址不能简单理解成：
-
-```text
-address = y * pitch + x * bytes_per_pixel
-```
-
-因为现代 GPU 会同时考虑：
+最简单的线性图像可以写成：
 
 ```text
-像素坐标
-   ↓
-元素大小 / BPE
-   ↓
-Tile / Swizzle
-   ↓
-Tile 内部的 bit 排列
-   ↓
-Pipe / Bank / XOR
-   ↓
-Mipmap level / array slice / 3D slice
-   ↓
-DCC / HTile / CMask 等 metadata
-   ↓
-最终 GPU 地址
+address = base + y * pitch + x * bytes_per_pixel
 ```
 
-所以，AddrLib 的核心不是“一个地址公式”，而是**一整套 surface layout algorithm**。
+但 GFX10 tiled surface 远比这复杂。可以先建立下面这个总模型：
+
+```text
+Surface 描述
+     │
+     ▼
+┌──────────────────────┐
+│ Resource / Format    │
+│ W/H/D / BPE / MSAA   │
+└──────────┬───────────┘
+           ▼
+     Swizzle Mode
+           │
+           ▼
+   Block / Tile Geometry
+           │
+     ┌─────┴─────┐
+     ▼           ▼
+ Mipmap       Alignment
+ Layout
+     │           │
+     └─────┬─────┘
+           ▼
+    Tile-local Mapping
+           │
+           ▼
+    Swizzle Pattern
+           │
+           ▼
+     ADDR_EQUATION
+           │
+           ▼
+   Pipe / Bank / XOR
+           │
+           ▼
+      Final Address
+
+同时还有：
+Surface ──► DCC / HTile / CMask / FMask
+```
+
+因此 AddrLib 的核心不是“一条地址公式”，而是一套 **surface layout algorithm**。
 
 ---
 
-# 2. 为什么 GPU 不能简单按照 X、Y 顺序存图像？
+# 2. 第一张图：AddrLib 究竟在解决什么问题？
 
-## 2.1 最简单的线性布局
+这是整篇最重要的第一张图。它把“图形 API 的世界”和“GPU memory system 的世界”连起来。
 
-假设有一张 8×8 的图片，每个像素 4 Byte：
+```mermaid
+flowchart LR
+    A[上层资源描述\nW/H/D / Format / BPE / Mips / Samples] --> B[AddrLib\nSurface Layout]
+    B --> C[几何布局\nPitch / Height / Slice / Alignment]
+    B --> D[Mipmap Layout\nMip Offset / Tail]
+    B --> E[Tile / Swizzle\nBlock + Equation]
+    B --> F[Metadata Layout\nDCC / HTile / CMask / FMask]
+    E --> G[坐标到地址\nTile-local Address]
+    G --> H[Pipe / Bank / XOR]
+    H --> I[GPU Memory Address]
+```
+
+这张图最值得记住的是：
+
+> **AddrLib 不是只负责最后一步“算地址”，而是先把整个 Surface 的内存地图规划出来。**
+
+这也是为什么 `Gfx10Lib` 同时存在 SurfaceInfo、Swizzle、Equation、Pipe/Bank、DCC、HTile、CMask、FMask 等多类接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+
+---
+
+# 3. 为什么不能简单按照 X、Y 顺序存图像？
+
+## 3.1 最简单的线性布局
+
+假设有一张 8×8 图片，每个像素 4 Byte：
 
 ```text
-线性内存：
-
-Row 0:  P00 P01 P02 P03 P04 P05 P06 P07
-Row 1:  P10 P11 P12 P13 P14 P15 P16 P17
-Row 2:  P20 P21 ...
+Row 0: P00 P01 P02 P03 P04 P05 P06 P07
+Row 1: P10 P11 P12 P13 P14 P15 P16 P17
+Row 2: P20 P21 P22 P23 P24 P25 P26 P27
 ...
 ```
 
-地址大致就是：
+线性布局非常容易理解：
 
 ```text
-Address = base + y * pitch + x * 4
+address ≈ base + y * pitch + x * 4
 ```
 
-这个布局非常容易理解。
-
-但是 GPU 的典型访问模式不是“只访问一行”。
-
-例如一个 shader 可能同时访问：
+问题在于 GPU 常见访问不是“只顺序读一行”，而是一个 wave 中很多线程同时访问二维邻域：
 
 ```text
-(x,y)
-(x+1,y)
-(x,y+1)
-(x+1,y+1)
+(x,y)     (x+1,y)
+
+(x,y+1)   (x+1,y+1)
 ```
 
-甚至一个 wave 中几十个线程会访问一大片邻近区域。
+GPU 希望这些访问尽量形成高效的 cache / transaction / memory-system 行为。
 
 ---
 
-# 3. 为什么需要 Tile / Tiling？
+# 4. 为什么需要 Tile / Tiling？
 
-线性布局的问题是：
-
-> **二维空间上相邻的像素，在内存中并不一定形成最适合 GPU cache / memory system 的访问模式。**
-
-因此 GPU 会把图像切成很多小块：
+最直观的做法是把大图切成很多块：
 
 ```text
-整个 Image
+                Image
 
-+---------+---------+---------+
-|  Tile   |  Tile   |  Tile   |
-|         |         |         |
-+---------+---------+---------+
-|  Tile   |  Tile   |  Tile   |
-|         |         |         |
-+---------+---------+---------+
-|  Tile   |  Tile   |  Tile   |
-|         |         |         |
-+---------+---------+---------+
+      +---------+---------+---------+
+      |  Tile   |  Tile   |  Tile   |
+      +---------+---------+---------+
+      |  Tile   |  Tile   |  Tile   |
+      +---------+---------+---------+
+      |  Tile   |  Tile   |  Tile   |
+      +---------+---------+---------+
 ```
 
-每个 Tile 是一块连续的内存区域。
+这样二维空间中的局部区域可以更集中地组织到内存中。
 
-这样 GPU 访问一个局部区域时，更容易让：
+Mesa 对 tiling 的通用解释也是：把图像组织成 tile，并重新安排 tile 内的数据，使空间局部性更适合 GPU。citehttps://docs.mesa3d.org/isl/tiling.html
 
-- cache 命中
-- memory transaction 合并
-- DRAM burst 更有效
-- GPU 各个 memory pipe 更均衡
+但是注意：
 
-Mesa 的 tiling 文档也把核心思想概括为：把二维图像分成 tile，并重新排列 tile 内的数据，使空间上相邻的像素更可能在内存中相邻。citehttps://docs.mesa3d.org/isl/tiling.html
+> **Tile 只是第一层。Tile 内部怎么排，才是 GFX10 AddrLib 后面大量位运算真正开始的地方。**
 
 ---
 
-# 4. Tile 还不够，为什么还要 Swizzle？
+# 5. 第二张图：Tiling 和 Swizzle 到底有什么区别？
 
-假设一个 Tile 有 64KB：
+这是理解 GFX10 最容易混淆的地方之一。
 
-```text
-64KB Tile
-
-+---------------------------+
-|                           |
-|       many pixels         |
-|                           |
-|                           |
-+---------------------------+
+```mermaid
+flowchart TD
+    A[Surface] --> B[把 Surface 分成 Tile / Block]
+    B --> C[确定某个坐标属于哪个 Tile]
+    C --> D[得到 Tile Base]
+    D --> E[Tile 内部的 X/Y/Z bit]
+    E --> F[Swizzle Pattern]
+    F --> G[ADDR_EQUATION]
+    G --> H[Tile-local Address]
 ```
 
-问题来了：
-
-> Tile 内部到底应该怎样排列这些像素？
-
-最简单的方法是：
+可以把它记成：
 
 ```text
-X0 X1 X2 X3 ...
-Y0 Y1 Y2 ...
+Tiling 解决：
+“大块在哪里？”
+
+Swizzle 解决：
+“块里面的 bit 怎么排？”
 ```
 
-但 GPU 可以进一步重新排列地址 bit：
+因此看到：
 
 ```text
-Address bit 8  ← X4
-Address bit 9  ← Y2
-Address bit 10 ← X5 XOR Y3
-Address bit 11 ← Y4
-...
+64KB_S_X
+64KB_D_X
+64KB_Z_X
 ```
 
-这就是 **swizzle** 的核心思想。
+不要把它们简单理解成“几个不同大小的 tile”。
 
-所以：
-
-> **Tiling 决定“大块怎么组织”，Swizzle 决定“块里面的 bit 怎么排列”。**
-
-GFX10 AddrLib 中甚至会把 swizzle pattern 转换成 `ADDR_EQUATION`，最后得到一组按 bit 描述的地址方程。
-
-可以把它理解成：
-
-```text
-(x,y,z)
-   │
-   ▼
-取 X/Y/Z 的各个 bit
-   │
-   ▼
-按照 GFX10 swizzle pattern 重新排列
-   │
-   ▼
-得到 tile 内地址 bit
-```
+更准确地说，它们是 GFX10 定义的不同 **layout recipes**：包括 tile 粒度以及 tile 内部的组织方式。
 
 ---
 
-# 5. 为什么会出现 256B、4KB、64KB？
+# 6. 为什么会出现 256B、4KB、64KB？
 
-这是理解 GFX10 AddrLib 最重要的概念之一。
+GFX10 的 swizzle mode table 中确实存在 256B、4KB、64KB、Variable 等类别，并进一步区分 standard/display/XOR/Z/rotated/thick 等属性。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
-可以先不要把它理解成复杂的枚举名称，只理解成：
-
-> **GPU 有不同粒度的“基本内存块”。**
-
-典型地可以把它想象成：
+建立第一层概念时，可以先这样看：
 
 ```text
-256B
- ↓
-更小的 micro tile
+Surface
+  │
+  ├── Linear
+  │
+  └── Tiled
+       │
+       ├── 256B class
+       ├── 4KB class
+       ├── 64KB class
+       └── Variable class
+```
 
-4KB
- ↓
-更大的 tile
+然后再加第二层属性：
 
+```text
 64KB
- ↓
-更大的 macro tile
+ │
+ ├── Standard
+ ├── Display
+ ├── XOR
+ ├── Z-order
+ ├── Rotated
+ └── Thick / 3D-related variants
 ```
 
-GFX10 的 swizzle mode 中可以看到 256B、4KB、64KB 以及 Variable 等类别；64KB 类又进一步区分 Standard、Display、XOR、Z-order、Rotated 等形式。GFX10 代码中的 swizzle-mode table 正是用这些属性描述布局。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
-
-直观理解：
-
-```text
-                Surface
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-      Linear                Tiled
-                              │
-             ┌────────────────┼──────────────┐
-             │                │              │
-            256B             4KB            64KB
-```
-
-实际硬件当然比这张图复杂，但这张图足够建立第一层认识。
+**不要一开始背枚举名称。**先把它们看成不同的“布局配方”。
 
 ---
 
-# 6. 为什么需要 Mipmap？
+# 7. 为什么需要 Mipmap？
 
-这是第二个特别重要的“为什么”。
-
-假设一个物体距离摄像机非常远，它在屏幕上只占：
-
-```text
-20 × 20 像素
-```
-
-但原始纹理可能是：
+假设纹理原图是：
 
 ```text
 4096 × 4096
 ```
 
-如果 GPU 每次都从 4096×4096 原图中采样，会产生大量无意义的数据访问。
+但远处物体在屏幕上只有几十个像素。如果每次都从原图采样，会读取大量并不需要的细节。
 
-所以图形系统提前准备：
+所以图形系统准备多个尺寸：
 
 ```text
-Mip 0: 4096 × 4096
-Mip 1: 2048 × 2048
-Mip 2: 1024 × 1024
-Mip 3:  512 ×  512
-Mip 4:  256 ×  256
+Mip 0    4096 × 4096
+Mip 1    2048 × 2048
+Mip 2    1024 × 1024
+Mip 3     512 ×  512
+Mip 4     256 ×  256
 ...
-Mip N:     1 × 1
+Mip N       1 ×  1
 ```
 
-可以理解为：
+因此 AddrLib 需要解决的不是“生成 mipmap 图片”，而是：
 
-> **Mipmap 是同一张图片的多级缩小版。**
+> **已经有这么多 mip level，怎么把它们安排到 GPU surface 的物理内存中？**
 
-远处物体用小 mip，近处物体用大 mip。
-
-好处是：
-
-- 少读内存
-- cache 更容易命中
-- 减少带宽
-- 降低纹理采样成本
-- 减少远处纹理的 aliasing
-
-因此 AddrLib 必须知道：
-
-> 每一级 mip 的尺寸是多少？从哪里开始？占多少空间？对齐到哪里？
-
-GFX10 的代码中有非常直接的 mip 尺寸计算：每进入一级 mip，宽、高、深度都会按照 mip level 做缩减。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 `GetMipSize()` 对 width/height/depth 做按 mip level 的缩减，随后 surface-layout 路径继续计算各级 mip 的空间和 offset。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-# 7. 为什么 Mipmap 不能简单地一个接一个放？
+# 8. 第三张图：Mipmap 在内存里到底是什么？
 
-假设：
-
-```text
-Mip0 = 4096×4096
-Mip1 = 2048×2048
-Mip2 = 1024×1024
-...
+```mermaid
+flowchart TD
+    A[Mip 0\n最大尺寸] --> B[Mip 1\n尺寸缩小]
+    B --> C[Mip 2\n继续缩小]
+    C --> D[...]
+    D --> E[进入很小的 Mip Levels]
+    E --> F[Mip Tail\n多个小 mip 共享尾部区域]
 ```
 
-如果每一级都必须满足 GPU 的大 Tile 对齐，那么到了后面：
+把它画成内存地图则更直观：
 
 ```text
-Mip5 = 很小
-Mip6 = 更小
-Mip7 = 更小
-Mip8 = 很小
+Surface Memory
+
++------------------------------------------+
+| Mip 0                                    |
+|                                          |
++------------------------------------------+
+| Mip 1                    |               |
++--------------------------+               |
+| Mip 2       |            |               |
++-------------+------------+               |
+| Mip 3 | Mip 4 | Mip 5 | Mip 6 | ...     |
++------------------------------------------+
+                       ↑
+                    小 mip
+                 逐渐进入 tail
 ```
 
-每一级如果仍然强制单独占一个完整的 64KB tile，浪费会非常严重。
+这里不要把示意图中的具体分割比例当成硬件常数。它表达的是**布局思想**：大的 mip 单独占主要区域，小 mip 到一定阶段后进入 tail 组织。
 
-于是就出现一个非常重要的概念：
-
-# Mipmap Tail
-
-可以把它想象成：
-
-```text
-大 mip：
-
-+-------------------------+
-| Mip0                    |
-|                         |
-+-------------------------+
-
-+-----------+
-| Mip1      |
-+-----------+
-
-+------+ 
-|Mip2  |
-+------+
-
-进入很小的 mip 后：
-
-+---------------------------+
-| MipTail                   |
-|                           |
-|  MipN | MipN+1 | MipN+2   |
-|-------+--------+----------|
-|  ...                    |
-+---------------------------+
-```
-
-也就是说：
-
-> **小 mip 不再各自浪费一个完整的大 Tile，而是把多个小 mip 打包进一个固定区域。**
-
-这就是 mip tail 存在的根本原因：
-
-**减少小 mip 带来的对齐浪费，同时保持硬件喜欢的 tile 化布局。**
-
-GFX10 的类定义中明确存在 `GetMaxNumMipsInTail()`；AddrLib 的输出结构也会告诉调用者 mip tail 从哪一级开始。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 类中存在 `GetMaxNumMipsInTail()`，AddrLib 的 surface-layout 输出也会记录 `firstMipIdInTail` / mip-tail offset 一类信息。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-# 8. 所以 Mipmap 在 AddrLib 中到底变成什么？
+# 9. 为什么需要 Mip Tail？
 
-可以把它简化成：
+如果每一个小 mip 都必须单独满足大 tile / alignment：
 
 ```text
-Input
- │
- │ width / height / depth / numMipLevels
- ▼
-计算每一级 mip 的尺寸
- │
- ▼
-决定每一级需要多少 tile
- │
- ▼
-决定 pitch / height / slice size
- │
- ▼
-决定哪些 mip 进入 mip tail
- │
- ▼
-产生：
-  mip[i].offset
-  mip[i].pitch
-  mip[i].height
-  mip[i].sliceSize
-  mip[i].mipTailOffset
+Mip N       → 一块
+Mip N+1     → 一块
+Mip N+2     → 一块
+Mip N+3     → 一块
 ```
 
-所以 AddrLib 不是“生成 mipmap 图片”。
+实际数据很小，但 alignment 带来的空间开销很大。
 
-它主要负责：
+所以 tail 的核心思想是：
 
-> **给已经存在的 mipmap levels 安排物理内存位置。**
+```text
+小 mip 1 ─┐
+小 mip 2 ─┤
+小 mip 3 ─┼──► 一个共同的 tail 区域
+小 mip 4 ─┤
+小 mip 5 ─┘
+```
+
+一句话：
+
+> **Mip Tail 的核心目的，是在保持 tile/alignment 约束的同时减少小 mip 的空间浪费。**
+
+这也是为什么在源码中看到 `mipTailOffset`、`firstMipIdInTail` 等字段时，不要把它们理解成“额外 metadata”；它们本身就是 surface layout 的一部分。
 
 ---
 
-# 9. 为什么还需要 Pipe？
+# 10. Surface Geometry：AddrLib 先算“大地图”
 
-现代 AMD GPU 并不是只有一个“内存通道”。
+在真正计算某个 `(x,y)` 的 tile-local address 之前，AddrLib 必须先知道整个 surface 的几何尺寸。
 
-可以非常粗略地画成：
-
-```text
-                    GPU
-                     │
-       ┌─────────────┼─────────────┐
-       │             │             │
-     Pipe0          Pipe1         Pipe2 ...
-       │             │             │
-      memory        memory        memory
-```
-
-如果所有连续数据都集中到 Pipe0：
+核心概念包括：
 
 ```text
-Pipe0: ███████████████████
-Pipe1: ██
-Pipe2: ██
-Pipe3: ██
+Pitch
+Height
+Slice Size
+Base Alignment
+Block Width / Height / Depth
+Mip Offset
 ```
 
-那么 Pipe0 会成为瓶颈。
+可以把它看成：
 
-理想情况是：
-
-```text
-Pipe0: █████████
-Pipe1: █████████
-Pipe2: █████████
-Pipe3: █████████
+```mermaid
+flowchart LR
+    A[Width / Height / Depth / BPE] --> B[Block Geometry]
+    B --> C[Pitch]
+    B --> D[Height]
+    B --> E[Slice Size]
+    B --> F[Base Alignment]
+    C --> G[Mip / Slice Placement]
+    D --> G
+    E --> G
+    F --> G
 ```
 
-因此 AddrLib 要参与决定：
+这一步回答的是：
 
-> **地址的哪些 bit 用来决定 pipe？**
+> **整个 Surface 的“大地图”怎么铺？**
 
-但 GFX10 并不只是简单地取某几位作为 pipe。更复杂的 swizzle/XOR 会把坐标 bit 混合起来。
+而后面的 Equation 才回答：
 
-因此更准确的理解是：
+> **地图中某个 tile 内的“小地址”怎么产生？**
 
-```text
-Coordinate bits
-      │
-      ▼
-Tile / Swizzle equation
-      │
-      ├──► address bits
-      │
-      └──► pipe/bank-related distribution
-```
-
-GFX10 AddrLib 明确提供 `HwlComputePipeBankXor()` 和 `HwlComputeSlicePipeBankXor()` 等接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这是理解源码时非常重要的一层分界。
 
 ---
 
-# 10. 为什么需要 Bank？
+# 11. 为什么 3D texture 会出现 Thin / Thick？
 
-Pipe 可以粗略理解成更高一级的并行路径，而 Bank 可以理解成 memory system 内部进一步的并行组织。
-
-可以把它类比成：
+2D 资源只有：
 
 ```text
-GPU
- │
- ├── Pipe 0
- │    ├── Bank 0
- │    ├── Bank 1
- │    ├── Bank 2
- │    └── Bank 3
- │
- ├── Pipe 1
- │    ├── Bank 0
- │    ├── Bank 1
- │    └── ...
+X × Y
 ```
 
-如果相邻访问总是撞在同一个 bank：
+3D 资源则是：
 
 ```text
-访问：A A A A A A A
-      ↓
-    Bank 0
+X × Y × Z
 ```
 
-就可能出现 bank conflict / 热点。
-
-所以地址布局会有意让不同空间区域分布到不同 bank。
-
-这也是为什么你在 GFX10 的 swizzle equation 里会看到各种 XOR：
+因此 tile 可以只组织一个 XY 平面，也可以把 Z 方向一起纳入局部布局。
 
 ```text
-BankBit0 = Xbit ^ Ybit ^ ...
+Thin：
+
+        X
+   +---------+
+   |         |
+ Y |         |
+   +---------+
+
+Thick：
+
+        Z
+        ↑
+   +---------+
+  /         /|
+ +---------+ |
+ |         | +
+ |         |/
+ +---------+
+      → X
 ```
 
-其核心目标之一就是：
+GFX10 源码中对 thin/thick 有明确判断逻辑：1D/2D 是 thin；3D 在特定 standard/display swizzle 下会进入 thick 语义。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
-> **让空间上的规律访问，不要在硬件 memory organization 中形成过强的规律性热点。**
+所以看到 GFX10 的 3D block-dimension 表时，不能只想着 `width × height`，还要考虑 `depth`。
 
 ---
 
-# 11. XOR 到底是干什么的？
+# 12. Swizzle Mode 不只是名字，而是一组属性
 
-初看 GFX10 AddrLib 时，XOR 很容易让人觉得“这是一个非常神秘的地址算法”。
+GFX10 源码的一个非常重要的设计思想是：swizzle mode 被拆成多个属性，而不是把每个枚举都当成完全独立算法。
 
-其实先把它想简单一点：
+概念上可以画成：
+
+```text
+                 Swizzle Mode
+                       │
+       ┌───────────────┼────────────────┐
+       ▼               ▼                ▼
+   Tile Size       Layout Type       Special Flags
+   256B/4KB/64KB   Std/Disp/...       XOR/Z/R/T
+```
+
+例如：
+
+```text
+64KB_S_X
+```
+
+首先说明“大块类别 + S 类布局 + XOR 类属性”，而不是一个完全不可拆分的黑盒名字。
+
+这正是 `SwizzleModeTable` 设计值得注意的地方：代码可以根据 `is64kb`、`isStd`、`isDisp`、`isXor`、`isZ`、`isT`、`isRot` 等属性走不同算法路径。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+
+---
+
+# 13. 第四张图：Swizzle Pattern 为什么最终会变成 Equation？
+
+这是以后深入 GFX10 源码时最关键的一座桥。
+
+GFX10 `gfx10SwizzlePattern.h` 中可以看到 pattern info、nibble table 和 `ADDR_BIT_SETTING` 等结构；GFX10 实现再把 swizzle pattern 转换成 `ADDR_EQUATION`。
+
+把代码压缩成一个概念流程：
+
+```mermaid
+flowchart LR
+    A[Swizzle Mode] --> B[Pattern Info]
+    B --> C[Nibble Tables]
+    C --> D[ADDR_BIT_SETTING]
+    D --> E[ConvertSwizzlePatternToEquation]
+    E --> F[ADDR_EQUATION]
+    F --> G[ComputeOffsetFromEquation]
+    G --> H[Tile-local Address]
+```
+
+可以进一步把一个地址 bit 想成：
+
+```text
+A[i]
+ │
+ ├── direct X/Y/Z term
+ │
+ ├── XOR term 1
+ │
+ └── XOR term 2
+```
+
+概念上就是：
+
+```text
+A[i] = term0 XOR term1 XOR term2
+```
+
+这里的 `term` 来自 X/Y/Z 的具体 coordinate bit。
+
+**这张图比直接背一堆 nibble table 更重要。**因为它告诉我们：
+
+> pattern table 是“描述布局”的数据；Equation 是“真正执行地址 bit 映射”的形式。
+
+---
+
+# 14. XOR 到底在干什么？
+
+先不要把 XOR 想得神秘。
+
+最简单：
 
 ```text
 普通：
@@ -513,15 +509,15 @@ XOR：
 A = X5 ^ Y3
 ```
 
-为什么这么做？
+它把两个方向的信息混合起来。
 
-因为如果：
+如果某个地址选择位只依赖 X：
 
 ```text
 A = X5
 ```
 
-那么地址分布会非常规则。
+那么二维访问的分布可能很规律。
 
 而：
 
@@ -529,251 +525,281 @@ A = X5
 A = X5 ^ Y3
 ```
 
-会把 X、Y 两个方向的信息混合起来。
+会让 X/Y 两个方向共同影响这一位。
 
-于是二维空间中的规律访问可以更均匀地映射到 memory system。
+GFX10 的实际 pattern 更复杂，可能包含多种 bit term，但理解入口就是：
 
-GFX10 AddrLib 更进一步，把一个 swizzle pattern 转换成 `ADDR_EQUATION`。从概念上看，每个 tile-local address bit 都可以理解成：
+> **XOR 是把多个 coordinate bit 混合进某个地址 bit 的工具。**
 
-```text
-A[i] = direct_term
-       XOR xor_term_1
-       XOR xor_term_2
-```
-
-而每一个 term 本质上来自 X/Y/Z 的某一个 bit。
-
-这就是我们以后深入研究 GFX10 swizzle equation 时最重要的入口。
+不要在这一阶段把它等同于“所有 XOR 都只用于 bank”。它更准确地属于 GFX10 tile-local/swizzle address mapping 的组成部分；pipe/bank distribution 是后面另一层需要单独分析的问题。
 
 ---
 
-# 12. 为什么 GFX10 会有 S、D、Z、R、X、T 这么多名字？
+# 15. Pipe 为什么重要？
 
-不要一开始背这些名字。
-
-把它们理解成“布局策略的不同组合”即可。
-
-例如：
+GPU memory system 可以粗略想象成多个并行路径：
 
 ```text
-64KB_S
-64KB_D
-64KB_S_X
-64KB_D_X
-64KB_Z_X
-64KB_R_X
-64KB_S_T
-64KB_D_T
+                    GPU
+                     │
+       ┌─────────────┼─────────────┐
+       ▼             ▼             ▼
+    Pipe 0         Pipe 1        Pipe 2 ...
 ```
 
-其中：
+如果访问长期集中到某个 pipe：
 
 ```text
-64KB       → 大块大小
-S / D      → 不同的 tile / swizzle 语义
-X          → XOR 类布局
-Z          → Z-order 类布局
-R          → rotated / rotate-opt 类布局
-T          → thick / 3D 相关布局
+Pipe0: █████████████████
+Pipe1: ██
+Pipe2: ██
+Pipe3: ██
 ```
 
-GFX10 源码的 `SwizzleModeTable` 正是把这些性质拆成 `is64kb`、`isStd`、`isDisp`、`isXor`、`isZ`、`isT`、`isRot` 等属性，而不是把它们当成完全独立的算法。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+并行能力就没有被充分利用。
 
-这给我们一个非常好的理解方式：
+AddrLib 因此不仅要知道 tile 内部地址，还需要参与 pipe/bank 相关的布局计算。
 
-> **Swizzle mode 本质上是一个“layout recipe”。**
+GFX10 `Gfx10Lib` 明确提供：
+
+```text
+HwlComputePipeBankXor()
+HwlComputeSlicePipeBankXor()
+```
+
+这说明 pipe/bank/XOR 是 GFX10 地址布局中独立的一层能力。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-# 13. 为什么 3D texture 会出现 Thick？
+# 16. 第五张图：Tile-local Address 和 Pipe/Bank 不要混为一谈
 
-2D 图片只有：
+这一点非常重要，因为后面深入源码时很容易混淆。
 
-```text
-X × Y
+```mermaid
+flowchart LR
+    A[(x,y,z)] --> B[Tile Selection]
+    B --> C[Tile Base]
+    A --> D[Swizzle / Equation]
+    D --> E[Tile-local Offset]
+    C --> F[Surface Address]
+    E --> F
+    F --> G[Pipe / Bank / XOR Distribution]
+    G --> H[Memory-system Placement]
 ```
 
-3D texture 则是：
+理解上可以分成两个问题：
 
-```text
-X × Y × Z
-```
+### 第一层：
 
-所以一个 tile 不一定只能在 X/Y 平面上组织，还可以在 Z 方向上组织：
+> `(x,y,z)` 在当前 tile 内部的哪个 byte？
 
-```text
-       Z
-       ↑
-   +-------+
-  /       /|
- +-------+ |
- |       | +
- |       |/
- +-------+
-   → X
-```
+这是 **swizzle / equation** 的核心问题。
 
-这就是 thick tiling 的直观来源。
+### 第二层：
 
-GFX10 的代码中明确区分 thin 和 thick：1D/2D 资源天然属于 thin，而 3D 资源在某些 standard/display swizzle 下会成为 thick。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+> 这个地址如何映射到 GPU memory system 的 pipe / bank / slice 等组织？
 
-因此：
+这是 **pipe/bank distribution** 的核心问题。
 
-```text
-2D
-  ↓
-主要组织 X/Y
-
-3D thick
-  ↓
-同时组织 X/Y/Z
-```
-
-这也是为什么 GFX10 的 block dimension table 不只是 width/height，而是有 `Dim3d`。
+二者有关联，但不能简单画成一个东西。
 
 ---
 
-# 14. 为什么需要 MSAA / Sample 相关计算？
+# 17. Bank 为什么重要？
 
-普通纹理可以粗略理解成：
+可以粗略把 memory system 想象成：
 
 ```text
-Pixel → 1 sample
+Pipe 0
+ ├── Bank 0
+ ├── Bank 1
+ ├── Bank 2
+ └── Bank 3
+
+Pipe 1
+ ├── Bank 0
+ ├── Bank 1
+ └── ...
 ```
 
-MSAA 则可能是：
+如果规律访问长期集中到同一个 bank：
+
+```text
+A A A A A A
+│ │ │ │ │ │
+└─┴─┴─┴─┴─┴──► Bank 0
+```
+
+就可能产生热点。
+
+所以地址映射会利用不同 bit 的组合，使空间规律访问尽可能分散到 memory system 的不同组织单元。
+
+这一层是理解 GFX10 pipe/bank XOR 的直觉入口，但具体 bit 选择和 XOR 规则必须回到 GFX10 源码逐项分析，不能仅凭概念图推断。
+
+---
+
+# 18. 为什么还需要 MSAA / FMask？
+
+普通资源可以粗略理解成：
+
+```text
+Pixel → 一个 data element
+```
+
+MSAA 则是：
 
 ```text
 Pixel
- ├── sample 0
- ├── sample 1
- ├── sample 2
- └── sample 3
+ ├── Sample 0
+ ├── Sample 1
+ ├── Sample 2
+ └── Sample 3
 ```
 
-于是一个 pixel 不再对应一个简单的 element。
+于是一个 pixel 不再简单对应一个 element。
 
 AddrLib 必须考虑：
 
 - sample 数量
-- sample 的布局
-- FMask
-- tile/block size
-- metadata
+- sample / fragment layout
+- tile/block geometry
+- FMask 等辅助 surface
 
-GFX10 的 AddrLib 类明确把 `Gfx10DataFmask` 作为一种数据 surface 类型，并存在 FMask 相关接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 类中明确有 `Gfx10DataFmask`，并存在 FMask 相关布局/地址接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 直观理解：
 
 ```text
 普通：
-Pixel → data
+Pixel ─────────► Data
 
 MSAA：
-Pixel → 多个 sample → data layout
-                 │
-                 └→ FMask 等辅助 metadata
+Pixel ─► Sample 0 ─┐
+       Sample 1 ──┼──► Data / FMask-related layout
+       Sample 2 ──┤
+       Sample 3 ──┘
 ```
 
 ---
 
-# 15. 为什么还需要 DCC、HTile、CMask？
+# 19. 为什么需要 DCC、HTile、CMask？
 
-这些不是“普通 texture data”。
+这些不是普通 color/depth data，而是 GPU 为性能服务的 **metadata surfaces**。
 
-它们是 GPU 为了提高性能而建立的 **metadata surface**。
+可以把整体想象成：
 
-可以简单理解为：
-
-```text
-Color Data
-████████████████████
-
-DCC Metadata
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+```mermaid
+flowchart TB
+    S[Surface] --> D[Main Data]
+    S --> M[Metadata]
+    M --> DCC[DCC\nColor Compression Metadata]
+    M --> HT[HTile\nDepth/Stencil Metadata]
+    M --> CM[CMask\nColor/Compression Metadata]
+    M --> FM[FMask\nMSAA Sample Mapping Metadata]
 ```
 
-DCC 可以理解成：
+这里最重要的不是现在记住每一个 bit，而是理解：
 
-> **告诉 GPU 某个区域的数据压缩/状态信息。**
+> **AddrLib 管的不只有“主数据 surface”，还包括与主 surface 配套的 metadata layout。**
 
-这样 GPU 不需要每次都读取完整 color data 才能知道怎么处理。
-
----
-
-## HTile
-
-深度/模板数据也有类似需求。
+GFX10 `Gfx10Lib` 直接提供：
 
 ```text
-Depth Buffer
-████████████████
-
-HTile
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-```
-
-HTile 可以帮助 depth/stencil 路径进行更高效的处理。
-
-GFX10 AddrLib 直接提供：
-
-```text
+HwlComputeDccInfo
 HwlComputeHtileInfo
+HwlComputeCmaskInfo
+HwlComputeDccAddrFromCoord
 HwlComputeHtileAddrFromCoord
-HwlComputeHtileCoordFromAddr
+HwlComputeCmaskAddrFromCoord
 ```
 
-说明 AddrLib 不仅计算普通 color surface，也计算 metadata surface 的布局和地址。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+所以这些并不是驱动外面自己随便计算的附加数据，而是 AddrLib surface-layout 模型的一部分。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-## CMask
+# 20. Preferred Swizzle：为什么 AddrLib 还会“帮你选布局”？
 
-CMask 同样属于辅助 metadata。
+AddrLib 并不是简单接受任何 swizzle。
 
-所以可以把 AddrLib 的工作理解成两层：
+不同：
+
+- resource type
+- BPE
+- display / non-display usage
+- MSAA
+- 3D / 2D
+- chip-specific capability
+
+可能使可用 layout 不同。
+
+因此 GFX10 有：
 
 ```text
-              Surface
-                 │
-        ┌────────┴────────┐
-        │                 │
-    Data Surface      Metadata Surface
-        │                 │
-     Color/Depth      DCC/HTile/CMask
+HwlGetPossibleSwizzleModes()
+HwlGetPreferredSurfaceSetting()
 ```
 
-这也是为什么不能把 AddrLib 简化成“texture address calculator”。
+可以把它理解成：
 
-它实际上是在计算一整套 GPU surface memory layout。
+```mermaid
+flowchart LR
+    A[Surface Requirements] --> B[Legal Swizzles]
+    B --> C[Hardware Constraints]
+    C --> D[Preferred Surface Setting]
+    D --> E[Final Layout Choice]
+```
+
+所以 AddrLib 具有一定的 **layout policy / hardware constraint filtering** 角色，而不仅仅是“被动计算器”。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-# 16. AddrLib 最重要的工作：决定 Surface Layout
+# 21. 第六张图：一次完整的 GFX10 Surface Layout 流程
 
-现在把前面的所有概念合起来：
+这一张图是后续研究整个源码时的“总导航图”。
 
 ```mermaid
 flowchart TD
-    A[应用/驱动提供 Surface 参数] --> B[元素大小 BPE]
-    B --> C[资源类型 1D/2D/3D/Array/MSAA]
-    C --> D[选择/验证 Swizzle Mode]
-    D --> E[确定 Tile / Block 大小]
-    E --> F[确定 Pitch / Height / Slice 对齐]
-    F --> G[计算每一级 Mipmap 尺寸]
-    G --> H[判断 Mip Tail]
-    H --> I[安排每一级 Mip 的 offset]
-    I --> J[建立 Tile 内 Swizzle / Equation]
-    J --> K[结合 Pipe / Bank / XOR]
-    K --> L[得到 Surface 的物理地址布局]
-    L --> M[需要时再计算 DCC / HTile / CMask]
+    A[Surface Input\nW/H/D, BPE, Resource Type, Mips, Samples] --> B[Sanity / Capability Checks]
+    B --> C[Possible / Preferred Swizzle]
+    C --> D{Linear or Tiled?}
+
+    D -->|Linear| E[Linear Surface Geometry]
+    D -->|Tiled| F[Tiled Surface Geometry]
+
+    F --> G[Block / Tile Geometry]
+    G --> H[Pitch / Height / Slice / Alignment]
+    E --> H
+
+    H --> I[Mip Dimensions]
+    I --> J[Mip Placement]
+    J --> K[Mip Tail]
+
+    C --> L[Swizzle Pattern]
+    L --> M[ADDR_EQUATION]
+
+    K --> N[Subresource / Mip / Slice Base]
+    M --> O[Tile-local Offset]
+    N --> P[Surface Address]
+    O --> P
+    P --> Q[Pipe / Bank / XOR]
+    Q --> R[Final Memory Mapping]
+
+    H --> S[Metadata Layout]
+    S --> S1[DCC]
+    S --> S2[HTile]
+    S --> S3[CMask]
+    S --> S4[FMask]
 ```
 
-这张图基本就是整个 GFX10 AddrLib 的“骨架”。
+这张图里有一个很重要的思想：
+
+> **AddrLib 不是一条直线。**
+>
+> 它同时存在“surface geometry”“mipmap placement”“swizzle equation”“metadata layout”等几条相互关联的计算支路，最后共同形成完整的 Surface Layout。
 
 ---
 
-# 17. 一个最核心的例子：访问 `(x,y)` 到底发生了什么？
+# 22. 一个最核心的例子：访问 `(x,y)` 到底发生了什么？
 
 假设：
 
@@ -781,7 +807,7 @@ flowchart TD
 Texture:
 1024 × 1024
 RGBA8
-64KB swizzle
+64KB tiled/swizzled layout
 ```
 
 shader 想访问：
@@ -790,190 +816,140 @@ shader 想访问：
 (x = 100, y = 200)
 ```
 
-AddrLib 思维下，不是直接：
+不要直接想：
 
 ```text
 100 + 200 * 1024
 ```
 
-而是大概经历：
+而应该形成下面这个思维链：
 
-```text
-             (x=100,y=200)
-                    │
-                    ▼
-          当前 mip level 是多少？
-                    │
-                    ▼
-             当前 mip 的尺寸
-                    │
-                    ▼
-          当前属于哪个 64KB tile？
-                    │
-              ┌─────┴─────┐
-              │           │
-           tile X       tile Y
-              │           │
-              └─────┬─────┘
-                    ▼
-             tile base address
-                    │
-                    ▼
-          tile 内部 X/Y bits
-                    │
-                    ▼
-          GFX10 swizzle equation
-                    │
-                    ▼
-       tile-local address bits
-                    │
-                    ▼
-            pipe / bank / XOR
-                    │
-                    ▼
-              final address
+```mermaid
+flowchart TD
+    A[(x=100,y=200)] --> B[确定 mip / subresource]
+    B --> C[确定当前 mip 的尺寸与 pitch]
+    C --> D[确定属于哪个 Tile / Block]
+    D --> E[Tile Base]
+    A --> F[取 X/Y/Z coordinate bits]
+    F --> G[Swizzle Pattern / Equation]
+    G --> H[Tile-local Offset]
+    E --> I[Surface Offset]
+    H --> I
+    I --> J[结合 Pipe / Bank / XOR 等规则]
+    J --> K[最终地址 / memory placement]
 ```
 
-**理解到这里，其实已经抓住 AddrLib 80% 的核心思想。**
+这张图非常重要，因为它把：
+
+```text
+“几何布局”
+```
+和
+```text
+“tile 内 bit 地址计算”
+```
+分开了。
 
 ---
 
-# 18. 为什么 AddrLib 还要提供“反向计算”？
+# 23. 为什么 AddrLib 还要提供“反向计算”？
 
-因为有些场景需要：
+某些路径不只需要：
 
 ```text
 coordinate → address
 ```
 
-也有些场景需要：
+还需要：
 
 ```text
 address → coordinate
 ```
 
-例如 GFX10 的 HTile 相关接口就同时提供：
+例如 GFX10 的 HTile 接口同时存在：
 
 ```text
-ComputeHtileAddrFromCoord
-ComputeHtileCoordFromAddr
+HwlComputeHtileAddrFromCoord
+HwlComputeHtileCoordFromAddr
 ```
 
-原因很简单：
-
-> **GPU/驱动有时候已经知道内存地址，需要反推出它属于哪个 tile / 坐标区域。**
-
-所以 AddrLib 实际上是在维护一个“坐标 ↔ 内存布局”的映射体系。
+所以 AddrLib 可以理解成维护一套“坐标 ↔ surface layout”的映射体系，而不仅是单向的地址计算器。
 
 ---
 
-# 19. Preferred Swizzle 是干什么的？
+# 24. GFX10 源码应该怎样分层阅读？
 
-AddrLib 并不是让驱动随便选一个 swizzle。
+不要一开始就钻进 `gfx10addrlib.cpp` 的几千行代码。
 
-不同 GPU / display / resource / bpp / usage 对布局的要求不同。
-
-所以 GFX10 有：
+先建立三层结构：
 
 ```text
-HwlGetPossibleSwizzleModes
-HwlGetPreferredSurfaceSetting
+                  AddrLib
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+   Common / Core               GFX10 Layer
+        │                         │
+        │                 gfx10addrlib.cpp/.h
+        │                 gfx10SwizzlePattern.h
+        │                         │
+        ▼                         ▼
+ 通用布局基础设施            GFX10 特有算法
 ```
 
-它们可以粗略理解成：
-
-```text
-输入：
-  我有这样一个 surface
-
-        ↓
-
-AddrLib：
-  哪些 layout 可以用？
-  哪一种更合适？
-
-        ↓
-
-输出：
-  推荐的 swizzle/layout
-```
-
-因此 AddrLib 不只是“计算器”，还承担了一部分 **layout policy / hardware constraint filtering** 的角色。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+Mesa 官方源码树明确把 `src/amd/addrlib` 作为 AMD-specific image creation/address-layout 代码；GFX10 则在这个公共框架上实现自己的硬件相关规则。citehttps://docs.mesa3d.org/sourcetree.html
 
 ---
 
-# 20. GFX10 AddrLib 的源码结构应该怎样理解？
+# 25. 从 GFX10Lib 的接口反推整个功能地图
 
-不要一上来钻 `gfx10addrlib.cpp` 的几千行代码。
-
-先分成三层。
-
-```text
-                    AddrLib
-                       │
-        ┌──────────────┴──────────────┐
-        │                             │
-    Common Layer                  GFX10 Layer
-        │                             │
-        │                     gfx10addrlib.cpp/.h
-        │                     gfx10SwizzlePattern.h
-        │                             │
-        ▼                             ▼
-统一接口 / 通用布局逻辑          GFX10 特有算法
-```
-
-Mesa 的 AMD AddrLib 源码树本身就是按照 common/core、gfx9、gfx10、gfx11 等层次组织的；GFX10 版本由 `Gfx10Lib` 实现具体硬件相关行为。citehttps://docs.mesa3d.org/sourcetree.html
-
----
-
-# 21. GFX10Lib 到底提供了哪些“大类”能力？
-
-从 GFX10 类的接口可以直接看到几个大的方向：
+从 `gfx10addrlib.h` 的接口可以直接看到这些能力：
 
 ```text
 Gfx10Lib
 │
 ├── Surface Layout
-│   ├── ComputeSurfaceInfo
-│   ├── Linear
-│   └── Tiled
+│   ├── HwlComputeSurfaceInfoTiled
+│   ├── HwlComputeSurfaceInfoLinear
+│   └── SurfaceInfoSanityCheck
 │
 ├── Address
-│   ├── Coord → Address
-│   └── Equation
+│   ├── HwlComputeSurfaceAddrFromCoordTiled
+│   └── Equation-related helpers
 │
 ├── Swizzle
-│   ├── Possible Swizzle Modes
-│   └── Preferred Surface Setting
+│   ├── HwlGetPossibleSwizzleModes
+│   └── HwlGetPreferredSurfaceSetting
 │
 ├── Pipe / Bank
-│   ├── PipeBankXor
-│   └── SlicePipeBankXor
+│   ├── HwlComputePipeBankXor
+│   └── HwlComputeSlicePipeBankXor
 │
-├── Mipmap
-│   └── Mip / MipTail
+├── Mipmap / Subresource
+│   ├── GetMipSize
+│   └── GetMaxNumMipsInTail
 │
 ├── Metadata
-│   ├── DCC
-│   ├── HTile
-│   └── CMask
+│   ├── HwlComputeDccInfo
+│   ├── HwlComputeHtileInfo
+│   └── HwlComputeCmaskInfo
 │
 ├── MSAA
-│   └── FMask
+│   └── FMask-related paths
 │
-└── Special Views / Copy
+└── Other
     ├── Non-block-compressed View
-    ├── CopyMemToSurface
-    └── CopySurfaceToMem
+    ├── CopyMemoryToSurface
+    └── CopySurfaceToMemory
 ```
 
-这些接口在 GFX10 的类声明中都有对应实现入口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这些接口名称本身就是理解源码的“目录”。不要从第一行开始顺读，而应该从功能地图进入具体算法。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
 
 ---
 
-# 22. 把整个 AddrLib 看成一个“编译器”
+# 26. 把整个 AddrLib 看成一个“编译器”
 
-这是我认为最适合理解 AddrLib 的类比。
+这是理解 AddrLib 最有用的类比之一。
 
 普通编译器：
 
@@ -996,125 +972,89 @@ Surface 描述
    ↓
 Tile / Mip / Block
    ↓
-Swizzle / Equation
+Swizzle Pattern
+   ↓
+ADDR_EQUATION
    ↓
 硬件地址布局
 ```
 
-甚至可以进一步类比：
+所以之前研究的：
 
 ```text
-Surface 参数
-    │
-    ▼
-“高层描述”
-    │
-    ▼
-Tile / Mip / Block
-    │
-    ▼
-Swizzle Pattern
-    │
-    ▼
-ADDR_EQUATION
-    │
-    ▼
-最终 address
+ConvertSwizzlePatternToEquation()
 ```
 
-所以我们之前研究的 `ConvertSwizzlePatternToEquation()`，实际上相当于在做：
+可以先类比成：
 
-> **把一种高层的 GFX10 swizzle 描述，编译成可以直接计算地址 bit 的 Boolean equation。**
+> **把一种 GFX10 layout recipe “编译”为可以计算地址 bit 的 Boolean equation。**
 
----
-
-# 23. 最重要的一张总图
-
-```mermaid
-flowchart LR
-    A[Texture / Surface
-    width height depth bpp] --> B[Resource Type]
-    B --> C[Swizzle Mode]
-    C --> D[Block / Tile Size]
-
-    D --> E[Surface Geometry]
-    E --> E1[Pitch]
-    E --> E2[Height]
-    E --> E3[Slice Size]
-    E --> E4[Alignment]
-
-    E --> F[Mipmap Layout]
-    F --> F1[Mip Dimensions]
-    F --> F2[Mip Offsets]
-    F --> F3[Mip Tail]
-
-    C --> G[Swizzle Pattern]
-    G --> H[ADDR_EQUATION]
-    H --> I[Tile-local Address]
-
-    I --> J[Pipe / Bank / XOR]
-    J --> K[Physical Address]
-
-    E --> L[Metadata Layout]
-    L --> L1[DCC]
-    L --> L2[HTile]
-    L --> L3[CMask]
-    L --> L4[FMask]
-
-    L --> K
-    F --> K
-```
-
-如果以后我们要深入代码，这张图就是整个研究地图。
-
----
-
-# 24. 什么时候 AddrLib 最重要？
-
-可以把 GPU texture 创建过程想象成：
+这个类比非常适合后面从 C++ 走向 RTL：
 
 ```text
-应用程序
-   │
-   ▼
-“我要一张 4096×4096 RGBA8 texture”
-   │
-   ▼
-驱动
-   │
-   ▼
-AddrLib
-   │
-   ├── 推荐 swizzle
-   ├── 算 pitch
-   ├── 算 height
-   ├── 算 alignment
-   ├── 算 mip offsets
-   ├── 算 mip tail
-   ├── 算 tile equation
-   ├── 算 pipe/bank/xor
-   ├── 算 DCC
-   ├── 算 HTile
-   └── 算其他 metadata
-   │
-   ▼
-驱动拿到完整 Surface Layout
-   │
-   ▼
-GPU descriptor / hardware programming
+C++ layout recipe
+        ↓
+bit equation
+        ↓
+combinational logic
+        ↓
+RTL implementation
 ```
 
-所以 AddrLib 实际上处于：
-
-> **图形 API → AMD GPU 硬件内存布局**
-
-之间的桥梁位置。
+当然，真实硬件还有寄存器、pipeline、接口时序等内容，但算法层可以先按这个模型理解。
 
 ---
 
-# 25. 我们接下来真正值得深入的顺序
+# 27. 这几层之间到底是什么关系？
 
-如果目标是最终把 GFX10 AddrLib 完全理解到可以写 RTL，我建议不要按照源码文件顺序学习，而按照下面顺序：
+把整个模型压缩成一张“脑内地图”：
+
+```text
+                 Surface
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+      Geometry             Metadata
+          │              DCC/HTile/...
+          ▼
+        Mipmap
+          │
+          ▼
+      Tile / Block
+          │
+          ▼
+       Swizzle
+          │
+          ▼
+      Equation
+          │
+          ▼
+ Tile-local Address
+          │
+          ▼
+   Pipe / Bank / XOR
+          │
+          ▼
+    Memory Placement
+```
+
+最容易犯的错误，是把这些层混成一个概念。
+
+实际上：
+
+- **Geometry**：决定 surface 的大地图。
+- **Mipmap**：决定不同 level 在大地图中的位置。
+- **Tile/Block**：决定空间组织粒度。
+- **Swizzle**：决定 tile 内坐标 bit 如何映射。
+- **Equation**：把这种映射表示成可计算的 bit equation。
+- **Pipe/Bank/XOR**：参与 memory-system 层面的分布。
+- **Metadata**：是另一组配套 surface/layout。
+
+---
+
+# 28. 我们接下来真正值得深入的顺序
+
+如果最终目标是把 GFX10 AddrLib 理解到可以写 RTL，我建议不要按照源码文件顺序学习，而按照下面顺序：
 
 ## 第一阶段：Surface 基础
 
@@ -1123,67 +1063,69 @@ GPU descriptor / hardware programming
 2. resource type
 3. linear vs tiled
 4. 256B / 4KB / 64KB
-5. pitch / height / slice / alignment
+5. block dimensions
+6. pitch / height / slice / alignment
 ```
 
-目标：能回答：
+目标：
 
-> “一张图片整体在内存里长什么样？”
+> **一张图片整体在内存里长什么样？**
 
 ## 第二阶段：Mipmap
 
 ```text
-6. mip dimension
-7. mip offset
-8. mip alignment
-9. mip tail
-10. 3D mip
+7. mip dimension
+8. mip offset
+9. mip alignment
+10. mip tail
+11. 3D mip
 ```
 
-目标：能回答：
+目标：
 
-> “一张图片有很多 mip 时，内存到底怎么排？”
+> **一张图片有很多 mip 时，内存到底怎么排？**
 
 ## 第三阶段：Tile 内部地址
 
 ```text
-11. block dimension
-12. swizzle pattern
-13. nibble table
-14. ADDR_EQUATION
-15. ComputeOffsetFromEquation
+12. swizzle mode attributes
+13. swizzle pattern
+14. nibble table
+15. ADDR_BIT_SETTING
+16. ADDR_EQUATION
+17. ComputeOffsetFromEquation
 ```
 
-目标：能回答：
+目标：
 
-> “一个 tile 里面的像素，为什么会落到这些 address bits？”
+> **一个 tile 里面的像素，为什么落到这些 address bits？**
 
 ## 第四阶段：Pipe / Bank / XOR
 
 ```text
-16. pipe interleave
-17. pipe selection
-18. bank selection
-19. pipe/bank XOR
-20. RB+
+18. pipe interleave
+19. pipe selection
+20. bank selection
+21. pipe/bank XOR
+22. RB+
 ```
 
-目标：能回答：
+目标：
 
-> “为什么同样的二维坐标最终能均匀分布到 GPU 的 memory system？”
+> **为什么空间访问可以更好地分布到 GPU memory system？**
 
 ## 第五阶段：Metadata
 
 ```text
-21. DCC
-22. HTile
-23. CMask
-24. FMask
+23. DCC
+24. HTile
+25. CMask
+26. FMask
 ```
 
-目标：能回答：
+目标：
 
-> “GPU 为什么除了 color/depth data 之外，还需要另一套地址布局？”
+> **GPU 为什么除了主 data surface，还需要另一套 metadata layout？**
 
 ## 第六阶段：完整闭环
 
@@ -1212,14 +1154,16 @@ GPU descriptor / hardware programming
 
 ---
 
-# 26. 最后用一句话记住整个 GFX10 AddrLib
+# 29. 最后用一句话记住整个 GFX10 AddrLib
 
-> **AddrLib 的本质，就是把“图形世界中的坐标和资源描述”，转换成“GPU memory system 能高效工作的物理内存布局”。**
+> **AddrLib 的本质，就是把“图形世界中的 Surface 描述”，转换成“GPU memory system 能高效工作的物理内存布局”。**
 
-而 GFX10 中最核心的几个层次可以记成：
+最核心的主线记成：
 
 ```text
 Surface
+  ↓
+Geometry
   ↓
 Mip
   ↓
@@ -1234,7 +1178,7 @@ Pipe / Bank / XOR
 Address
 ```
 
-再加上旁边的一条支线：
+旁边再记一条 metadata 支线：
 
 ```text
 Surface
@@ -1246,18 +1190,48 @@ Metadata
   └── FMask
 ```
 
-**如果这两张图真正理解了，后面再看 GFX10 的几千行 AddrLib 源码，就不会再觉得它是在“凭空做大量奇怪的位运算”。每一组位运算都可以追溯到一个硬件布局问题。**
+如果这两张主图真正理解了，后面再看 GFX10 的几千行 AddrLib 源码，就不会再觉得它是在“凭空做大量奇怪的位运算”。每一组位运算都可以追溯到一个硬件布局问题。
 
 ---
 
-## 研究基线与资料说明
+# 30. 源码依据与研究说明
 
-- Mesa 当前稳定版本基线：**Mesa 26.2.2**，发布日期为 2026-09-02。citehttps://docs.mesa3d.org/relnotes/26.2.2.html
-- Mesa 官方源码仓库：freedesktop.org 上的 Mesa Git 仓库。citehttps://docs.mesa3d.org/repository.html
-- Mesa 官方源码树说明：`src/amd/addrlib` 是 AMD-specific 的 image creation/address-layout 代码。citehttps://docs.mesa3d.org/sourcetree.html
-- GFX10 关键实现：`src/amd/addrlib/src/gfx10/gfx10addrlib.cpp`、`gfx10addrlib.h`、`gfx10SwizzlePattern.h`。
-- 本文的目标是**算法理解**，不是逐行代码注释；对于 register pipeline staging、debug assert、极少数 chip-specific workaround 等细节暂不展开。
+本版不是把网上的通用 GPU 图示直接搬进来，而是根据 GFX10 AddrLib 源码中的接口和调用关系重新组织示意图。
+
+重点核对的 GFX10 源码包括：
+
+- `src/amd/addrlib/src/gfx10/gfx10addrlib.cpp`
+- `src/amd/addrlib/src/gfx10/gfx10addrlib.h`
+- `src/amd/addrlib/src/gfx10/gfx10SwizzlePattern.h`
+- common/core 下的 surface-layout、mipmap、equation 等基础实现
+
+重点对应的源码能力包括：
+
+```text
+HwlComputeSurfaceInfoTiled
+HwlComputeSurfaceInfoLinear
+ComputeSurfaceInfoMacroTiled
+ComputeSurfaceInfoMicroTiled
+ComputeSurfaceAddrFromCoordMacroTiled
+ComputeSurfaceAddrFromCoordMicroTiled
+ConvertSwizzlePatternToEquation
+ComputeOffsetFromEquation
+GetMipSize
+GetMaxNumMipsInTail
+HwlComputePipeBankXor
+HwlComputeSlicePipeBankXor
+HwlComputeDccInfo
+HwlComputeHtileInfo
+HwlComputeCmaskInfo
+HwlComputeDccAddrFromCoord
+HwlComputeHtileAddrFromCoord
+HwlComputeCmaskAddrFromCoord
+```
+
+这些函数名非常适合作为后续源码深挖的“锚点”。它们分别对应“大地图”“mipmap”“tile-local address”“equation”“memory distribution”“metadata”等不同层次。
+
+Mesa 官方源码仓库位于 freedesktop.org；`src/amd/addrlib` 是 AMD image creation/address-layout 的源码目录。citehttps://docs.mesa3d.org/repository.html citehttps://docs.mesa3d.org/sourcetree.html
 
 ## 一句话学习路线
 
-**先理解“为什么要这样布局”，再理解“布局长什么样”，最后才理解“每一个 bit 为什么这么算”。**
+**先理解为什么要这样布局 → 再看布局长什么样 → 再看每一层由哪个源码函数负责 → 最后才追每一个 address bit 为什么这么算。**
