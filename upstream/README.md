@@ -4,7 +4,7 @@
 
 This directory is intended to hold a source snapshot of Mesa's AMD AddrLib, with emphasis on GFX10.
 
-As of 2026-09-06, Mesa 26.1.8 is the newest Mesa version identified during this repository setup. The 26.1.8 debug-source package contains the expected AddrLib GFX10 sources, including `gfx10addrlib.cpp`, `gfx10addrlib.h`, and `gfx10SwizzlePattern.h`.
+As of 2026-09-06, the target upstream release for this research repository is **Mesa 26.2.2**. The repository should distinguish the exact upstream release being studied from any GitHub mirror used only for source inspection.
 
 The upstream project is Mesa at:
 
@@ -43,3 +43,7 @@ Expected source set:
 ## Important note
 
 The upstream source is intentionally tracked separately from our derived analysis and RTL-oriented implementation. We should not modify the upstream snapshot when deriving algorithms; changes belong under `analysis/` or `verilog/`.
+
+## Source-inspection provenance
+
+Some detailed source inspection during development may use a GitHub mirror when the canonical Mesa GitLab tree is inconvenient to retrieve programmatically. Such a mirror is **not** treated as the authoritative version. Every analysis document should record the exact upstream release/commit when possible.
