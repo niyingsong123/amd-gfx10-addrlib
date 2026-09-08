@@ -23,9 +23,9 @@ output l2_data_blk_height;
 output l2_data_blk_depth;
 
 //变量含义
-map0_w //mipmap0 width -1 for non_TC/padded sclaed width for TC
-map0_h //mipmap0 height -1 for non_TC/padded sclaed height for TC
-map0_d //mipmap0 depth -1 for non_TC/padded sclaed depth for TC
+map0_w //mipmap0 width -1 for non_TC/padded scaled width for TC
+map0_h //mipmap0 height -1 for non_TC/padded scaled height for TC
+map0_d //mipmap0 depth -1 for non_TC/padded scaled depth for TC
 l2_eb //log2_element_bytes //0:1byte 1:2byte 2:4byte 3:8 bytes 4:16byte
 log2_num_samples // specifies the log2 of 'the number of samples', for non-MSAA hardware, tie 0 0: 1sample 1: 2samples 2: 4samples 3: 8samples
 pitch //padded_width - 1 no of elements
@@ -50,7 +50,7 @@ linear = sw_type == `SW_LINEAR
 | SW_LINEAR    | SZ_LIN (SZ_128B) | SW_L    |
 | SW\_256B_2D  | SZ_256B          | SW_D_2D |
 | SW\_4KB_2D   | SZ_4KB           | SW_D_2D |
-| SW\_64KB_2D  | SZ_64KB          | SW_D_2D |
+| SW\_64KB_2D  | SZ_64KB           | SW_D_2D |
 | SW\_256KB_2D | SZ_256KB         | SW_D_2D |
 | SW\_4KB_3D   | SZ_4K            | SW_S_3D |
 | SW\_64KB_3D  | SZ_64KB          | SW_S_3D |
@@ -112,7 +112,7 @@ else if {linear, sw_type} == {1'b0, \`SW_S_3D}
 | 256KB, 8bpp              | 4'b1001, 3'd0         | 6 (64)      | 6 (64)      | 6 (64)      |
 | 256KB, 16bpp             | 4'b1001, 3'd1         | 5 (32)      | 6 (64)      | 6 (64)      |
 | 256KB, 32bpp             | 4'b1001, 3'd2         | 5 (32)      | 6 (64)      | 5 (32)      |
-| 256KB, 64bpp             | 4'b1001, 3'd3         | 5 (32)      | 5 (32)      | 5 (32)      |
+| 256KB, 64bpp              | 4'b1001, 3'd3         | 5 (32)      | 5 (32)      | 5 (32)      |
 | 256KB, 128bpp            | 4'b1001, 3'd4         | 4 (16)      | 5 (32)      | 5 (32)      |
 }
 else //1D or linear
@@ -124,8 +124,8 @@ else //1D or linear
 
 //////////////256B align////////////////
 //fix for 128B pitch alignment
-//slice must still be calculated at 256B alignment, so use this forslice calculations
-l2_blk_w_slice = (linear && (l2_blk_w < 'd8)) ? ('d8 - l2_eb) : ll2_blk_w; //256B align
+//slice must still be calculated at 256B alignment, so use this for slice calculations
+l2_blk_w_slice = (linear && (l2_blk_w < 'd8)) ? ('d8 - l2_eb) : l2_blk_w; //256B align
 l2_ms_256B = (l2_ms_128B=='d0) ? 'd0 : (l2_ms_128B - 1) // log 256B align
 l2_mip_offset = (l2_ms < 5'd8) ? 5'd0 : l2_ms - 5'd8
 //prevent underflow in sw_linear case
@@ -133,7 +133,7 @@ l2_mip_offset = (l2_ms < 5'd8) ? 5'd0 : l2_ms - 5'd8
 /////////function al_num_mips_inside_tail////////////
 function (input l2_ms_256B, input sw_type, output num_mips_in_tail)
 {
-​	is_3d_blk_size = (sw_type == `SW_S_3D) //no always the same as dim_type == `dim_3D
+​	is_3d_blk_size = (sw_type == `SW_S_3D) //not always the same as dim_type == `dim_3D
 ​	case(l2_ms_256B)
 ​	{
 ​		4'd4: l2_ms_256B_3d = 4'd3 //12-4/3 - 8 = 3 (4kB)
@@ -147,7 +147,7 @@ function (input l2_ms_256B, input sw_type, output num_mips_in_tail)
 ​	case (l2_ms_256B_eff)
 ​	4'd0: num_mips_in_tail = 'd1 //this will handle the linear cases as well (l2_ms = 7)
 ​	4'd3: num_mips_in_tail = 'd5 //(1+(1<<(l2_ms_256B_eff + 8 - 9)))
-​	4'd4, 4'd6, 4'd7, 4'd8, 4'd9, 4'd10, 4'd11, 4'd12: num_mips_in_tail = (l2_ms_256B_eff + 4'd4) // (((effecttive_block_size_log2_256B + 8) - 11) + 7) => (l2_ms_256B_eff + 4'd4)
+​	4'd4, 4'd6, 4'd7, 4'd8, 4'd9, 4'd10, 4'd11, 4'd12: num_mips_in_tail = (l2_ms_256B_eff + 4'd4) // (((effective_block_size_log2_256B + 8) - 11) + 7) => (l2_ms_256B_eff + 4'd4)
 }
 num_mips_in_tail = al_num_mips_inside_tail(l2_ms_256B, sw_type)
 
@@ -160,7 +160,7 @@ generate
 ​	end
 endgenerate
 
-//Since no VAR mode, swtich back to the 10.1 design with addition of 256KB.
+//Since no VAR mode, switch back to the 10.1 design with addition of 256KB.
 //i.e. only need to look at SW_TYPE[0], which is set for 4KB and 256KB
 y_bias_intail = (sw_type ==`SW_S_3D) & (blk_type[0] == 1'b1)
 //special case, where in_tail condition is handled differently
@@ -169,7 +169,7 @@ y_bias_intail = (sw_type ==`SW_S_3D) & (blk_type[0] == 1'b1)
 function pad_to_log2sz_gc (input dim_in, input l2_pad_sz_in, output pad_out)
 {
 //total "after padding" bits required depends on what is the minimum size of the padding supported
-//pads to atleast on block
+//pads to at least one block
 //in some cases, user can pass 'PAD_WIDTH' to override this
 pad_sz_mask = (1'b1 << l2_pad_sz_in) - 1'b1
 pad_out = ((dim_in >> L2_pad_sz_in + |(dim_in & pad_sz_mask))
