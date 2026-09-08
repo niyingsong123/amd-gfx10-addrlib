@@ -1,541 +1,97 @@
-# ADDRLIB_comment.md
+# ADDRLIB.md 的 mip-tail 注释（经源码核对）
 
-> 本文件用于记录对 `ADDRLIB.md` 中关键 RTL 算法的逐句注释与推导。
-> 本次新增内容重点整理 **Mip Tail 内部 reverse / byte_offset / micro-block 地址计算**，并特别区分 `mip_size` 与 `byte_offset`。
+核对来源：AMD PAL 固定提交 `c5e800072a32f68b6ccc4422936d96167c6e0728`。详细的行号、三代差异及片段缺陷见[逐段版本审计](analysis/addrlib_version_audit.md)。
 
----
+## 1. 版本与输入语义
 
-## 1. Mip Tail 内部的 reverse 定义
+此伪RTL的模式和linear对齐策略主要对应GFX12；tail数学在GFX10/11/12中有共用部分，不能统一冠以GFX10。本文保留原片段，解释其算法意图；它缺少位宽、接口预处理和完整语法，不是已验证RTL。
 
-原始 RTL：
+设C=num_mips_in_tail（最大容量），first=tail_mipid，mip为当前级，maxmip为末级ID。实际tail级数T=maxmip-first+1，可以小于C。
 
-```text
-mip_in_tail_reverse = (MAXMIP_WIDTH+2)'(num_mips_in_tail - (mip_in_tail + 1));
-```
+有效tail的相对编号t=mip-first，reverse=C-1-t。reverse=0是最大容量布局的最后位置，**实际链的最后一级不一定达到0**。例如64KB 2D，C=12，实际仅6级tail：reverse为11..6，不是5..0。[上游GFX10循环](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L3938)
 
-### 注释
+## 2. reverse 到 byte_offset
 
 ```text
-mip_in_tail_reverse = num_mips_in_tail - (mip_in_tail + 1)
+r = C - 1 - t
+r < 0: byte_offset = 0
+0 <= r <= 6: byte_offset = r * 256
+r > 6: byte_offset = 16 * 2^r
 ```
 
-这里的 `mip_in_tail` 是当前 mip 在 tail 中的相对编号：
+GFX12通过将负r钳位到0处理非tail哨兵，与上述输出一致。GFX10/11则在合法tail循环中计算此式。[GFX12参考函数](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx12/shared/addr_shared.cpp#L483)
 
-- `mip_in_tail = 0`：第一个进入 tail 的 mip
-- `mip_in_tail = 1`：tail 中第二个 mip
-- ...
-- `mip_in_tail = num_mips_in_tail-1`：tail 中最后一个、最小的 mip
-
-而 `mip_in_tail_reverse` 是把这个顺序反过来编号：
-
-```text
-mip_in_tail = 0                    -> reverse = num_mips_in_tail-1
-mip_in_tail = 1                    -> reverse = num_mips_in_tail-2
-...
-mip_in_tail = num_mips_in_tail-1  -> reverse = 0
-```
-
-因此，`reverse=0` 对应 tail 中最后、最小的 mip；越靠近 tail 起始处的 mip，reverse 越大。
-
-这里的 `reverse` 首先是一个 **tail 内部位置索引**，不能直接解释成 mip 的 size。
-
----
-
-## 2. byte_offset 的 piecewise 计算
-
-原始 RTL：
-
-```text
-if(mip_in_tail_reverse[MAXMIP_WIDTH+1])
-    byte_offset = 0;
-else if(mip_in_tail_reverse > 'd6)
-    byte_offset = (MSB_BYTE_OFFSET+1)'(5'd16 << mip_in_tail_reverse[MAXMIP_WIDTH+1:0]);
-else
-    byte_offset = (MSB_BYTE_OFFSET+1)'(mip_in_tail_reverse[MAXMIP_WIDTH+1:0] << 4'd8);
-```
-
-### 注释
-
-首先检查 `mip_in_tail_reverse` 的符号位：
-
-```text
-if(mip_in_tail_reverse[MAXMIP_WIDTH+1])
-    byte_offset = 0;
-```
-
-如果 reverse 是负数，说明当前索引已经超出了有效的 tail-relative 范围。这里直接把 offset 置 0，避免无符号下溢/错误地址传播。
-
-然后是核心分界：
-
-```text
-else if(mip_in_tail_reverse > 6)
-    byte_offset = 16 << reverse;
-```
-
-即：
-
-```text
-byte_offset = 16 * 2^reverse
-```
-
-而当：
-
-```text
-reverse <= 6
-```
-
-则使用：
-
-```text
-byte_offset = reverse << 8
-```
-
-即：
-
-```text
-byte_offset = reverse * 256B
-```
-
-因此，这段 RTL 实际定义的是一个 **piecewise byte-offset mapping**：
-
-```text
-reverse <= 6 : offset = reverse * 256B
-reverse >  6 : offset = 16 * 2^reverse
-```
-
-特别注意：这里的变量名是 `byte_offset`，不是 `mip_size`。
-
----
-
-## 3. Tail 内部为什么可以理解成 256B slot
-
-对于 tail 内部通常使用的 `reverse=0..6` 区间：
-
-```text
-byte_offset = reverse << 8
-           = reverse * 256B
-```
-
-因此相邻 reverse 的 offset 间隔为：
-
-```text
-256B
-```
-
-例如：
-
-| reverse | byte_offset |
+| r | byte_offset（B） |
 |---:|---:|
-| 0 | 0 B |
-| 1 | 256 B |
-| 2 | 512 B |
-| 3 | 768 B |
-| 4 | 1024 B |
-| 5 | 1280 B |
-| 6 | 1536 B |
+| 0 | 0 |
+| 1 | 256 |
+| 2 | 512 |
+| 3 | 768 |
+| 4 | 1024 |
+| 5 | 1280 |
+| 6 | 1536 |
+| 7 | 2048 |
+| 8 | 4096 |
+| 9 | 8192 |
+| 10 | 16384 |
+| 11 | 32768 |
 
-所以如果 tail 中有 6 个 mip，并且它们分别对应 `reverse=5..0`，则位置为：
+r>6仍可为tail内的较大mip，不能称为“tail外”。r=6的offset确为1536B，不能用16×2^6替代。
 
-| mip_in_tail | reverse | byte_offset |
-|---:|---:|---:|
-| 0 | 5 | 1280 B |
-| 1 | 4 | 1024 B |
-| 2 | 3 | 768 B |
-| 3 | 2 | 512 B |
-| 4 | 1 | 256 B |
-| 5 | 0 | 0 B |
+## 3. offset、占用与分配
 
-这说明 tail 内部可以从 **地址 slot / allocation granularity** 的角度理解为：
+256B是上述低区间**原点偏移的步长**，不是证明每个mip固定占256B。更不能从6个原点推出总tail footprint=1536B。二维宏块级布局会为整个tail计一个当前swizzle块；64KB模式为64KB。三维slice统计按blockSize/blockDepth计算，完整深度占用还涉及对齐切片数。
 
-```text
-6 个 mip
-    ↓
-6 个 256B slot
-    ↓
-总 tail footprint = 6 * 256B = 1536B
-```
+byte_offset不是mip自己的size，也不一定等于pMipInfo.offset：厚模式中后者还乘tailMaxDepth。[GFX10布局和字段赋值](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L3874)；[GFX12对应代码](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx12/gfx12addrlib.cpp#L340)
 
-这里的“每个 mip 256B”应理解为 **tail packed layout 中分配的 256B slot / granularity**，而不是说 mip 的真实 texel footprint 在所有情况下都严格等于 256B。
-
----
-
-## 4. 一个非常重要的概念：byte_offset != mip_size
-
-不能因为：
+## 4. 从byte_offset拆出XY微块索引
 
 ```text
-reverse = 4 -> byte_offset = 1024B
+X[j] = byte_offset[9 + 2*j]    (j=0..5)
+Y[j] = byte_offset[8 + 2*j]    (j=0..5)
 ```
 
-就说：
+先去掉低8位，再取12位交错位；不可漏掉右移8这一步。
+
+| byte_offset | byte_offset >> 8 | Xmicro | Ymicro |
+|---|---|---:|---:|
+| 0x1000 | 0x010 | 0 | 4 |
+| 0x2000 | 0x020 | 4 | 0 |
+
+这只是tail原点的布局编码，不是所有texel的通用Morton地址公式。[上游位拆解](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx12/gfx12addrlib.cpp#L367)
+
+## 5. 奇数块指数
+
+GFX12合法tiled块指数8/12/16/18均为偶数，此交换分支不启用。GFX10/11公开泛化代码对于奇数L先交换XY，还在e=log2(BPE)为奇数时执行：
 
 ```text
-mip_size = 1024B
+Y = (Y << 1) | (X & 1)
+X = X >> 1
 ```
 
-因为 `byte_offset` 表示的是 **位置**，而 `mip_size` 表示的是 **这个 mip 自己需要多少存储空间**。
+当前片段漏了后一步，不能证明其兼容旧VAR模式。三目式的分隔符也应为冒号，且micro_block/micro_blocks混名需要完整代码确认。[GFX10源码](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L3963)
 
-二者属于不同层次：
+## 6. 微块尺寸与坐标缩放
+
+上游tail微块令b=8-e：
+2D：w=ceil(b/2)，h=floor(b/2)，d=0。
+3D：q=floor(b/3)，r=b mod3，w=q+[r>1]，h=q，d=q+[r>0]。
+
+这些w/h/d是log2尺寸。当前片段用8-e-s，多减了samples指数；仅s=0时可据此匹配所对照函数。linear在上游还有单独分支。[getMicroBlockSize](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx12/shared/addr_shared.cpp#L539)
 
 ```text
-mip_size
-   │
-   │ 描述 mip 自身 footprint
-   ↓
-allocation / layout information
-
-byte_offset
-   │
-   │ 描述当前 mip 在特定 packed layout 中的位置
-   ↓
-micro-block / micro-tile coordinate
-   ↓
-最终地址
+originX = Xmicro * 2^w
+originY = Ymicro * 2^h
+originZ = 0
 ```
 
-尤其在 `reverse > 6` 的区域，offset 直接进入指数增长：
+z原点为0不代表3D深度不参与最终地址。每个texel仍需加原点后进入对应swizzle方程，并处理slice、macroBlockOffset与pipeBankXor。
 
-```text
-reverse = 7  -> 2048 B
-reverse = 8  -> 4096 B
-reverse = 9  -> 8192 B
-```
+## 7. surface级mipsize与输出单位
 
-不能把这些数直接当成对应 mip 的 size。
+原片段：
+tail前mipsize=Wb_slice×Hb；tail首级计1；其后计0。这是避免重复计算共享tail的**XY块统计**，不是每一级真实texel字节数。
 
----
+slice_b是该统计的和；slice_out乘XY块尺寸后为元素位置数，转换字节还要BPE和samples，不能忽略3D slice/depth语义。mip_offset_in_blks选择当前mip之后的级数，符合倒序布局。
 
-## 5. byte_offset 如何进一步变成 micro-block 坐标
-
-原始 RTL：
-
-```text
-{x_mip_micro_block[5],
- y_mip_micro_block[5],
- x_mip_micro_block[4],
- y_mip_micro_block[4],
- x_mip_micro_block[3],
- y_mip_micro_block[3],
- x_mip_micro_block[2],
- y_mip_micro_block[2],
- x_mip_micro_block[1],
- y_mip_micro_block[1],
- x_mip_micro_block[0],
- y_mip_micro_block[0]} = byte_offset[BYTE_OFFSET_IN_MIPTAIL_WIDTH-1:8];
-```
-
-### 注释
-
-这里是理解 `byte_offset` 最关键的一步。
-
-RTL 并没有继续把 `byte_offset` 当成“size”使用，而是把它的高位重新解释为：
-
-```text
-x_mip_micro_block[*]
-y_mip_micro_block[*]
-```
-
-也就是说：
-
-```text
-byte_offset
-    │
-    │ 去掉低 8 bit
-    │ （256B granularity）
-    ↓
-剩余 bit
-    │
-    │ 按 X/Y 交错方式重新解释
-    ↓
-x_mip_micro_block / y_mip_micro_block
-```
-
-所以这里可以把 `byte_offset` 理解成：
-
-> **把 mip 在 tail 中的 reverse 位置转换成 micro-block 坐标的一种中间地址表示。**
-
-这也是为什么 `byte_offset` 与 `mip_size` 不能画等号。
-
----
-
-## 6. l2_ms_odd 对 X/Y 方向的交换
-
-原始 RTL：
-
-```text
-x_mip_micro_block_final = (l2_ms_odd) ? y_mip_micro_blocks; x_mip_micro_blocks;
-y_mip_micro_block_final = (l2_ms_odd) ? x_mip_micro_blocks; y_mip_micro_blocks;
-```
-
-### 注释
-
-当 `l2_ms_odd` 为真时，X/Y 两个 micro-block 坐标交换；否则保持原顺序。
-
-因此：
-
-```text
-l2_ms_odd = 0
-    x_final = x
-    y_final = y
-
-l2_ms_odd = 1
-    x_final = y
-    y_final = x
-```
-
-这说明 tail 内部的 packed address 并不是简单的一维线性排列，还需要考虑 block/swizzle 对 X/Y 方向的组织方式。
-
----
-
-## 7. micro-block index 再转换成 element coordinate
-
-原始 RTL：
-
-```text
-x_mip_in_tail_orig = 10'(x_mip_micro_block_final << l2_ublk_w);
-y_mip_in_tail_orig = 10'(y_mip_micro_block_final << l2_ublk_h);
-z_mip_in_tail_orig = 'd0;
-```
-
-### 注释
-
-`x_mip_micro_block_final` / `y_mip_micro_block_final` 还是 micro-block 坐标。
-
-一个 micro-block 在 X/Y 方向分别包含：
-
-```text
-2^l2_ublk_w elements
-2^l2_ublk_h elements
-```
-
-因此左移：
-
-```text
-x << l2_ublk_w
-```
-
-相当于：
-
-```text
-x * 2^l2_ublk_w
-```
-
-从 micro-block index 转换为 element-space 的 X 坐标。
-
-Y 方向同理。
-
-所以完整链条可以写成：
-
-```text
-mip_in_tail
-      ↓
-reverse
-      ↓
-byte_offset
-      ↓
-去掉低 8 bit
-      ↓
-X/Y micro-block index
-      ↓
-考虑 l2_ms_odd 做 X/Y 交换
-      ↓
-乘以 micro-block 的 element 尺寸
-      ↓
-x_mip_in_tail_orig / y_mip_in_tail_orig
-```
-
----
-
-## 8. reverse / offset 数值表：注意它是 offset 表，不是 size 表
-
-根据 RTL：
-
-```text
-reverse <= 6:
-    offset = reverse * 256B
-
-reverse > 6:
-    offset = 16 * 2^reverse
-```
-
-得到：
-
-| reverse | byte_offset | 不能直接解释成 mip_size |
-|---:|---:|:---|
-| 0 | 0 B | 是位置 0 |
-| 1 | 256 B | 是位置 256B |
-| 2 | 512 B | 是位置 512B |
-| 3 | 768 B | 是位置 768B |
-| 4 | 1024 B | 是位置 1024B |
-| 5 | 1280 B | 是位置 1280B |
-| 6 | 1536 B | 是位置 1536B |
-| 7 | 2048 B | 是位置 2048B |
-| 8 | 4096 B | 是位置 4096B |
-| 9 | 8192 B | 是位置 8192B |
-
-特别注意 `reverse=6`：
-
-```text
-reverse > 6   = false
-```
-
-因此 RTL 选择：
-
-```text
-6 << 8 = 1536B
-```
-
-而不是：
-
-```text
-16 << 6 = 1024B
-```
-
-所以不能用 `reverse=6 -> 1024B` 来解释这段 RTL 的 `byte_offset`。
-
-如果某个独立算法得到 `1024B` 的 mip size，则需要去找真正计算 `mip_size` 的代码，不能由这里的 `byte_offset` 直接推导。
-
----
-
-## 9. 与 surface-level mipsize 的区别
-
-前面的 RTL 还有一套完全不同的 `mipsize` 计算：
-
-```text
-if(mip_idx > tail_mipid)
-    mipsize[mip_idx] = 'd0;
-else if(mip_idx == tail_mipid)
-    mipsize[mip_idx] = 'd1;
-else
-    mipsize[mip_idx] = Wb_slice[mip_idx] * Hb[mip_idx];
-```
-
-这里的 `mipsize` 用于 **surface footprint / mip offset / slice footprint 的统计**。
-
-特别是：
-
-```text
-mip == tail_mipid
-    mipsize = 1
-
-mip > tail_mipid
-    mipsize = 0
-```
-
-它表达的是：
-
-> 在 surface-level footprint 统计中，把整个 packed mip tail 当作一个 region 计算，而不是逐个把 tail 内 mip 重复累加。
-
-因此这里又出现了三个不能混淆的概念：
-
-```text
-1. mip_size / mipsize
-   → mip 或 surface layout footprint
-
-2. mip_offset
-   → mip 在更高层 surface layout 中的偏移
-
-3. byte_offset
-   → mip-tail 内部地址生成过程中，用来得到 micro-block 坐标的中间地址量
-```
-
-这三个量虽然最后都会参与地址计算，但含义不同。
-
----
-
-## 10. 当前阶段的统一理解
-
-现在可以把 Mip Tail 相关逻辑分成两层：
-
-```text
-                    Mipmap chain
-                         │
-                         ↓
-                 判断是否进入 tail
-                         │
-                         ↓
-                    tail_mipid
-                         │
-          ┌──────────────┴──────────────┐
-          │                             │
-          ↓                             ↓
-   Surface-level layout          Tail-internal address
-          │                             │
-          ↓                             ↓
-       mipsize                     mip_in_tail
-          │                             │
-          ↓                             ↓
-     mip_offset                  reverse index
-          │                             │
-          │                             ↓
-          │                       byte_offset
-          │                             │
-          │                             ↓
-          │                    micro-block X/Y
-          │                             │
-          │                             ↓
-          │                    element coordinate
-          │                             │
-          └──────────────┬──────────────┘
-                         ↓
-                  final address
-```
-
-### 核心结论
-
-**Tail 内部：**
-
-```text
-reverse = num_mips_in_tail - (mip_in_tail + 1)
-```
-
-对于 `reverse <= 6`：
-
-```text
-byte_offset = reverse * 256B
-```
-
-因此 tail 内部可以自然地理解为 256B-granularity 的 packed slots。
-
-**Tail 外部 / reverse > 6：**
-
-RTL 使用：
-
-```text
-byte_offset = 16 * 2^reverse
-```
-
-但这个量仍然叫 `byte_offset`，不能直接当作 `mip_size`。
-
-最终最重要的认知是：
-
-> **`byte_offset` 是地址计算工具，不是 mip size。它的主要作用是在 mip-tail packed layout 中，把 reverse position 映射为后续 micro-block / micro-tile 坐标，从而最终参与地址生成。**
-
----
-
-## 11. 当前仍需进一步验证的问题
-
-下面这个问题不要仅凭当前 RTL 的 `byte_offset` 代码下结论：
-
-> **tail 外第一个 mip 的真实 `mip_size` 到底是多少？**
-
-尤其是 `reverse=6` 对应的那个边界 mip，不能简单地用：
-
-```text
-16 * 2^6 = 1024B
-```
-
-作为结论，因为当前 piecewise RTL 在 `reverse=6` 时明确走的是：
-
-```text
-6 * 256B = 1536B
-```
-
-这两个数属于不同语义时才可能同时成立：
-
-```text
-1024B → 某个 mip 的真实 footprint / size（如果其他代码证明）
-1536B → 当前 RTL 算出的 byte_offset
-```
-
-后续应继续追踪真正的 `mipsize` / `GetMipSize()` / mip allocation 计算，而不要从 `byte_offset` 反推 `mip_size`。
+mip_offset_b_out=mip_offset_in_blks×2^max(L-8,0)使用256B单位；不是直接byte数。输入minus-one与输出减一注释和公式存在冲突，详见审计表，不将推测的接口行为写成事实。

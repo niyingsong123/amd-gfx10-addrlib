@@ -311,3 +311,9 @@ Also do not treat a source mirror commit as the Mesa 26.2.2 canonical source unt
 8. Translate to combinational Verilog.
 9. Compare against upstream AddrLib behavior.
 10. Repeat for D_X, Z_X, R_X and RB+.
+
+## 16. Fixed-source audit (2026-09-08)
+
+This note has now been cross-checked against [AMD PAL GFX10 at c5e800072a32f68b6ccc4422936d96167c6e0728](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp). This does not establish equivalence to a Mesa release. PI must be 256B in this implementation, despite decoder cases for larger values ([assertion](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L854)).
+
+In sections 4/12, X is the equation's byte coordinate, not unscaled texel x: the caller supplies x << elemLog2 ([caller](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L4798)). Thus A0/A1 for 4BPE are byte-within-element positions, normally zero for an element base address. Pipe/bank layout terms are not a full model of external DRAM topology. The detailed per-bit extraction in the roadmap remains planned work, not a completed validation.

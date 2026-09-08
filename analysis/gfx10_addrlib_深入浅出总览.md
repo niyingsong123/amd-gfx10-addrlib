@@ -8,7 +8,7 @@
 >
 > 本版在上一版基础上增加了多张**根据 GFX10 AddrLib 源码结构重新绘制的示意图**。这些图不是从网上搬来的 GFX10 图片；图中的流程、函数和数据关系以 GFX10 AddrLib 的实际代码为依据，图形本身用于帮助理解。
 >
-> 研究基线采用 Mesa 26.2.2。Mesa 官方说明 `src/amd/addrlib` 是 AMD image creation/address-layout 代码，Mesa 26.2.2 于 2026-09-02 发布。citehttps://docs.mesa3d.org/sourcetree.html citehttps://docs.mesa3d.org/relnotes/26.2.2.html
+> 本次核对采用AMD官方PAL固定提交 c5e800072a32f68b6ccc4422936d96167c6e0728；旧稿的Mesa 26.2.2没有对应快照/标签验证，不能作为本文已核验基线。[固定源码](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp)
 
 ---
 
@@ -103,7 +103,7 @@ flowchart LR
 
 > **AddrLib 不是只负责最后一步“算地址”，而是先把整个 Surface 的内存地图规划出来。**
 
-这也是为什么 `Gfx10Lib` 同时存在 SurfaceInfo、Swizzle、Equation、Pipe/Bank、DCC、HTile、CMask、FMask 等多类接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这也是为什么 `Gfx10Lib` 同时存在 SurfaceInfo、Swizzle、Equation、Pipe/Bank、DCC、HTile、CMask、FMask 等多类接口。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -156,7 +156,7 @@ GPU 希望这些访问尽量形成高效的 cache / transaction / memory-system 
 
 这样二维空间中的局部区域可以更集中地组织到内存中。
 
-Mesa 对 tiling 的通用解释也是：把图像组织成 tile，并重新安排 tile 内的数据，使空间局部性更适合 GPU。citehttps://docs.mesa3d.org/isl/tiling.html
+Mesa 对 tiling 的通用解释也是：把图像组织成 tile，并重新安排 tile 内的数据，使空间局部性更适合 GPU。[来源](https://docs.mesa3d.org/isl/tiling.html)
 
 但是注意：
 
@@ -205,7 +205,7 @@ Swizzle 解决：
 
 # 6. 为什么会出现 256B、4KB、64KB？
 
-GFX10 的 swizzle mode table 中确实存在 256B、4KB、64KB、Variable 等类别，并进一步区分 standard/display/XOR/Z/rotated/thick 等属性。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 的 swizzle mode table 中确实存在 256B、4KB、64KB、Variable 等类别，并进一步区分 standard/display/XOR/Z/rotated/thick 等属性。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 建立第一层概念时，可以先这样看：
 
@@ -265,7 +265,7 @@ Mip N       1 ×  1
 
 > **已经有这么多 mip level，怎么把它们安排到 GPU surface 的物理内存中？**
 
-GFX10 `GetMipSize()` 对 width/height/depth 做按 mip level 的缩减，随后 surface-layout 路径继续计算各级 mip 的空间和 offset。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 `GetMipSize()` 对 width/height/depth 做按 mip level 的缩减，随后 surface-layout 路径继续计算各级 mip 的空间和 offset。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -302,7 +302,7 @@ Surface Memory
 
 这里不要把示意图中的具体分割比例当成硬件常数。它表达的是**布局思想**：大的 mip 单独占主要区域，小 mip 到一定阶段后进入 tail 组织。
 
-GFX10 类中存在 `GetMaxNumMipsInTail()`，AddrLib 的 surface-layout 输出也会记录 `firstMipIdInTail` / mip-tail offset 一类信息。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 类中存在 `GetMaxNumMipsInTail()`，AddrLib 的 surface-layout 输出也会记录 `firstMipIdInTail` / mip-tail offset 一类信息。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -417,7 +417,7 @@ Thick：
       → X
 ```
 
-GFX10 源码中对 thin/thick 有明确判断逻辑：1D/2D 是 thin；3D 在特定 standard/display swizzle 下会进入 thick 语义。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 源码中对 thin/thick 有明确判断逻辑：1D/2D 是 thin；3D 在特定 standard/display swizzle 下会进入 thick 语义。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 所以看到 GFX10 的 3D block-dimension 表时，不能只想着 `width × height`，还要考虑 `depth`。
 
@@ -446,7 +446,7 @@ GFX10 源码的一个非常重要的设计思想是：swizzle mode 被拆成多�
 
 首先说明“大块类别 + S 类布局 + XOR 类属性”，而不是一个完全不可拆分的黑盒名字。
 
-这正是 `SwizzleModeTable` 设计值得注意的地方：代码可以根据 `is64kb`、`isStd`、`isDisp`、`isXor`、`isZ`、`isT`、`isRot` 等属性走不同算法路径。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这正是 `SwizzleModeTable` 设计值得注意的地方：代码可以根据 `is64kb`、`isStd`、`isDisp`、`isXor`、`isZ`、`isT`、`isRot` 等属性走不同算法路径。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -567,7 +567,7 @@ HwlComputePipeBankXor()
 HwlComputeSlicePipeBankXor()
 ```
 
-这说明 pipe/bank/XOR 是 GFX10 地址布局中独立的一层能力。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这说明 pipe/bank/XOR 是 GFX10 地址布局中独立的一层能力。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -665,7 +665,7 @@ AddrLib 必须考虑：
 - tile/block geometry
 - FMask 等辅助 surface
 
-GFX10 类中明确有 `Gfx10DataFmask`，并存在 FMask 相关布局/地址接口。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+GFX10 类中明确有 `Gfx10DataFmask`，并存在 FMask 相关布局/地址接口。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 直观理解：
 
@@ -713,7 +713,7 @@ HwlComputeHtileAddrFromCoord
 HwlComputeCmaskAddrFromCoord
 ```
 
-所以这些并不是驱动外面自己随便计算的附加数据，而是 AddrLib surface-layout 模型的一部分。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+所以这些并不是驱动外面自己随便计算的附加数据，而是 AddrLib surface-layout 模型的一部分。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -749,7 +749,7 @@ flowchart LR
     D --> E[Final Layout Choice]
 ```
 
-所以 AddrLib 具有一定的 **layout policy / hardware constraint filtering** 角色，而不仅仅是“被动计算器”。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+所以 AddrLib 具有一定的 **layout policy / hardware constraint filtering** 角色，而不仅仅是“被动计算器”。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -873,7 +873,9 @@ HwlComputeHtileAddrFromCoord
 HwlComputeHtileCoordFromAddr
 ```
 
-所以 AddrLib 可以理解成维护一套“坐标 ↔ surface layout”的映射体系，而不仅是单向的地址计算器。
+但本固定GFX10提交的HwlComputeHtileCoordFromAddr函数体仅调用ADDR_NOT_IMPLEMENTED()，没有实现反向计算，不能仅凭接口名称认定支持。[实现桩](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L649)
+
+AddrLib接口体系包含地址与坐标转换能力，但每个代际、每条路径的实现状态必须分别确认。
 
 ---
 
@@ -897,7 +899,7 @@ HwlComputeHtileCoordFromAddr
  通用布局基础设施            GFX10 特有算法
 ```
 
-Mesa 官方源码树明确把 `src/amd/addrlib` 作为 AMD-specific image creation/address-layout 代码；GFX10 则在这个公共框架上实现自己的硬件相关规则。citehttps://docs.mesa3d.org/sourcetree.html
+Mesa 官方源码树明确把 `src/amd/addrlib` 作为 AMD-specific image creation/address-layout 代码；GFX10 则在这个公共框架上实现自己的硬件相关规则。[来源](https://docs.mesa3d.org/sourcetree.html)
 
 ---
 
@@ -943,7 +945,7 @@ Gfx10Lib
     └── CopySurfaceToMemory
 ```
 
-这些接口名称本身就是理解源码的“目录”。不要从第一行开始顺读，而应该从功能地图进入具体算法。citehttps://fossies.org/linux/mesa/src/amd/addrlib/src/gfx10/gfx10addrlib.h
+这些接口名称本身就是理解源码的“目录”。不要从第一行开始顺读，而应该从功能地图进入具体算法。[来源](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.h)
 
 ---
 
@@ -1230,8 +1232,14 @@ HwlComputeCmaskAddrFromCoord
 
 这些函数名非常适合作为后续源码深挖的“锚点”。它们分别对应“大地图”“mipmap”“tile-local address”“equation”“memory distribution”“metadata”等不同层次。
 
-Mesa 官方源码仓库位于 freedesktop.org；`src/amd/addrlib` 是 AMD image creation/address-layout 的源码目录。citehttps://docs.mesa3d.org/repository.html citehttps://docs.mesa3d.org/sourcetree.html
+Mesa 官方源码仓库位于 freedesktop.org；`src/amd/addrlib` 是 AMD image creation/address-layout 的源码目录。[来源](https://docs.mesa3d.org/repository.html) [来源](https://docs.mesa3d.org/sourcetree.html)
 
 ## 一句话学习路线
 
 **先理解为什么要这样布局 → 再看布局长什么样 → 再看每一层由哪个源码函数负责 → 最后才追每一个 address bit 为什么这么算。**
+
+## 2026-09-08 审计边界
+
+本文概念图表达功能关系，不是保证依次执行的物理流水线。pipeBankXor最终与blkOffset异或；方程本身也包含坐标XOR，不能由图断言它们属于两个互不重叠的地址转换层。这里的pipe/bank不等于已知外部DRAM拓扑。表面格式转换、有效模式和未实现接口仍需查具体函数。[地址组合](https://github.com/GPUOpen-Drivers/pal/blob/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp#L4786)
+
+用户ADDRLIB.md的模式集合主要匹配GFX12，本文保留为GFX10背景，不作为该片段全部属于GFX10的证据。[逐段审计](addrlib_version_audit.md)
