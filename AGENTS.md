@@ -18,7 +18,7 @@
 
 ## 用例命名与编号
 
-命名规则的完整定义与现有编号表位于 case/README.md。文件名使用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，删除 step_by_step 后缀。用户指定 mip4 为 case0、mip0 为 case1、mip6 为 case3；保留 case2 空缺，下一例从 case4 开始，按已分配最大编号加 1 递增，不重排、不复用。新增时同步用例索引，独立记录可信状态；确认可信后再更新基准清单。
+命名规则的完整定义与现有编号表位于 case/README.md。文件名使用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，删除 step_by_step 后缀。用户指定 mip4 为 case0、mip0 为 case1、mip6 为 case2；现有编号连续为 case0、case1、case2，下一例从 case3 开始，按已分配最大编号加 1 递增，不重排、不复用。新增时同步用例索引，独立记录可信状态；确认可信后再更新基准清单。
 
 ## 完成工作
 

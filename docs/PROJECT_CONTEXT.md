@@ -19,13 +19,13 @@
 | scripts/ | 当前项目维护与基准校验 |
 | backup/ | 历史归档；常规工作不读 |
 
-用户现已明确确认 mip4 也可信。当前可信基准共 4 个文件：ADDRLIB.md，以及 case0（mip4）、case1（mip0）、case3（mip6）。用例均已纳入字节基准清单；确认依据为用户指示，本轮未复算算法。
+用户现已明确确认 mip4 也可信。当前可信基准共 4 个文件：ADDRLIB.md，以及 case0（mip4）、case1（mip0）、case2（mip6）。用例均已纳入字节基准清单；确认依据为用户指示，本轮未复算算法。
 
 原用例中的计算结果、来源哈希、旧路径均保持原样；当前路径从 case/README.md 进入。没有重新执行用例计算或验证 RTL。
 
 ## 用例编号决定
 
-文件名采用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，不保留 step_by_step。用户指定 mip4 → case0、mip0 → case1、mip6 → case3；case2 留空，后续从 case4 递增。编号不重排、不复用，具体规则与当前索引集中在 case/README.md，协作执行要求写入 AGENTS.md。
+文件名采用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，不保留 step_by_step。用户指定 mip4 → case0、mip0 → case1、mip6 → case2；现有编号为 case0、case1、case2，后续从 case3 递增。编号不重排、不复用，具体规则与当前索引集中在 case/README.md，协作执行要求写入 AGENTS.md。
 
 ## 历史资料策略
 

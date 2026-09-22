@@ -6,13 +6,13 @@
 | --- | --- | --- | --- |
 | case0 | [mip4](case0_mip4_xyz_5_6_3.md) | (5,6,3) | 用户已确认可信 |
 | case1 | [mip0](case1_mip0_xyz_69_134_195.md) | (69,134,195) | 用户已确认可信 |
-| case3 | [mip6](case3_mip6_xyz_1_1_17.md) | (1,1,17) | 用户已确认可信 |
+| case2 | [mip6](case2_mip6_xyz_1_1_17.md) | (1,1,17) | 用户已确认可信 |
 
 ## 命名与编号规则
 
 - 文件名使用 `case{num}_mip{level}_xyz_{x}_{y}_{z}.md`，不再使用 `step_by_step` 后缀。
-- 编号是稳定标识，不按 mip 大小重新排序。现有映射由用户指定：mip4 → case0，mip0 → case1，mip6 → case3。
-- 保留 case2 空缺；新增用例从 case4 开始，之后 case5、case6 依次递增。
+- 编号是稳定标识，不按 mip 大小重新排序。现有映射由用户指定：mip4 → case0，mip0 → case1，mip6 → case2。
+- 现有编号连续为 case0、case1、case2；新增用例从 case3 开始，之后 case4、case5 依次递增。此前 mip6 的 case3 编号为用户已撤回的笔误，不占用后续编号。
 - 分配编号前检查本索引、现有文件与必要的 Git 历史，使用已分配最大编号加 1；不复用已删除的编号，不自动填补空缺。
 - 新增用例时同步更新本索引。可信状态需有独立依据，不能因编号而自动加入可信清单；明确确认后才补充 docs/TRUSTED_BASELINE.json。
 
