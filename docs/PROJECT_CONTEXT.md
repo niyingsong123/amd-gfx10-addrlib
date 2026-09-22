@@ -19,9 +19,13 @@
 | scripts/ | 当前项目维护与基准校验 |
 | backup/ | 历史归档；常规工作不读 |
 
-先前明确确认的是主文档、mip0、mip6。三个用例已归类，但在用户澄清前，mip4 暂保留待确认状态。已询问最新“3 个可信用例”是否包含对 mip4 的确认。
+用户现已明确确认 mip4 也可信。当前可信基准共 4 个文件：ADDRLIB.md，以及 case0（mip4）、case1（mip0）、case3（mip6）。用例均已纳入字节基准清单；确认依据为用户指示，本轮未复算算法。
 
 原用例中的计算结果、来源哈希、旧路径均保持原样；当前路径从 case/README.md 进入。没有重新执行用例计算或验证 RTL。
+
+## 用例编号决定
+
+文件名采用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，不保留 step_by_step。用户指定 mip4 → case0、mip0 → case1、mip6 → case3；case2 留空，后续从 case4 递增。编号不重排、不复用，具体规则与当前索引集中在 case/README.md，协作执行要求写入 AGENTS.md。
 
 ## 历史资料策略
 
@@ -35,4 +39,4 @@
 
 工作目录 D:/project/no_preject/addrlib，本地 main，无远程。原始快照提交 405c58b441e970b1043ba2c118bf7230b130e79f；初版上下文提交 165afe0。工具生成的提交使用命令级 Codex <codex@localhost> 身份，不修改全局配置。
 
-docs/TRUSTED_BASELINE.json 记录已确认文件的路径、长度和 SHA-256。迁移只更新路径，既有哈希不变。scripts/verify_trusted_baseline.ps1 只验证字节完整性。常规协作遵循 AGENTS.md，实际工作记录在 WORK_LOG.md。
+docs/TRUSTED_BASELINE.json 记录已确认文件的路径、长度和 SHA-256。迁移与重命名只更新路径，既有哈希不变；mip4 在用户明确确认后新增基准记录。scripts/verify_trusted_baseline.ps1 只验证字节完整性。常规协作遵循 AGENTS.md，实际工作记录在 WORK_LOG.md。

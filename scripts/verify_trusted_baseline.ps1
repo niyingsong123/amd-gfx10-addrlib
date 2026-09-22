@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $manifestPath = Join-Path $repoRoot 'docs/TRUSTED_BASELINE.json'
 $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
-if ($manifest.schema_version -ne 1 -or @($manifest.files).Count -ne 3) {
+if ($manifest.schema_version -ne 1 -or @($manifest.files).Count -lt 1) {
     throw 'Unexpected trusted baseline manifest schema or file count.'
 }
 
@@ -29,4 +29,4 @@ foreach ($entry in $manifest.files) {
 if ($failures.Count -gt 0) {
     throw ($failures -join [Environment]::NewLine)
 }
-Write-Output 'PASS: all 3 trusted files match the recorded baseline. This does not validate algorithms.'
+Write-Output "PASS: all $(@($manifest.files).Count) trusted files match the recorded baseline. This does not validate algorithms."

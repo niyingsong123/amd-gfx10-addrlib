@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "recorded_on": "2026-09-22",
-  "trust_basis": "User explicitly confirmed these three unique files; no algorithm revalidation performed.",
+  "trust_basis": "User explicitly confirmed ADDRLIB.md and all three cases, including mip4; no algorithm revalidation performed.",
   "original_snapshot_commit": "405c58b441e970b1043ba2c118bf7230b130e79f",
   "files": [
     {
@@ -10,12 +10,17 @@
       "bytes": 32244
     },
     {
-      "path": "case/case_mip0_xyz_69_134_195_step_by_step.md",
+      "path": "case/case0_mip4_xyz_5_6_3.md",
+      "sha256": "54449B421AE88232C5FAF3E90DAD9516327845CA591A2D931C899C4C6CBA84EA",
+      "bytes": 16528
+    },
+    {
+      "path": "case/case1_mip0_xyz_69_134_195.md",
       "sha256": "DC282D50A42228AFA35B6700EC45E5F31538F32CC9CC47F145CEDFAA62FFF407",
       "bytes": 12054
     },
     {
-      "path": "case/case_mip6_xyz_1_1_17_step_by_step.md",
+      "path": "case/case3_mip6_xyz_1_1_17.md",
       "sha256": "002411A68B46EC8C1891946AB810D7955A530BFF736A9038E9316DD835E769E0",
       "bytes": 15872
     }

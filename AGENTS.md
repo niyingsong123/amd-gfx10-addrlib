@@ -16,6 +16,10 @@
 - 不擅自修改研究正文、历史哈希或换行符。目录重组保留原文字节；必要的技术修改说明依据与范围，保留 Git 历史，并记录基准变化。不得仅更新哈希来消除失败。
 - 新分析记录源文件、配置、输入、单位、位宽假设和实际验证范围；上游规则不自动覆盖本项目基准。
 
+## 用例命名与编号
+
+命名规则的完整定义与现有编号表位于 case/README.md。文件名使用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，删除 step_by_step 后缀。用户指定 mip4 为 case0、mip0 为 case1、mip6 为 case3；保留 case2 空缺，下一例从 case4 开始，按已分配最大编号加 1 递增，不重排、不复用。新增时同步用例索引，独立记录可信状态；确认可信后再更新基准清单。
+
 ## 完成工作
 
 - 运行 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_trusted_baseline.ps1。该检查仅验证文件字节。
