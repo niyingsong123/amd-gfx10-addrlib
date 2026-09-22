@@ -1,0 +1,928 @@
+
+
+ADDRLIB is top module
+
+////////////////////top module definition////////////////////////
+
+module addr_calc_full_gc;
+
+input x;
+
+input y;
+
+input z;
+
+input s;
+
+input map0_w_minus_1;
+
+input map0_h_minus_1;
+
+input map0_d_minus_1;
+
+input baseAddr256B;
+
+input log2_num_samples;
+
+input log2_element_bytes;
+
+input sw_mode;
+
+input mip_level;
+
+input maxmip;
+
+output address_final;
+
+output mipid_in_tail;
+
+
+
+//////////////////////////module definition/////////////////////////
+
+module mipmap_param_calc_core_gc
+
+input x;
+
+input y;
+
+input z;
+
+input s;
+
+input map0_w_minus_1;
+
+input map0_h_minus_1;
+
+input map0_d_minus_1;
+
+input sw_mode;
+
+input log2_num_samples;
+
+input log2_element_bytes;
+
+input mip_level;
+
+input maxmip;
+
+output pitch;
+
+output slice;
+
+output mip_in_tail;
+
+output mip_offset_b;
+
+output l2_ms;
+
+output  l2_blk_w;
+
+output l2_blk_h;
+
+output l2_blk_d;
+
+output l2_blk_w_slice;
+
+
+
+//变量含义
+
+map0_w = map0_w_minus_1 + 1; //mipmap0 width for non_TC/padded scaled width for TC
+
+map0_h = map0_h_minus_1 + 1; //mipmap0 height for non_TC/padded scaled height for TC
+
+map0_d = map0_d_minus_1 + 1; //mipmap0 depth or non_TC/padded scaled depth for TC
+
+l2_eb //log2_element_bytes //0:1byte 1:2byte 2:4byte 3:8 bytes 4:16byte
+
+l2_ns = log2_num_samples; // specifies the log2 of 'the number of samples', for non-MSAA hardware, tie 0 0: 1sample 1: 2samples 2: 4samples 3: 8samples
+
+pitch //padded_width 
+
+slice //(padded_width * padded_ht)
+
+\`define PAD_W_MSB(mip) ((mip < W0_B_WIDTH) ? (mip-1) : (W0_B_WIDTH-1))
+
+\`define PAD_H_MSB(mip) ((mip < H0_B_WIDTH) ? (mip-1) : (H0_B_WIDTH-1))
+
+`define MAXMIP 17
+
+
+
+//S0 stage
+
+//calculate W0/H0: padded width/height of mip0
+
+//Decode sw_mode: get dim_type, sw_type, blk_type, is_linear
+
+//calculate macro_block_size: l2_ms = log2 of block size (base on blk_type)
+
+//calculate block dimensions: l2_blk_w/h/d
+
+/////////sw_mode_dec/////////////
+
+{blk_type, sw_type} = sw_mode_dec(sw_mode) 
+
+linear = sw_type == `SW_L
+
+//SW_L == Linear/1D
+
+| swizzle mode | blk_type         | sw_type |
+| ------------ | ---------------- | ------- |
+| SW_LINEAR    | SZ_LIN (SZ_128B) | SW_L    |
+| SW\_256B_2D  | SZ_256B          | SW_D_2D |
+| SW\_4KB_2D   | SZ_4KB           | SW_D_2D |
+| SW\_64KB_2D  | SZ_64KB          | SW_D_2D |
+| SW\_256KB_2D | SZ_256KB         | SW_D_2D |
+| SW\_4KB_3D   | SZ_4KB           | SW_S_3D |
+| SW\_64KB_3D  | SZ_64KB          | SW_S_3D |
+| SW\_256KB_3D | SZ_256KB         | SW_S_3D |
+
+///////macro_blk_size_calc//////////
+
+{l2_ms, l2_ms_128B, ms_mask_128B} = macro_blk_size_calc(blk_type)
+
+| blk_type | l2_ms | l2_ms_128B | ms_mask_128B(mask of ms bits used) |
+| -------- | ----- | ---------- | ---------------------------------- |
+| SZ_LIN   | 7     | 0          | 0                                  |
+| SZ_256B  | 8     | 1          | 1                                  |
+| SZ_4KB   | 12    | 5          | 1f                                 |
+| SZ_64KB  | 16    | 9          | 1ff                                |
+| SZ_256KB | 18    | 11         | 7ff                                |
+
+/////////macro_block_dim_calc///////////
+
+dim3D = (sw_type == \`SW_S_3D)
+
+msaa = (dim3D | linear) ? 2'd0 : l2_ns
+
+block_size_elements = l2_ms - (l2_eb + msaa)
+
+if {linear, sw_type} == {1'b0, \`SW_D_2D}
+
+{
+
+​	l2_blk_w = block_size_elements[4:1] + (block_size_elements[0] & (l2_eb[0] || l2_ns[0]))
+
+​	l2_blk_h = block_size_elements[4:1]
+
+​	l2_blk_d = 4'h0
+
+//下面表格只是举例，最终看上面公式
+
+| macro size, element size | l2_ms, l2_ns, l2_eb | block_size_elements | l2_blk_w_2d | l2_blk_h_2d | l2_blk_d_2d |
+| ------------------------ | ------------------- | ------------------- | ----------- | ----------- | ----------- |
+| 256B, 8bpp               | 4'b1000, 2'b0, 3'b0 | 8                   | 4 (16)      | 4 (16)      | 0           |
+| 256B, 8bpp               | 4'b1000, 2'b1, 3'b0 | 7                   | 4 (16)      | 3 (8)       | 0           |
+| 256B, 8bpp               | 4'b1000, 2'd2, 3'b0 | 6                   | 3 (8)       | 3 (8)       | 0           |
+| 256B, 8bpp               | 4'b1000, 2'd3, 3'b0 | 5                   | 3 (8)       | 2 (4)       | 0           |
+| 256B, 8bpp               | 4'b1000, 2'b0, 3'b0 | 8                   | 4 (16)      | 4 (16)      | 0           |
+| 256B, 16bpp              | 4'b1000, 2'b0, 3'b1 | 7                   | 4 (16)      | 3 (8)       | 0           |
+| 256B, 16bpp              | 4'b1000, 2'b1, 3'b1 | 6                   | 3 (8)       | 3 (8)       | 0           |
+| 256B, 32bpp              | 4'b1000, 2'd2, 3'd2 | 4                   | 2 (4)       | 2 (4)       | 0           |
+| 256B, 32bpp              | 4'b1000, 2'd3, 3'd2 | 3                   | 2 (4)       | 1 (2)       | 0           |
+
+}
+
+else if {linear, sw_type} == {1'b0, \`SW_S_3D}
+
+{
+
+​	l2_blk_w = sheet(l2_ms[4:1] l2_eb[2:0]) //看下面表格
+
+​	l2_blk_h =  sheet(l2_ms[4:1] l2_eb[2:0]) //看下面表格
+
+​	l2_blk_d =  sheet(l2_ms[4:1] l2_eb[2:0]) //看下面表格
+
+| macro size, element size | l2_ms[4:1] l2_eb[2:0] | l2_blk_w_3d | l2_blk_h_3d | l2_blk_d_3d |
+| ------------------------ | --------------------- | ----------- | ----------- | ----------- |
+| 4KB, 8bpp                | 4'b0110, 3'd0         | 4 (16)      | 4 (16)      | 4 (16)      |
+| 4KB, 16bpp               | 4'b0110, 3'd1         | 3 (8)       | 4 (16)      | 4 (16)      |
+| 4KB, 32bpp               | 4'b0110, 3'd2         | 3 (8)       | 4 (16)      | 3 (8)       |
+| 4KB, 64bpp               | 4'b0110, 3'd3         | 3 (8)       | 3 (8)       | 3 (8)       |
+| 4KB, 128bpp              | 4'b0110, 3'd4         | 2 (4)       | 3 (8)       | 3 (8)       |
+| 64KB, 8bpp               | 4'b1000, 3'd0         | 6 (64)      | 5 (32)      | 5 (32)      |
+| 64KB, 16bpp              | 4'b1000, 3'd1         | 5 (32)      | 5 (32)      | 5 (32)      |
+| 64KB, 32bpp              | 4'b1000, 3'd2         | 5 (32)      | 5 (32)      | 4 (16)      |
+| 64KB, 64bpp              | 4'b1000, 3'd3         | 5 (32)      | 4 (16)      | 4 (16)      |
+| 64KB, 128bpp             | 4'b1000, 3'd4         | 4 (16)      | 4 (16)      | 4 (16)      |
+| 256KB, 8bpp              | 4'b1001, 3'd0         | 6 (64)      | 6 (64)      | 6 (64)      |
+| 256KB, 16bpp             | 4'b1001, 3'd1         | 5 (32)      | 6 (64)      | 6 (64)      |
+| 256KB, 32bpp             | 4'b1001, 3'd2         | 5 (32)      | 6 (64)      | 5 (32)      |
+| 256KB, 64bpp             | 4'b1001, 3'd3         | 5 (32)      | 5 (32)      | 5 (32)      |
+| 256KB, 128bpp            | 4'b1001, 3'd4         | 4 (16)      | 5 (32)      | 5 (32)      |
+
+}
+
+else //1D or linear
+
+{
+
+​	l2_blk_w = block_size_elements
+
+​	l2_blk_h = 4'h0
+
+​	l2_blk_d = 4'h0
+
+}
+
+//////////////256B align////////////////
+
+//fix for 128B pitch alignment
+
+//slice must still be calculated at 256B alignment, so use this for slice calculations
+
+l2_blk_w_slice = (linear && (l2_blk_w < 'd8)) ? ('d8 - l2_eb) : l2_blk_w; //log2 width (block unit) 256B align
+
+l2_ms_256B = (l2_ms_128B=='d0) ? 'd0 : (l2_ms_128B - 1) // log2 macro size 256B align
+
+l2_mip_offset = (l2_ms < 5'd8) ? 5'd0 : l2_ms - 5'd8 //log2 macro size 256B align
+
+//prevent underflow in sw_linear case
+
+
+
+/////////function al_num_mips_inside_tail////////////
+
+function (input l2_ms_256B, input  sw_type, output num_mips_in_tail)
+
+{
+
+​	is_3d_blk_size = (sw_type == `SW_S_3D) //not always the same as dim_type == \`dim_3D
+
+​	case(l2_ms_256B)
+
+​	{
+
+​		4'd4: l2_ms_256B_3d = 4'd3 //12-4/3 - 8 = 3 (4kB)
+
+​		4'd8: l2_ms_256B_3d = 4'd6 //16-8/3 - 8 = 6 (64KB)
+
+​		4'd10: l2_ms_256B_3d = 4'd7 //18 - 10/3 - 8 = 7 (256KB)
+
+​	}
+
+​	l2_ms_256B_eff = (is_3d_blk_size) ? l2_ms_256B_3d : l2_ms_256B
+
+
+
+​	//this assumes that l2_ms_256B can only be 256B, 4K, 64K, VAR
+
+​	//VAR sizes are : l2_ms = 14 ... 20
+
+​	//GFX12: Block sizes are: 256B(8), 4KB(12), 64KB(16), 256KB(18)
+
+​	case (l2_ms_256B_eff)
+
+​	4'd0: num_mips_in_tail = 'd1 //this will handle the linear cases as well (l2_ms = 7)
+
+​	4'd3: num_mips_in_tail = 'd5 //(1+(1<<(l2_ms_256B_eff + 8 - 9)))
+
+​	4'd4, 4'd6, 4'd7, 4'd8, 4'd9, 4'd10, 4'd11, 4'd12: num_mips_in_tail = (l2_ms_256B_eff + 4'd4) // (((effective_block_size_log2_256B + 8) - 11) + 7) => (l2_ms_256B_eff + 4'd4)
+
+}
+
+num_mips_in_tail = al_num_mips_inside_tail(l2_ms_256B, sw_type)
+
+
+
+//you can fit only some number of mips inside a tail, everything else will be outside
+
+//this condition needs to be in conjunction with the mipsizes check
+
+mips_outside_tail = (maxmip - num_mips_in_tail) //extra bit to allow for negative result
+
+generate 
+
+​	for (m=0; m<MAXMIP;m=m+1) begin
+
+​		assign in_tail_chk[m] = ((m > mips_outside_tail) | mips_outside_tail[msb]) // if mips_outside_tail is -ve, then in_tail_chk is true, mips_outside_tail[msb] only use mips_outside_tail's msb bit, only 1 bit
+
+​	end
+
+endgenerate
+
+
+
+//Since no VAR mode, switch back to the 10.1 design with addition of 256KB.
+
+//i.e. only need to look at SW_TYPE[0], which is set for 4KB and 256KB
+
+y_bias = (sw_type ==\`SW_S_3D) & (blk_type[0] == 1'b1) // (blk_type[0] == 1'b1) means 4KB or 256KB
+
+//special case, where in_tail condition is handled differently
+
+//convert mip0 width/height to padded width/height. Padding based on blk_type
+
+
+
+function pad_to_log2sz_gc (input dim_in, input l2_pad_sz_in, output pad_out)
+{
+
+//total "after padding" bits required depends on what is the minimum size of the padding supported
+
+//pads to at least one block
+
+//in some cases, user can pass 'PAD_WIDTH' to override this
+
+pad_sz_mask = (1'b1 << l2_pad_sz_in) - 1'b1
+
+pad_out = (dim_in >> l2_pad_sz_in) + |(dim_in & pad_sz_mask)
+
+}
+
+Wb[0] = Wb0 = pad_to_log2sz_gc(map0_w, l2_blk_w)
+
+Hb[0] = Hb0 = pad_to_log2sz_gc(map0_h, l2_blk_h)
+
+Wb_slice[0] = Wb_slice0 = pad_to_log2sz_gc(map0_w, l2_blk_w_slice)
+
+
+
+pad_data_sz_w = 1'b1 << l2_blk_w
+
+pad_data_sz_h = 1'b1 << l2_blk_h
+
+
+
+//S1 stage
+
+//calculate padded width/height for remaining mip levels
+
+//determine which mip levels are in the tail
+
+//get mip index of lowest mip level in miptail
+
+//calculate mipsize at each mip level
+
+//begin pre-computing mip_offset and slice_b(for timing)
+
+
+
+generate
+
+​	for(m=1;m<MAXMIP;m=m+1) begin: W_H_block_calc
+
+​		assign Wb[m] = (Wb0 >> m) + |Wb0[\`PAD_W_MSB(m):0];
+
+​		assign Hb[m] = (Hb0 >> m) + |Hb0[\`PAD_H_MSB(m):0];
+
+​		assign Wb_slice[m] = (Wb_slice0 >> m) + |Wb_slice0[\`PAD_W_MSB(m):0]
+
+
+
+///////////in_mip_tail_0///////////
+
+w_tail_sz = y_bias ? pad_data_sz_w : (pad_data_sz_w >> 1)
+
+h_tail_sz = y_bias ? (pad_data_sz_h>>1) : pad_data_sz_h
+
+in_miptail[0] = (map0_h<= h_tail_sz) & (map0_w<= w_tail_sz) & in_tail_chk[0] //这里只check mip0是否在tail里
+
+
+
+generate
+
+​	for(m=0;m<MAXMIP-1;m=m+1) begin: CHK_NEXT_IN_MIPTAIL
+
+​		//y_bias is special condition for checking in_tail
+
+​		//in_tail_chk[m+1] is check if the mip is outside the number of levels that can fit inside a tail 
+
+​		//next_in_tail[m+1]  //=1, if the next mip is inside the miptail
+
+​		height_in_tail = y_bias ? (Hb[m] <=1) : (Hb[m]<=2);
+
+​		width_in_tail = y_bias ? (Wb[m] <=2) : (Wb[m]<=1);
+
+​		in_miptail[m+1] = next_in_tail[m+1] = height_in_tail && width_in_tail && in_tail_chk[m+1]
+
+​	end
+
+endgenerate
+
+
+
+//////////////tail_mipid_calc///////////////
+
+//set the tail mipid to max to indicate no tails are supported
+
+assign tail_mipid = ((maxmip == 0) | ((l2_ms_128B>>1) == 0) ? MAXMIP : tail_mipid_raw) // linear and SW_\*_256B are treated  same - no miptails
+
+tail_mipid_raw = {MAXMIP} // no tail
+
+for(i=0; i<MAXMIP; i++) begin
+
+​	if(i==0) begin if(in_miptail[i]) tail_mipid_raw = i; end
+
+​	else begin if(in_miptail[i]^in_miptail[i-1]) tail_mipid_raw = i; end
+
+end
+
+
+
+for (int mip_idx=MAXMIP-1;mip_idx >=6; --mip_idx) begin
+
+​	if(mip_idx > tail_mipid) begin
+
+​		mipsize[mip_idx] = 'd0;
+
+​	end else if ((mip_idx==tail_mipid) || (mip_idx == (MAXMIP-1))) begin
+
+​		mipsize[mip_idx] = 'd1;
+
+​	end else begin
+
+​		mipsize[mip_idx] = Wb_slice[mip_idx] * Hb[mip_idx];
+
+​	end
+
+end
+
+
+
+//TIMING_FIX: break into smaller terms and pre-compute mip_offset_b and slice_b additions
+
+assign mip_mask = ((1'b1<<(mip_level + 4'd1)) - 1'b1); //for SLICE_CALC, ignore mip
+
+assign maxmip_mask = ((1'b1 << (maxmip + 4'd1)) - 1'b1); 
+
+slice_input_en = maxmip_mask; // no miptails for linear case 
+
+mip_off_input_en = slice_input_en & ~mip_mask; //no miptails for linear case
+
+
+
+//S2 stage: compute outputs
+
+pitch = Wb[mip_level] << l2_blk_w;
+
+
+
+for (int mip_idx=5; mip_idx>=0; --mip_idx) begin
+
+​	if (mip_idx > tail_mipid) begin
+
+​		mipsize[mip_idx] = 'd0
+
+​	end else if ((mip_idx == tail_mipid)) begin
+
+​		mipsize[mip_idx] = 'd1
+
+​	end else begin
+
+​		mipsize[mip_idx] = Wb_slice[mip_idx] * Hb[mip_idx]
+
+​	end
+
+end
+
+
+
+mip_offset_in_blks = (mip_off_input_en[16] ? mipsize[16] : 'd0) + 
+
+​				     (mip_off_input_en[15] ? mipsize[15] : 'd0) + 
+
+​				     (mip_off_input_en[14] ? mipsize[14] : 'd0) + 
+
+​				     (mip_off_input_en[13] ? mipsize[13] : 'd0) + 
+
+​				     (mip_off_input_en[12] ? mipsize[12] : 'd0) + 
+
+​				     (mip_off_input_en[11] ? mipsize[11] : 'd0) + 
+
+​				     (mip_off_input_en[10] ? mipsize[10] : 'd0) + 
+
+​				     (mip_off_input_en[9] ? mipsize[9] : 'd0) + 
+
+​				     (mip_off_input_en[8] ? mipsize[8] : 'd0) + 
+
+​				     (mip_off_input_en[7] ? mipsize[7] : 'd0) + 
+
+​				     (mip_off_input_en[6] ? mipsize[6] : 'd0);
+
+slice_b = (slice_input_en[16] ? mipsize[16] : 'd0) + 
+
+​		 (slice_input_en[15] ? mipsize[15] : 'd0) + 
+
+​		 (slice_input_en[14] ? mipsize[14] : 'd0) + 
+
+​		 (slice_input_en[13] ? mipsize[13] : 'd0) + 
+
+​		 (slice_input_en[12] ? mipsize[12] : 'd0) + 
+
+​		 (slice_input_en[11] ? mipsize[11] : 'd0) + 
+
+​		 (slice_input_en[10] ? mipsize[10] : 'd0) + 
+
+​		 (slice_input_en[9] ? mipsize[9] : 'd0) + 
+
+​		 (slice_input_en[8] ? mipsize[8] : 'd0) + 
+
+​		 (slice_input_en[7] ? mipsize[7] : 'd0) + 
+
+​		 (slice_input_en[6] ? mipsize[6] : 'd0) ;
+
+mip_offset_in_blks = mip_offset_in_blks + 
+
+​					(mip_off_input_en[1] ? mipsize[1] : 'd0) + 
+
+​					 (mip_off_input_en[2] ? mipsize[2] : 'd0) + 
+
+​					 (mip_off_input_en[3] ? mipsize[3] : 'd0) + 
+
+​					 (mip_off_input_en[4] ? mipsize[4] : 'd0) +
+
+​					 (mip_off_input_en[5] ? mipsize[5] : 'd0) ;
+
+slice_b = slice_b + 
+
+​		(slice_input_en[0] ? mipsize[0] : 'd0) + 
+
+​		 (slice_input_en[1] ? mipsize[1] : 'd0) + 
+
+​		 (slice_input_en[2] ? mipsize[2] : 'd0) + 
+
+​		 (slice_input_en[3] ? mipsize[3] : 'd0) + 
+
+​		 (slice_input_en[4] ? mipsize[4] : 'd0) + 
+
+​		 (slice_input_en[5] ? mipsize[5] : 'd0) ;
+
+//////////output of mipmap_param_calc_core_gc//////////////////////
+
+slice = slice_b << ({1'b0, l2_blk_w_slice} + {1'b0, l2_blk_h}); //
+
+pitch = pitch;
+
+mip_offset_b = mip_offset_in_blks << l2_mip_offset;
+
+mip_in_tail = (mip_level < tail_mipid) ? {MAXMIP} : (mip_level - tail_mipid);
+
+l2_blk_width = l2_blk_w;
+
+l2_blk_height = l2_blk_h;
+
+l2_blk_depth = l2_blk_d;
+
+l2_ms = l2_ms
+
+//////////////////end of mipmap_param_calc_core_gc////////////////
+
+
+
+l2_ms_odd = l2_block_ms[0];//this is input 
+
+l2_block_ms = l2_ms
+
+l2_block_ms_128B = l2_ms - 7;
+
+////////////////////////module definition///////////////////////////
+
+module calc_mip_inside_tail_xyz_orig
+
+input l2_ms_odd;
+
+input mip_in_tail;
+
+input l2_eb;
+
+input l2_ns;
+
+input sw_type;
+
+input l2_block_ms_128B;
+
+output x_mip_in_tail_orig;
+
+output y_mip_in_tail_orig;
+
+output z_mip_in_tail_orig;
+
+
+
+l2_data_block_size_256B = (l2_block_ms_128B == 'd0) ? 'd0 : (l2_block_ms_128B - 1);
+
+num_mips_in_tail = al_num_mips_inside_tail(l2_data_block_size_256B, sw_type);
+
+{l2_ublk_w, l2_ublk_h, l2_ublk_d} =  micro_block_dim_calc(l2_eb, sw_type, l2_ns);
+
+function micro_block_dim_calc(input l2_eb, input sw_type, input l2_ns, output l2_blk_w, output l2_blk_h, output l2_blk_d)
+
+{
+
+​	block_bits = 4'(4'd8 - (l2_eb + l2_ns));
+
+​	l2_2d_blk_w = block_bits[3:1] + block_bits[0];
+
+​	l2_2d_blk_h = block_bits[3:1];
+
+​	case(block_bits)
+
+​	{
+
+​		4'd4: q_3 = 1; r_3 = 1;
+
+​		4'd5: q_3 = 1; r_3 = 2;
+
+​		4'd6: q_3 = 2; r_3 = 0;
+
+​		4'd7: q_3 = 2; r_3 = 1;
+
+​		4'd8: q_3 = 2; r_3 = 2;
+
+​	}
+
+​	l2_3d_blk_d = q_3 + (r_3 > 0);
+
+​	l2_3d_blk_w = q_3 + (r_3 > 1);
+
+​	l2_3d_blk_h = {1'b0, q_3};
+
+​	dim3D = (sw_type == \`SW_S_3D);
+
+​	l2_blk_w = (dim3D) ? l2_3d_blk_w : l2_2d_blk_w;
+
+​	l2_blk_h = (dim3D) ? l2_3d_blk_h : l2_2d_blk_h;
+
+​	l2_blk_d = (dim3D) ? l2_3d_blk_d : 0;
+
+}
+
+mip_in_tail_reverse = (MAXMIP_WIDTH+2)'(num_mips_in_tail - (mip_in_tail + 1));
+
+if(mip_in_tail_reverse[MAXMIP_WIDTH+1])
+
+​	{byte_offset = 0;}
+
+else if(mip_in_tail_reverse > 'd6)
+
+​	{byte_offset = (MSB_BYTE_OFFSET+1)'(5'd16 << mip_in_tail_reverse[MAXMIP_WIDTH+1:0]);}
+
+else 
+
+​	{byte_offset = (MSB_BYTE_OFFSET+1)'(mip_in_tail_reverse[MAXMIP_WIDTH+1:0] << 4'd8);}
+
+{x_mip_micro_block[5],
+
+y_mip_micro_block[5],
+
+x_mip_micro_block[4],
+
+y_mip_micro_block[4],
+
+x_mip_micro_block[3],
+
+y_mip_micro_block[3],
+
+x_mip_micro_block[2],
+
+y_mip_micro_block[2],
+
+x_mip_micro_block[1],
+
+y_mip_micro_block[1],
+
+x_mip_micro_block[0],
+
+y_mip_micro_block[0]} = byte_offset[BYTE_OFFSET_IN_MIPTAIL_WIDTH-1:8];
+
+x_mip_micro_block_final = (l2_ms_odd) ? y_mip_micro_block : x_mip_micro_block;
+
+y_mip_micro_block_final = (l2_ms_odd) ? x_mip_micro_block : y_mip_micro_block;
+
+x_mip_in_tail_orig = 10'(x_mip_micro_block_final << l2_ublk_w);
+
+y_mip_in_tail_orig = 10'(y_mip_micro_block_final << l2_ublk_h);
+
+z_mip_in_tail_orig = 'd0;
+
+return;
+
+x_in_sheet = x_mip_in_tail_orig + x;
+
+y_in_sheet = y_mip_in_tail_orig + y;
+
+z_in_sheet = z_mip_in_tail_orig + z;
+
+
+// blk_offset[6:0] table 这个表格里的x,y,z都使用x_in_sheet，y_in_sheet，z_in_sheet
+
+| {sw_mode, log2_ns, log2_eb}   | blk_offset                                 |      |
+| ----------------------------- | ------------------------------------------ | ---- |
+| {`SW_LINEAR, AA_1X, BPE_1} | {x[6], x[5], x[4], x[3], x[2], x[1], x[0]} |      |
+| {`SW_LINEAR, AA_1X, BPE_2} | {x[5], x[4], x[3], x[2], x[1], x[0], 1'b0} |      |
+| {`SW_LINEAR, AA_1X, BPE_4} | {x[4], x[3], x[2], x[1], x[0], 1'b0, 1'b0} |      |
+| {`SW_LINEAR, AA_1X, BPE_8} | {x[3], x[2], x[1], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_LINEAR, AA_1X, BPE_16} | {x[2], x[1], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_1X, BPE_1} | {y[3], x[3], y[2], y[1], x[2], y[0], x[1], x[0]} |      |
+| {`SW_4KB_2D, AA_1X, BPE_1} | {x[5], y[5], x[4], y[4], y[3], x[3], y[2], y[1], x[2], y[0], x[1], x[0]} |      |
+| {`SW_64KB_2D, AA_1X, BPE_1} | {x[7], y[7], x[6], y[6], x[5], y[5], x[4], y[4], y[3], x[3], y[2], y[1], x[2], y[0], x[1], x[0]} |      |
+| {`SW_256KB_2D, AA_1X, BPE_1} | {x[8], y[8], x[7], y[7], x[6], y[6], x[5], y[5], x[4], y[4], y[3], x[3], y[2], y[1], x[2], y[0], x[1], x[0]} |      |
+| {`SW_256B_2D, AA_1X, BPE_2} | {x[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0} |      |
+| {`SW_4KB_2D, AA_1X, BPE_2} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0} |      |
+| {`SW_64KB_2D, AA_1X, BPE_2} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0} |      |
+| {`SW_256KB_2D, AA_1X, BPE_2} | {x[8], y[7], x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0} |      |
+| {`SW_256B_2D, AA_1X, BPE_4} | {y[2], x[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_1X, BPE_4} | {x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_1X, BPE_4} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_1X, BPE_4} | {x[7], y[7], x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_1X, BPE_8} | {y[1], x[2], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_1X, BPE_8} | {x[4], y[3], x[3], y[2], y[1], x[2], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_1X, BPE_8} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], y[1], x[2], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_1X, BPE_8} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], y[1], x[2], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_1X, BPE_16} | {y[1], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_1X, BPE_16} | {x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_1X, BPE_16} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_1X, BPE_16} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_2X, BPE_1} | {x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0]} |      |
+| {`SW_4KB_2D, AA_2X, BPE_1} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0]} |      |
+| {`SW_64KB_2D, AA_2X, BPE_1} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0]} |      |
+| {`SW_256KB_2D, AA_2X, BPE_1} | {x[8], y[7], x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0]} |      |
+| {`SW_256B_2D, AA_2X, BPE_2} | {y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0} |      |
+| {`SW_4KB_2D, AA_2X, BPE_2} | {x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0} |      |
+| {`SW_64KB_2D, AA_2X, BPE_2} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0} |      |
+| {`SW_256KB_2D, AA_2X, BPE_2} | {x[7], y[7], x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0} |      |
+| {`SW_256B_2D, AA_2X, BPE_4} | {x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_2X, BPE_4} | {x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_2X, BPE_4} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_2X, BPE_4} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_2X, BPE_8} | {y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_2X, BPE_8} | {x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_2X, BPE_8} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_2X, BPE_8} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_2X, BPE_16} | {x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_2X, BPE_16} | {x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_2X, BPE_16} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_2X, BPE_16} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_4X, BPE_1} | {y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0]} |      |
+| {`SW_4KB_2D, AA_4X, BPE_1} | {x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0]} |      |
+| {`SW_64KB_2D, AA_4X, BPE_1} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0]} |      |
+| {`SW_256KB_2D, AA_4X, BPE_1} | {x[7], y[7], x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0]} |      |
+| {`SW_256B_2D, AA_4X, BPE_2} | {x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0} |      |
+| {`SW_4KB_2D, AA_4X, BPE_2} | {x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0} |      |
+| {`SW_64KB_2D, AA_4X, BPE_2} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0} |      |
+| {`SW_256KB_2D, AA_4X, BPE_2} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0} |      |
+| {`SW_256B_2D, AA_4X, BPE_4} | {y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_4X, BPE_4} | {x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_4X, BPE_4} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_4X, BPE_4} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_4X, BPE_8} | {x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_4X, BPE_8} | {x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_4X, BPE_8} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_4X, BPE_8} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_4X, BPE_16} | {y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_4X, BPE_16} | {x[2], y[2], x[1], y[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_4X, BPE_16} | {x[4], y[4], x[3], y[3], x[2], y[2], x[1], y[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_4X, BPE_16} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], x[1], y[1], y[0], x[0], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_8X, BPE_1} | {x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0]} |      |
+| {`SW_4KB_2D, AA_8X, BPE_1} | {x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0]} |      |
+| {`SW_64KB_2D, AA_8X, BPE_1} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0]} |      |
+| {`SW_256KB_2D, AA_8X, BPE_1} | {x[7], y[6], x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0]} |      |
+| {`SW_256B_2D, AA_8X, BPE_2} | {y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0} |      |
+| {`SW_4KB_2D, AA_8X, BPE_2} | {x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0} |      |
+| {`SW_64KB_2D, AA_8X, BPE_2} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0} |      |
+| {`SW_256KB_2D, AA_8X, BPE_2} | {x[6], y[6], x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0} |      |
+| {`SW_256B_2D, AA_8X, BPE_4} | {x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_8X, BPE_4} | {x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_8X, BPE_4} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_8X, BPE_4} | {x[6], y[5], x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_8X, BPE_8} | {y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_8X, BPE_8} | {x[2], y[2], x[1], y[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_8X, BPE_8} | {x[4], y[4], x[3], y[3], x[2], y[2], x[1], y[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_8X, BPE_8} | {x[5], y[5], x[4], y[4], x[3], y[3], x[2], y[2], x[1], y[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256B_2D, AA_8X, BPE_16} | {x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_2D, AA_8X, BPE_16} | {x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_2D, AA_8X, BPE_16} | {x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_2D, AA_8X, BPE_16} | {x[5], y[4], x[4], y[3], x[3], y[2], x[2], y[1], x[1], y[0], x[0], s[2], s[1], s[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_3D, AA_1X, BPE_1} | {y[3], z[3], x[3], y[2], z[2], x[2], z[1], y[1], y[0], z[0], x[1], x[0]} |      |
+| {`SW_64KB_3D, AA_1X, BPE_1} | {x[5], y[4], z[4], x[4], y[3], z[3], x[3], y[2], z[2], x[2], z[1], y[1], y[0], z[0], x[1], x[0]} |      |
+| {`SW_256KB_3D, AA_1X, BPE_1} | {y[5], z[5], x[5], y[4], z[4], x[4], y[3], z[3], x[3], y[2], z[2], x[2], z[1], y[1], y[0], z[0], x[1], x[0]} |      |
+| {`SW_4KB_3D, AA_1X, BPE_2} | {y[3], z[3], x[2], y[2], z[2], y[1], z[1], x[1], y[0], z[0], x[0], 1'b0} |      |
+| {`SW_64KB_3D, AA_1X, BPE_2} | {x[4], y[4], z[4], x[3], y[3], z[3], x[2], y[2], z[2], y[1], z[1], x[1], y[0], z[0], x[0], 1'b0} |      |
+| {`SW_256KB_3D, AA_1X, BPE_2} | {y[5], z[5], x[4], y[4], z[4], x[3], y[3], z[3], x[2], y[2], z[2], y[1], z[1], x[1], y[0], z[0], x[0], 1'b0} |      |
+| {`SW_4KB_3D, AA_1X, BPE_4} | {y[3], z[2], x[2], y[2], z[1], y[1], z[0], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_64KB_3D, AA_1X, BPE_4} | {x[4], y[4], z[3], x[3], y[3], z[2], x[2], y[2], z[1], y[1], z[0], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_256KB_3D, AA_1X, BPE_4} | {y[5], z[4], x[4], y[4], z[3], x[3], y[3], z[2], x[2], y[2], z[1], y[1], z[0], x[1], y[0], x[0], 1'b0, 1'b0} |      |
+| {`SW_4KB_3D, AA_1X, BPE_8} | {y[2], z[2], x[2], y[1], z[1], x[1], z[0], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_3D, AA_1X, BPE_8} | {x[4], y[3], z[3], x[3], y[2], z[2], x[2], y[1], z[1], x[1], z[0], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_3D, AA_1X, BPE_8} | {y[4], z[4], x[4], y[3], z[3], x[3], y[2], z[2], x[2], y[1], z[1], x[1], z[0], y[0], x[0], 1'b0, 1'b0, 1'b0} |      |
+| {`SW_4KB_3D, AA_1X, BPE_16} | {y[2], z[2], x[1], y[1], z[1], y[0], z[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_64KB_3D, AA_1X, BPE_16} | {x[3], y[3], z[3], x[2], y[2], z[2], x[1], y[1], z[1], y[0], z[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+| {`SW_256KB_3D, AA_1X, BPE_16} | {y[4], z[4], x[3], y[3], z[3], x[2], y[2], z[2], x[1], y[1], z[1], y[0], z[0], x[0], 1'b0, 1'b0, 1'b0, 1'b0} |      |
+
+
+
+//extracts the swizzle bits from the base address and clears those bits from the base address
+
+swizzle_bits_256B =baseAddr256B[11:0] & (ms_mask_128B >> 1)[11:0]; //mask to only use 256B align addr
+
+baseAddr256B_out = {baseAddr256B[ADDR_WIDTH_256B-1:BLK_256B_WIDTH], (baseAddr256B[BLK_256B_WIDTH-1:0] & ~ms_mask_128B >> 1)};
+
+mipoffset_BaseAddr256B_out = baseAddr256B_out + mip_offset_b;
+
+
+
+////////////////////////module definition/////////////////////////////////
+
+module block_index_calc
+
+input x;
+
+input y;
+
+input z;
+
+input l2_ms;
+
+input l2_ms_slice;
+
+input l2_blk_w;
+
+input l2_blk_w_slice;
+
+input l2_blk_h;
+
+input l2_blk_d;
+
+input pitch;
+
+input slice;
+
+output blk_index;
+
+
+
+//calculate block index
+
+//blk_index = (slice * z) + (pitch * y) + x //all in block units
+
+//Use l2_blk_w_slice because slice is still 256B aligned
+
+log2_blk_slice = l2_blk_w_slice + l2_blk_h;
+
+pitch_b = pitch >> l2_blk_w;
+
+slice_b = slice >> log2_blk_slice;
+
+xb = x >> l2_blk_w;
+
+yb = y >> l2_blk_h;
+
+zb = z >> l2_blk_d;
+
+
+
+//splitting the linear calculation;
+
+slice_times_z_l = slice_b[15:0] * zb;
+
+slice_times_z_h = slice_b[SLICE_WIDTH_B-1:16] * zb;
+
+pitch_times_y = (pitch_b * yb);
+
+blk_index_pitch = (pitch_times_y + xb);
+
+blk_index_slice = slice_times_z_l + (slice_times_z_h << 'd16);
+
+blk_index = (blk_index_pitch << l2_ms) + (blk_index_slice << l2_ms_slice);
+
+/////////////////end module//////////////////
+
+
+
+l2_ms_slice = (l2_block_ms < 8) ? 8 : l2_block_ms;
+
+//slice calculations should be clamped to 256B
+
+micro_offset_linear[6:0] = x[6:0] << l2_eb;
+
+
+
+//////////XOR swizzle bits logic///////////////////
+
+//only enable for SW\_\*\_X and SW\_\*\_T modes
+
+///////////////////////////////////////////////////////
+
+
+
+ms_mask_256B = ms_mask_128B >> 1;
+
+//128B alignment does not apply to the base address
+
+blk_offset_final = (linear) ? {1'b0, micro_offset_linear} : blk_offset[7:0];
+
+swizzle_bits = blk_offset[DATA_BLK_OFFSET_WIDTH-1:8] & ms_mask_256B[DATA_BLK_OFFSET_WIDTH-8-1:0] ^ swizzle_bits_256B;
+
+addr_offset = blk_index[47:0] | (swizzle_bits <<8)[19:0] | blk_offset_final[45:0];
+
+
+
+address_final = ({mipoffset_BaseAddr256B_out, 8'd0}) + addr_offset;
+
+mipid_in_tail = (mip_in_tail != MAXMIP) //mipid_in_tail is 1bit bool value
+
+
+
