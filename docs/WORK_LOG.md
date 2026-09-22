@@ -16,3 +16,14 @@
 - 两个导航 README：24 个本地链接均有效。
 - git diff --check 通过。
 - 系统默认禁用 PowerShell 脚本，文档命令使用进程级 -ExecutionPolicy Bypass；未修改系统执行策略。
+
+## 2026-09-22：用例集中与历史资料归档
+
+- 根据用户要求，将 mip0、mip4、mip6 三个逐步用例原样移至 case/。
+- 将其余 analysis 资料归档至 backup/analysis/；原 upstream 与 verilog 仅含历史说明，一并归档。旧源备份集中到 backup/source_snapshots/。
+- 旧复核队列移至 backup/context/REVIEW_QUEUE.initial.md。备份默认不读取、不搜索、不作为当前依据，也不安排主动复核；用户认为后续很可能不会用到。
+- 更新 README、AGENTS、当前上下文、用例索引与基准路径。新增 backup/README.md 和 backup/AGENTS.md，明确历史声明不覆盖当前规则。
+- 用户解释源哈希不同可能因为产生于不同对话。作为来源背景保留，不据此降低可信状态，也不将历史版本追溯列为默认前置工作。
+- 已询问“3 个可信用例”是否包含 mip4；截至本轮提交尚无回答，mip4 暂保留待确认，原先明确确认的主文档、mip0、mip6 状态不变。目录迁移已全部完成。
+- 验证：已确认文件 3/3 哈希及长度通过；相对迁移前 Git HEAD，20 个研究/归档文件的 Git blob 完全一致；新入口的 11 个本地链接有效；git diff --check 通过。
+- 本轮没有技术正文修改、算法复算或上游验证。
