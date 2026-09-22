@@ -1,0 +1,20 @@
+# Local editor and operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+~$*
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Generated output; research notes and backup/ remain tracked
+__pycache__/
+*.pyc
+/build/
+/dist/
+/out/
+/tmp/

@@ -1,0 +1,3 @@
+# Preserve exact source bytes, historical hashes and line endings.
+# Do not normalize trusted documents during add or checkout.
+* -text
