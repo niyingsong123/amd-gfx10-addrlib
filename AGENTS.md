@@ -1,29 +1,19 @@
 # 项目协作约定
 
-## 默认上下文
+## 阅读范围
 
-先读 docs/PROJECT_CONTEXT.md，再读 ADDRLIB.md 和 case/README.md 中与任务相关的用例。需要历史操作记录时读 docs/WORK_LOG.md。
+先读 docs/PROJECT_CONTEXT.md，再按任务读取 ADDRLIB.md 和 case/ 中的相关用例。backup/ 仅作备份，默认不读取、不搜索、不作为依据；仅在用户要求或确需溯源时按需访问。
 
-不要默认递归读取 backup/，也不要把备份加入常规搜索、检索或算法依据。搜索时优先指定 ADDRLIB.md、case/、docs/、scripts/；全仓库搜索使用排除 backup/** 的规则。
+## 工作规则
 
-## 可信边界
+- 可信文件以 docs/TRUSTED_BASELINE.json 为准。新增用例的可信状态需独立确认，不能因放入 case/ 而自动获得。
+- 用例文件名采用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，新增编号按已有最大编号加 1，同步 case/README.md。
+- 保留研究正文、源哈希与换行符。技术修改需说明依据和验证范围，不得仅更新基准哈希来掩盖变化。
+- 新分析记录源文件、输入、单位、位宽假设和实际验证结果；上游规则不能直接覆盖本项目基准。
+- 完成修改后运行 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_trusted_baseline.ps1，并检查 git diff、git status。哈希校验不能替代算法验证。
 
-- 当前确认状态以 case/README.md、docs/PROJECT_CONTEXT.md 和 docs/TRUSTED_BASELINE.json 为准。
-- 文件放入 case/ 只是分类，不应单凭位置或文件名推断确认状态。
-- 用户解释用例源哈希不同可能因为产生于不同对话。保留此解释，不因哈希不同降低用户确认的可信状态，也不把版本追溯设置为默认前置任务。
-- 不把用户确认的用例误表述为本轮已重新执行的算法回归。
-- backup/ 仅为历史留存，用户认为后续很可能不用。旧文件中的“已修正”“已核对”不构成当前依据；不主动安排逐项审计或恢复归档内容。
-- 不擅自修改研究正文、历史哈希或换行符。目录重组保留原文字节；必要的技术修改说明依据与范围，保留 Git 历史，并记录基准变化。不得仅更新哈希来消除失败。
-- 新分析记录源文件、配置、输入、单位、位宽假设和实际验证范围；上游规则不自动覆盖本项目基准。
+## 上下文维护
 
-## 用例命名与编号
+当前事实与有效决定放入 docs/PROJECT_CONTEXT.md；用例导航放入 case/README.md；重要成果和未解决事项简记于 docs/WORK_LOG.md。
 
-命名规则的完整定义与现有编号表位于 case/README.md。文件名使用 case{num}_mip{level}_xyz_{x}_{y}_{z}.md，删除 step_by_step 后缀。用户指定 mip4 为 case0、mip0 为 case1、mip6 为 case2；现有编号连续为 case0、case1、case2，下一例从 case3 开始，按已分配最大编号加 1 递增，不重排、不复用。新增时同步用例索引，独立记录可信状态；确认可信后再更新基准清单。
-
-## 完成工作
-
-- 运行 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_trusted_baseline.ps1。该检查仅验证文件字节。
-- 按实际修改验证相关算法；不要将归档脚本当作当前验证入口。
-- 检查 git diff 和 git status，不覆盖用户修改。
-- 当前状态或决定变化时维护 docs/PROJECT_CONTEXT.md，用例状态变化时维护 case/README.md；实质工作记入 docs/WORK_LOG.md。
-- 不再维护默认的历史资料复核队列；原队列已归档，只作历史记录。
+保持简洁，及时删除过时状态。不记录笔误、确认往返、改名过程、重复对应关系或逐次工具操作；详细变更由 Git 保存。不要在多个文件重复展开同一规则。
