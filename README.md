@@ -21,7 +21,7 @@ AGENTS.md                   协作规则
 
 ## Git 与校验
 
-本地 main 分支，尚未配置远程；详细变更历史由 Git 保存。
+目标仓库：[niyingsong123/amd-gfx10-addrlib](https://github.com/niyingsong123/amd-gfx10-addrlib)。主分支 main；云端算法比较范围见 [续做说明](docs/CLOUD_HANDOFF.md)。
 
 ```powershell
 git status
@@ -30,3 +30,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_trusted_basel
 ```
 
 校验检查可信文件的字节是否变化，不替代算法验证。研究正文禁用 Git 换行转换。
+
+
+云端/Linux 使用 Node.js 20+（无 npm 依赖）：
+
+```sh
+node scripts/verify_trusted_baseline.cjs
+node scripts/mipmap_compare/smoke.cjs
+```
+
+smoke 不包含随机对比。先完成并讨论小规模结果，再决定百万组。

@@ -1,0 +1,61 @@
+{
+  "repository": "https://github.com/GPUOpen-Drivers/pal",
+  "commit": "c5e800072a32f68b6ccc4422936d96167c6e0728",
+  "gfx12_branch": "ADDR_GFX12_SHARED_BUILD=0",
+  "files": [
+    {
+      "path": "src/core/imported/addrlib/src/core/addrlib2.cpp",
+      "local_path": "upstream/src/core/addrlib2.cpp",
+      "git_blob": "61f29795441c8787539e8a0fa603cead999e704e",
+      "sha256": "639e5218917e3f1becbe6712c7158c72b70c22934633aa93d6823c79a7357f66"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/core/addrlib2.h",
+      "local_path": "upstream/src/core/addrlib2.h",
+      "git_blob": "5b359c78dc6cd2686476e3fe6a10a5149a61db03",
+      "sha256": "dd3bcc01e1c0055d31b7d73b254c6cdb365acc4c4b1c9eeac483f6812b9f6264"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/core/addrlib3.cpp",
+      "local_path": "upstream/src/core/addrlib3.cpp",
+      "git_blob": "ee31a36c12350f8b620068dfb85402b2eae2dbc9",
+      "sha256": "068c124ef619aad4d83f636bee425146b9bf590e47d899f7c751a1736676a8fd"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/core/addrlib3.h",
+      "local_path": "upstream/src/core/addrlib3.h",
+      "git_blob": "8afbaff2ce3886278b39b22e3b3f752f308573f9",
+      "sha256": "f4f8581af6d7a86f60d09aa5fa9a69afa3653720f7c158da60bb060ad832f7f6"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/gfx10/gfx10addrlib.cpp",
+      "local_path": "upstream/src/gfx10/gfx10addrlib.cpp",
+      "git_blob": "e674d6b203a62281da93bee1dc2ced597cec3e40",
+      "sha256": "1783ef59438185ac365aac5f041fcc4d743b84b9374501d723ee833aaf9b0f58"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/gfx10/gfx10addrlib.h",
+      "local_path": "upstream/src/gfx10/gfx10addrlib.h",
+      "git_blob": "a99826e747b52cdb0e5bde82153ad66fb029d13e",
+      "sha256": "5bd1d35af0cb8f6c218eaf07e0fdbb67beca23b416af67d6643b16ab1e4942bc"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/gfx12/gfx12addrlib.cpp",
+      "local_path": "upstream/src/gfx12/gfx12addrlib.cpp",
+      "git_blob": "a167ed3066e718c0b461cd1ea8c022403d11021f",
+      "sha256": "9210bb10078c48a3757e1f1a2f9483d5a355b04d83fbca19a65485938b1da8db"
+    },
+    {
+      "path": "src/core/imported/addrlib/src/gfx12/gfx12addrlib.h",
+      "local_path": "upstream/src/gfx12/gfx12addrlib.h",
+      "git_blob": "8453e1a21588a950ca77d4d9aa468c46eccdc0c9",
+      "sha256": "89efb2aa8819f3f7dc4a2775de080cebb704c5bf7d1ac75c96077c7f45dda79e"
+    },
+    {
+      "path": "src/core/imported/addrlib/inc/addrinterface.h",
+      "local_path": "upstream/inc/addrinterface.h",
+      "git_blob": "80f455558f4fba6f5481c003c2ef6d884edade67",
+      "sha256": "566a5b9815094818027fc2b8b84382b5fa217310846ea5d0cb855139fd55fae2"
+    }
+  ]
+}

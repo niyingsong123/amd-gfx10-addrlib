@@ -1,0 +1,3 @@
+The independent reference models transcribe AMD PAL AddrLib at commit
+c5e800072a32f68b6ccc4422936d96167c6e0728. See SOURCES.md and provenance.json.
+Original AMD copyright and license notices are preserved in upstream/.
