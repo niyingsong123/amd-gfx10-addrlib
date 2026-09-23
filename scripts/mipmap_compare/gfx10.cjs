@@ -58,7 +58,14 @@ function surface(i,overrides={}) {
   const p=align(wh[0],dims[0]),h=align(wh[1],dims[1]);
   pitch.push(p);height.push(h);slicePitch.push(p);
   let bytes=0n;
-  if(m<first) bytes=BigInt(p)*BigInt(h)*unit*(i.maxmip===0?samples:1n);
+  if(m<first) {
+   if((b.L===8)&&!b.linear&&(i.maxmip>0)) {
+    // ComputeSurfaceInfoMicroTiled adds a UINT_32 product to UINT_64.
+    // Preserve the C++ intermediate wrap instead of widening every operand.
+    const product=(Math.imul(Math.imul(p,h),2**i.e))>>>0;
+    bytes=BigInt(product);
+   } else bytes=BigInt(p)*BigInt(h)*unit*(i.maxmip===0?samples:1n);
+  }
   else if(m===first) bytes=BigInt(2**b.L)/BigInt(dims[2]);
   bytesPerMip.push(bytes);sliceSize+=bytes;
  }
