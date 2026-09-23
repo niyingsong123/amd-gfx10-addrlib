@@ -4,7 +4,7 @@
 
 项目用于研究 AddrLib 地址计算。ADDRLIB.md 为主文档，case/ 保存用例；具体可信文件及字节基准见 TRUSTED_BASELINE.json。
 
-当前进行 mipmap_param_calc_core_gc 与公开 GFX10 的算法比较，GFX12 为辅助参考。scripts/mipmap_compare/ 已有独立 Node.js 模型草稿及固定版本参考源，尚未完成参考模型复核和随机对比。先完成小规模并与用户讨论，再决定百万组；云端续做要求见 CLOUD_HANDOFF.md。
+已完成 mipmap_param_calc_core_gc 与公开 GFX10/GFX12 独立模型的小规模比较。统一入口为 `node scripts/mipmap_compare/run.cjs`，结果和限制见 `docs/MIPMAP_COMPARE_SMALL_REPORT.md`；结果否定模块与公开 GFX10 完全匹配，若干宏块阶段则在可比样本中一致。先与用户讨论，再决定是否做百万组，本阶段不得自行扩展。
 
 文件哈希一致仅证明字节未变，不证明算法正确；不同用例的源哈希差异不能单凭此判断用例错误。未做 RTL 仿真。
 

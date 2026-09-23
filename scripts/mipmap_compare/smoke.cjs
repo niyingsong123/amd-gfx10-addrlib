@@ -13,4 +13,4 @@ for(const c of G.trusted) assert.deepEqual(doc.outputs(doc.surface(c),c.mip),c.e
 assert.equal(G.combos.length,100);
 for(const file of ['gfx10.cjs','gfx12.cjs','compare.cjs']) require('./'+file);
 console.log('PASS: 9 upstream files verified; 3 document regressions; 100 generator combinations.');
-console.log('Reference ports remain unreviewed. Randomized comparison has not run.');
+console.log('Smoke does not run the randomized comparison; use run.cjs for the reviewed small-scale comparison.');
