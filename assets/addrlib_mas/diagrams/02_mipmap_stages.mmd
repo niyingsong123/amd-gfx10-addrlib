@@ -1,0 +1,12 @@
+flowchart TB
+  IN["布局输入<br/>mip0 尺寸、模式、元素大小、采样数<br/>maxmip 与当前 mip_level"] --> S0
+  S0["S0：公共参数<br/>解码模式，计算 macro block 尺寸<br/>计算 mip0 对齐块数 Wb0 / Hb0 / Wb_slice0<br/>计算 tail 容量与 y_bias"] --> S1
+  S1["S1：块数与 tail 分界<br/>计算 mip0～16 的 Wb / Hb / Wb_slice<br/>尺寸条件 AND 剩余层数条件 → tail_mipid<br/>计算 mip16～mip6 的 mipsize"] --> S2
+  S2["S2：补齐与求和<br/>计算 mip5～mip0 的 mipsize<br/>slice 累加全部有效 mip 贡献<br/>mip offset 只累加当前 mip 后面的贡献"] --> OUT
+  OUT["输出 9 个布局参数<br/>pitch / slice / mip_offset_b / mip_in_tail<br/>l2_ms / l2_blk_w,h,d / l2_blk_w_slice"]
+  classDef input fill:#eaf2ff,stroke:#456b9b,color:#18334e;
+  classDef stage fill:#f4f7fa,stroke:#7e92a7,color:#223447;
+  classDef output fill:#e4f5ed,stroke:#348566,color:#194936;
+  class IN input;
+  class S0,S1,S2 stage;
+  class OUT output;

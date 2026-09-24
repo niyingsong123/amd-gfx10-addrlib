@@ -1,0 +1,8 @@
+flowchart LR
+  T["共享 tail：mip3～12<br/>1 个 256KB block<br/>[0x000000, 0x040000)"] --> M2["mip2<br/>1 个 block<br/>[0x040000, 0x080000)"]
+  M2 --> M1["mip1<br/>4 个 block<br/>[0x080000, 0x180000)"]
+  M1 --> M0["mip0<br/>16 个 block<br/>[0x180000, 0x580000)"]
+  classDef tail fill:#f2edfc,stroke:#8670a9,color:#47365e;
+  classDef mip fill:#eaf2ff,stroke:#456b9b,color:#18334e;
+  class T tail;
+  class M2,M1,M0 mip;

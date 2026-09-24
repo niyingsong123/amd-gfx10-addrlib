@@ -1,0 +1,22 @@
+flowchart LR
+  subgraph T["入 tail 的阈值"]
+    direction TB
+    M["SW_S_3D 且<br/>block 为 4KB 或 256KB"] --> Y{"y_bias"}
+    Y -- 1 --> Y1["宽度用整块<br/>高度用半块"]
+    Y -- 0 --> Y0["宽度用半块<br/>高度用整块"]
+    Y1 --> C["与剩余 mip 数量条件一起检查<br/>得到 in_miptail"]
+    Y0 --> C
+  end
+  subgraph O["tail 原点的坐标轴"]
+    direction TB
+    L["l2_ms 的最低位"] --> P{"l2_ms_odd"}
+    P -- 1 --> P1["交换 X/Y micro block 坐标"]
+    P -- 0 --> P0["保持 X/Y micro block 坐标"]
+    P1 --> R["按 micro block 尺寸左移<br/>得到 tail origin"]
+    P0 --> R
+  end
+  T ~~~ O
+  classDef check fill:#eaf2ff,stroke:#456b9b,color:#18334e;
+  classDef origin fill:#f2edfc,stroke:#8670a9,color:#47365e;
+  class M,Y,Y1,Y0,C check;
+  class L,P,P1,P0,R origin;

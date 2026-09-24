@@ -1,0 +1,17 @@
+flowchart TB
+  O["位表输出 blk_offset"] --> L["低 8 位<br/>blk_offset_final"]
+  O --> H["高于 bit7 的字段<br/>与 ms_mask_256B 做 AND"]
+  S["从输入基址提取的<br/>swizzle_bits_256B"] --> X["XOR"]
+  H --> X
+  X --> SH["左移 8 位<br/>放回块内高位位置"]
+  B["block_index_calc 输出<br/>blk_index，单位：字节"] --> R["OR 合成 addr_offset<br/>保持主文档字段截取"]
+  SH --> R
+  L --> R
+  BASE["清理基址 + mip_offset_b<br/>整体左移 8"] --> F["加上 addr_offset<br/>address_final"]
+  R --> F
+  classDef field fill:#eaf2ff,stroke:#456b9b,color:#18334e;
+  classDef xor fill:#fff4dd,stroke:#ba8d34,color:#5b461b;
+  classDef out fill:#e4f5ed,stroke:#348566,color:#194936;
+  class O,L,H,S,SH,B,BASE field;
+  class X xor;
+  class R,F out;

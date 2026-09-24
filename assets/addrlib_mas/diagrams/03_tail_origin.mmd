@@ -1,0 +1,19 @@
+flowchart TB
+  K["相对 tail 编号 k = mip_in_tail<br/>非 tail 哨兵为 17"] --> R["reverse = 容量 - (k + 1)<br/>保留负数判断"]
+  R --> N{"reverse 为负数？"}
+  N -- 是 --> Z["byte_offset = 0"]
+  N -- 否 --> H{"reverse > 6 ?"}
+  H -- 是 --> L["byte_offset =<br/>16 左移 reverse 位"]
+  H -- 否 --> U["byte_offset =<br/>reverse 左移 8 位"]
+  Z --> D["拆分 byte_offset 的交织位<br/>得到 X/Y micro block 坐标"]
+  L --> D
+  U --> D
+  D --> O["由 l2_ms_odd 决定是否交换 X/Y<br/>按 micro block 尺寸左移<br/>得到 tail origin"]
+  O --> C["origin + 当前 mip 局部坐标"]
+  C --> A["查 swizzle 位表得到 blk_offset<br/>不再额外加 byte_offset"]
+  classDef flow fill:#eef4fc,stroke:#597ca5,color:#20374e;
+  classDef select fill:#fff4dd,stroke:#ba8d34,color:#5b461b;
+  classDef out fill:#e4f5ed,stroke:#348566,color:#194936;
+  class K,R,Z,L,U,D,O,C flow;
+  class N,H select;
+  class A out;

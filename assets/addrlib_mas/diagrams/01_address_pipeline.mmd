@@ -1,0 +1,24 @@
+flowchart TB
+  I["布局输入<br/>mip0 尺寸、模式、元素大小<br/>采样数、mip 范围"] --> P["mipmap_param_calc_core_gc<br/>pitch / slice / mip_offset_b<br/>tail 编号 / 块尺寸"]
+  C["当前 mip 的局部坐标<br/>x / y / z / s"] --> B["block_index_calc<br/>宏块坐标与字节偏移"]
+  P --> B
+  P --> O["calc_mip_inside_tail_xyz_orig<br/>生成 tail 坐标原点"]
+  C --> S["坐标相加<br/>x/y/z_in_sheet"]
+  O --> S
+  S --> W["按模式、元素大小及采样数查位表<br/>blk_offset"]
+  A["baseAddr256B<br/>256B 单位"] --> E["提取 swizzle 种子<br/>清理基址字段"]
+  E --> X["块内高位 XOR<br/>保留低 8 位"]
+  W --> X
+  E --> M["清理后的基址 + mip_offset_b<br/>仍为 256B 单位"]
+  P --> M
+  B --> R["OR 合成 addr_offset<br/>宏块字节偏移与块内字段"]
+  X --> R
+  M --> F["基址左移 8，再加 addr_offset<br/>address_final：字节地址"]
+  R --> F
+  P --> T["mip_in_tail != 17<br/>mipid_in_tail：布尔标志"]
+  classDef input fill:#eaf2ff,stroke:#456b9b,color:#18334e;
+  classDef process fill:#f4f7fa,stroke:#7e92a7,color:#223447;
+  classDef output fill:#e4f5ed,stroke:#348566,color:#194936;
+  class I,C,A input;
+  class P,B,O,S,W,E,X,M,R process;
+  class F,T output;
