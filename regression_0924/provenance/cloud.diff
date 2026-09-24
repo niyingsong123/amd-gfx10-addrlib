@@ -1,0 +1,2899 @@
+diff --git a/docs/MIPMAP_COMPARE_SMALL_REPORT.md b/docs/MIPMAP_COMPARE_SMALL_REPORT.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..eb8cbeb5278d38272bec6c27db5ec6b52e258c47
+--- /dev/null
++++ b/docs/MIPMAP_COMPARE_SMALL_REPORT.md
+@@ -0,0 +1,119 @@
++# mipmap_param_calc_core_gc 小规模算法对比报告
++
++## 范围与结论
++
++本轮只复算 `mipmap_param_calc_core_gc` 文档算法，并与 AMD PAL 固定提交
++`c5e800072a32f68b6ccc4422936d96167c6e0728` 中的公开 GFX10 实现比较；GFX12 非 shared 分支只用于定位规则来源。
++没有证据把该公开实现精确称为 GFX10.2。本轮不是 RTL 仿真，也没有执行百万组。
++
++小规模结果已经给出否定“模块对公开 GFX10 完全匹配”的明确反例：Linear 的宏块尺度和 pitch、奇数
++`log2_num_samples` 的 GFX10 MSAA 二维块方向，以及 MicroTiled 极端多 mip 的 C++ `UINT32` 中间乘积回绕均可造成数值差异。
++另一方面，宏块模式的 tail 容量、首 tail mip、各级逻辑尺寸和宏块偏移在本轮全部可比样本中未发现差异；这些是有限样本结论，不是数学证明。
++
++## 复核依据与模型边界
++
++- 参考源码来自仓库内 `scripts/mipmap_compare/upstream/`；运行前按 `provenance.json` 同时核对 SHA-256 和 Git blob。
++- GFX10 转写逐阶段对应 `ComputeThinBlockDimension`、`ComputeThickBlockDimension`、`GetMipTailDim`、
++  `GetMaxNumMipsInTail`、`ComputeSurfaceInfoMicroTiled`、`ComputeSurfaceInfoMacroTiled` 和
++  `HwlComputeSurfaceInfoLinear`。MicroTiled 多 mip 的 `pitch * height * elementBytes` 按 C++ 的
++  `UINT_32` 中间表达式取低 32 位，再累加到 `UINT_64`。
++- GFX12 转写选择 `ADDR_GFX12_SHARED_BUILD=0`；两个参考模型都不导入或调用文档模型。
++- 文档模型尺寸和指数使用可精确表示当前范围的 JavaScript `Number`，乘积、mask 和 offset 使用 `BigInt`。
++  未定义的 RTL 位宽没有被猜测或截断，因此结果是文档算法复算，不是 RTL 行为保证。
++- 输入的减一尺寸先加 1；`maxmip + 1` 是 mip 数量。`slice` 从文档 XY 元素位置数换算为字节；
++  `mip_offset_b * 256` 只与 `macroBlockOffset` 比较，不加入 tail 内偏移。无 tail 统一为 17。
++  参考接口没有直接返回的对齐指数均明确作为从块尺寸推导的量。
++- 固定 256KB 没有映射成 GFX10 VAR；它在 GFX10 统计中属于“无等价模式”。GFX10 64KB 二维暂映射
++  `ADDR_SW_64KB_R_X` 以检查布局/MSAA 规则，不声称地址 swizzle 等价。
++- PAL `MaxMipLevels=16` 仅允许索引 0～15；文档 `MAXMIP=17` 的索引 16 单列为参考拒绝，未计作通过。
++
++## 输入与实际规模
++
++统一入口使用种子 `0x20260922`，100 个模式/元素大小/采样数组合各生成 100 个随机配置，共 10,000 个；
++另加入 670 个定向配置。合计：
++
++| 项目 | 数量 |
++|---|---:|
++| 配置 | 10,670 |
++| 请求范围内 mip | 36,607 |
++| 两个参考、9 字段的分类次数 | 658,926 |
++| 不变性扰动 | 500 |
++
++覆盖 8 种文档模式、元素字节指数 0～4、二维采样指数 0～3；普通单采样包含单级、完整链和截断链，
++多采样主样本为单级，另有多采样多 mip 拒绝探测。随机范围为宽高 1～16384、3D 深度 1～2048；
++定向加入二次幂、块/tail 阈值 ±1、65536 尺寸、mip 16、首级入 tail、无 tail、tail 前后相邻级和 Linear 末端裁剪。
++
++## 模块整体分类
++
++下表是“配置”分类；一个可比配置只要任一请求 mip 有数值差异就归数值差异，其次才归表达口径不同。
++拒绝、无等价和假设未明确绝不计作通过。
++
++| 参考 | 一致 | 数值差异 | 表达口径不同 | 无等价模式 | 参考拒绝 | 假设未明确 |
++|---|---:|---:|---:|---:|---:|---:|
++| 公开 GFX10 | 2,688 | 1,169 | 938 | 2,665 | 3,210 | 0 |
++| GFX12 辅助 | 8,919 | 127 | 1,464 | 0 | 160 | 0 |
++
++GFX10 的 22,654 个可比 mip 中，14,684 个九字段全同，4,103 个有数值差异，3,867 个只有 tail 内
++pitch 表达不同。GFX12 的 34,607 个可比 mip 中，相应数字为 27,198、830、6,579。
++
++## 字段与阶段定位
++
++### 更符合 GFX12 的部分
++
++- 除 Linear 物理 slice block 的口径外，文档的块指数、tail 容量、首 tail、各级尺寸、宏块偏移均与
++  GFX12 可比结果一致。固定 256KB 模式也有直接 GFX12 对应。
++- GFX12 的 550 个 `block_dimensions` 差异全部来自 Linear：文档输出的是 128B rendering pitch 指数，
++  GFX12 物理 slice block 是 256B；归一后的 9 输出对齐指数按接口语义比较为一致。
++- GFX12 的 127 个配置/830 个 mip 仅在 `slice` 数值上不同，来源是单层 Linear 的末端 256B 裁剪；
++  使用相同参考块、容量和首 tail 后，非 Linear 的 slice 累加与逐级贡献未发现差异。
++
++### 符合公开 GFX10 的部分
++
++- 所有 4,795 个 GFX10 可比配置的首 tail 判定均一致；有 tail 容量计算的 3,705 个配置也全部一致。
++- 所有 22,654 个 GFX10 可比 mip 的逻辑尺寸、归一 tail 相对编号和宏块字节偏移均一致。
++- 强制双方使用相同参考块、tail 容量和首 tail 后，tail 外 pitch 15,087 次全部一致；这说明大量 pitch
++  差异来自更早的块形状规则，而非后续 pitch 对齐公式。
++
++### 不符合公开 GFX10 或不完全符合两者的部分
++
++- GFX10 有 1,168 个可比配置块形状不同，集中于 Linear 的 256B 对齐口径及 MSAA 二维块宽高方向。
++  例如缩减反例 `SW_64KB_2D`、8bpp、8 samples、`1×126`：文档块为 `128×64`，公开 GFX10 为
++  `64×128`，导致 slice 分别为 131072B 和 65536B。
++- 最小 Linear 反例 `SW_LINEAR`、8bpp、`1×1`：文档 pitch 128、`l2_ms=7`，公开 GFX10 pitch 256、
++  `l2_ms=8`；slice 都是 256B。它说明 Linear 并非完整 GFX10 匹配。
++- GFX10 MicroTiled 多 mip 的极端 65536 维度触发 `UINT32` 乘积回绕。隔离阶段仍有 1 个配置的
++  slice 累加/逐级贡献不同，这是有意保留 C++ 整数语义后的真实差异，而不是用足宽 `BigInt` 掩盖。
++- Linear 同时体现“更像 GFX12 的 128B rendering pitch”和“文档固定 256B slice pitch”；但 GFX12
++  单层末端会裁剪，文档不会。因此不能笼统称 Linear 完全匹配 GFX12，更不能称其匹配 GFX10。
++
++tail 内 pitch 在两边代表方式不同，共有 GFX10 3,867、GFX12 6,579 个 mip 被单独归为“表达口径不同”，
++没有伪装成数值一致。`mip_offset_b` 只比较宏块偏移，所有可比项一致；tail 内 `mipTailOffset` 未混入。
++
++## 不变性与限制
++
++对前 100 个随机配置分别扰动 x、y、z、sample 坐标和深度输入，共 500 次。文档模型及 GFX10 可比模型
++未发现输出变化；GFX12 有 1 次深度从 1 变 2 后变化，因为其单层 Linear 末端裁剪条件依赖层数。
++这不是坐标进入 mip 参数运算，而是参考 API 的资源层数语义差异。
++
++结果文件只保存汇总、可信用例回归和每类限量代表性反例（含双方原始量、换算量及有界贪心缩减），
++不保存整批逐样本日志。输入摘要 SHA-256 为
++`3b480db81b8a2bda35b49f0b213973a75badc61003083ff2a0d892da54fb4419`，输出汇总 SHA-256 为
++`9be204580dbdde236ec7cda08a77089c1c3a8773f2423bbab889a07d307d89e5`。
++
++本轮没有证明无限输入域上的等价性，没有验证未知 RTL 位宽，也没有把阶段通过计作模块整体通过。
++需与用户讨论后再决定是否扩展至百万组。
++
++## 运行与重放
++
++```sh
++# 本报告的小规模运行
++node scripts/mipmap_compare/run.cjs --seed 0x20260922 --config-count 10000 \
++  --out docs/mipmap_compare_small_results.json
++
++# 随机配置编号 48 的全部请求 mip
++node scripts/mipmap_compare/run.cjs --seed 0x20260922 --config-number 48 --no-directed
++
++# 随机配置编号 48 的 mip 0
++node scripts/mipmap_compare/run.cjs --seed 0x20260922 --config-number 48 --mip 0 --no-directed
++```
++
+diff --git a/docs/PROJECT_CONTEXT.md b/docs/PROJECT_CONTEXT.md
+index 38c8d677eca4e83816eb950358d8741bbbf611c7..f209a0dd355ab0ae777d6f092590b040539f9011 100644
+--- a/docs/PROJECT_CONTEXT.md
++++ b/docs/PROJECT_CONTEXT.md
+@@ -1,20 +1,20 @@
+ # 项目上下文
+ 
+ ## 当前状态
+ 
+ 项目用于研究 AddrLib 地址计算。ADDRLIB.md 为主文档，case/ 保存用例；具体可信文件及字节基准见 TRUSTED_BASELINE.json。
+ 
+-当前进行 mipmap_param_calc_core_gc 与公开 GFX10 的算法比较，GFX12 为辅助参考。scripts/mipmap_compare/ 已有独立 Node.js 模型草稿及固定版本参考源，尚未完成参考模型复核和随机对比。先完成小规模并与用户讨论，再决定百万组；云端续做要求见 CLOUD_HANDOFF.md。
++已完成 mipmap_param_calc_core_gc 与公开 GFX10/GFX12 独立模型的小规模比较。统一入口为 `node scripts/mipmap_compare/run.cjs`，结果和限制见 `docs/MIPMAP_COMPARE_SMALL_REPORT.md`；结果否定模块与公开 GFX10 完全匹配，若干宏块阶段则在可比样本中一致。先与用户讨论，再决定是否做百万组，本阶段不得自行扩展。
+ 
+ 文件哈希一致仅证明字节未变，不证明算法正确；不同用例的源哈希差异不能单凭此判断用例错误。未做 RTL 仿真。
+ 
+ ## 目录与使用范围
+ 
+ - ADDRLIB.md、case/：日常研究依据，用例导航见 case/README.md。
+ - docs/：当前上下文、可信清单和工作记录。
+ - scripts/：维护校验脚本、开发中的算法对比工具及固定版本参考源码。
+ - backup/：历史备份，默认不读取、不作为依据、不主动复核。
+ 
+ 新增 case 按已有最大编号加 1，命名和协作要求见根目录 AGENTS.md。
+ 
+ Git 目标仓库为 https://github.com/niyingsong123/amd-gfx10-addrlib，主分支 main。云端可用 node scripts/verify_trusted_baseline.cjs 校验字节，node scripts/mipmap_compare/smoke.cjs 做迁移基本检查。详细历史由 Git 保存。
+diff --git a/docs/WORK_LOG.md b/docs/WORK_LOG.md
+index ad64b927769f6fdb303ad6219fca23cc0eee8b78..b6443d136fa41f811fd012a5b28844b84957ee34 100644
+--- a/docs/WORK_LOG.md
++++ b/docs/WORK_LOG.md
+@@ -1,13 +1,15 @@
+ # 工作记录
+ 
+ 仅保留重要成果、验证范围和未解决事项；详细操作历史见 Git。
+ 
+ ## 已完成
+ 
+ - 建立本地 Git，保存原始资料。
+ - 整理主文档、用例、管理文档与历史备份，建立可信文件哈希清单。
+ - 资料整理未改变研究正文；主文档及三个用例的字节校验通过。
+ 
+-## 当前研究与云端续做
++## 当前研究
+ 
+-已同步至 niyingsong123/amd-gfx10-addrlib 的 main 分支，并保留本地与远程提交历史。迁移检查通过：4 个可信文件字节未变、9 个参考源文件 SHA256/Git blob 校验通过、3 个文档回归用例通过。新增跨平台字节校验和独立 Node.js 模型草稿；尚无随机比较报告或完整匹配结论。下一步先核验模型并完成小规模测试，与用户讨论后再决定扩大规模。具体范围见 CLOUD_HANDOFF.md。
++- 2026-09-23：完成 mipmap 参数算法 10,000 个随机配置加 670 个定向配置的小规模比较；加入可重放批量入口、
++  GFX10 MicroTiled `UINT32` 回绕语义、机器结果和中文报告。存在否定公开 GFX10 完全匹配的明确反例；
++  百万组等待用户讨论决定。
+diff --git a/docs/mipmap_compare_small_results.json b/docs/mipmap_compare_small_results.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9af3471aa310de51251df1cc91d6195792d6f84
+--- /dev/null
++++ b/docs/mipmap_compare_small_results.json
+@@ -0,0 +1,2471 @@
++{
++  "schemaVersion": 1,
++  "scope": "mipmap_param_calc_core_gc small-scale comparison",
++  "generatedAt": "2026-09-23T13:18:55.528Z",
++  "parameters": {
++    "seed": "0x20260922",
++    "randomConfigurationCount": 10000,
++    "combinationCount": 100,
++    "randomPerCombination": 100,
++    "directed": true,
++    "replay": {
++      "configNumbers": null,
++      "mip": null
++    }
++  },
++  "assumptions": {
++    "documentArithmetic": "BigInt for products/masks/offsets; dimensions are exact Number; unknown RTL widths are not simulated",
++    "gfx10Identity": "public GFX10 PAL implementation; not claimed to be exactly GFX10.2",
++    "maxMip": "PAL MaxMipLevels=16 (indices 0..15); document MAXMIP=17 (indices 0..16)"
++  },
++  "selfCheck": {
++    "trustedCases": 3,
++    "formulaAssertions": 5,
++    "uint32WrapAssertion": true
++  },
++  "counts": {
++    "configurations": 10670,
++    "requestedMips": 36607,
++    "fieldComparisons": 658926
++  },
++  "modes": {
++    "SW_LINEAR": {
++      "configurations": 555,
++      "mips": 3567
++    },
++    "SW_256B_2D": {
++      "configurations": 2120,
++      "mips": 5475
++    },
++    "SW_4KB_2D": {
++      "configurations": 2120,
++      "mips": 5627
++    },
++    "SW_64KB_2D": {
++      "configurations": 2120,
++      "mips": 5502
++    },
++    "SW_256KB_2D": {
++      "configurations": 2120,
++      "mips": 5667
++    },
++    "SW_4KB_3D": {
++      "configurations": 545,
++      "mips": 3629
++    },
++    "SW_64KB_3D": {
++      "configurations": 545,
++      "mips": 3444
++    },
++    "SW_256KB_3D": {
++      "configurations": 545,
++      "mips": 3696
++    }
++  },
++  "references": {
++    "gfx10": {
++      "configurations": {
++        "match": 2688,
++        "numerical_difference": 1169,
++        "representation_difference": 938,
++        "no_equivalent": 2665,
++        "reference_rejected": 3210,
++        "model_assumption": 0
++      },
++      "mips": {
++        "match": 14684,
++        "numerical_difference": 4103,
++        "representation_difference": 3867,
++        "no_equivalent": 9363,
++        "reference_rejected": 4590,
++        "model_assumption": 0
++      },
++      "fields": {
++        "pitch": {
++          "match": 16114,
++          "numerical_difference": 2673,
++          "representation_difference": 3867,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "slice": {
++          "match": 22213,
++          "numerical_difference": 441,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "mip_in_tail": {
++          "match": 22654,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "mip_offset_b": {
++          "match": 22654,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "l2_ms": {
++          "match": 19172,
++          "numerical_difference": 3482,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "l2_blk_w": {
++          "match": 18554,
++          "numerical_difference": 4100,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "l2_blk_h": {
++          "match": 22036,
++          "numerical_difference": 618,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "l2_blk_d": {
++          "match": 22654,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        },
++        "l2_blk_w_slice": {
++          "match": 22036,
++          "numerical_difference": 618,
++          "representation_difference": 0,
++          "no_equivalent": 9363,
++          "reference_rejected": 4590,
++          "model_assumption": 0
++        }
++      },
++      "stages": {
++        "shared": {
++          "block_dimensions": {
++            "match": 3627,
++            "difference": 1168,
++            "notApplicable": 0
++          },
++          "tail_capacity": {
++            "match": 3705,
++            "difference": 0,
++            "notApplicable": 1090
++          },
++          "first_tail": {
++            "match": 4795,
++            "difference": 0,
++            "notApplicable": 0
++          },
++          "slice_sum": {
++            "match": 4356,
++            "difference": 439,
++            "notApplicable": 0
++          },
++          "mip_dimensions": {
++            "match": 22654,
++            "difference": 0,
++            "notApplicable": 0
++          },
++          "slice_contribution": {
++            "match": 22215,
++            "difference": 439,
++            "notApplicable": 0
++          },
++          "pitch": {
++            "match": 16114,
++            "difference": 6540,
++            "notApplicable": 0
++          },
++          "macro_offset": {
++            "match": 22654,
++            "difference": 0,
++            "notApplicable": 0
++          }
++        },
++        "isolated": {
++          "first_tail": {
++            "match": 4245,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "slice_sum": {
++            "match": 4244,
++            "difference": 1,
++            "notApplicable": 550
++          },
++          "slice_contribution": {
++            "match": 19171,
++            "difference": 1,
++            "notApplicable": 550
++          },
++          "macro_offset": {
++            "match": 19172,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "pitch_outside_tail": {
++            "match": 15087,
++            "difference": 0,
++            "notApplicable": 4635
++          }
++        }
++      },
++      "eligibleConfigurations": 4795
++    },
++    "gfx12": {
++      "configurations": {
++        "match": 8919,
++        "numerical_difference": 127,
++        "representation_difference": 1464,
++        "no_equivalent": 0,
++        "reference_rejected": 160,
++        "model_assumption": 0
++      },
++      "mips": {
++        "match": 27198,
++        "numerical_difference": 830,
++        "representation_difference": 6579,
++        "no_equivalent": 0,
++        "reference_rejected": 2000,
++        "model_assumption": 0
++      },
++      "fields": {
++        "pitch": {
++          "match": 28028,
++          "numerical_difference": 0,
++          "representation_difference": 6579,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "slice": {
++          "match": 33777,
++          "numerical_difference": 830,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "mip_in_tail": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "mip_offset_b": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "l2_ms": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "l2_blk_w": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "l2_blk_h": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "l2_blk_d": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        },
++        "l2_blk_w_slice": {
++          "match": 34607,
++          "numerical_difference": 0,
++          "representation_difference": 0,
++          "no_equivalent": 0,
++          "reference_rejected": 2000,
++          "model_assumption": 0
++        }
++      },
++      "stages": {
++        "shared": {
++          "block_dimensions": {
++            "match": 9960,
++            "difference": 550,
++            "notApplicable": 0
++          },
++          "tail_capacity": {
++            "match": 10510,
++            "difference": 0,
++            "notApplicable": 0
++          },
++          "first_tail": {
++            "match": 10510,
++            "difference": 0,
++            "notApplicable": 0
++          },
++          "slice_sum": {
++            "match": 10383,
++            "difference": 127,
++            "notApplicable": 0
++          },
++          "mip_dimensions": {
++            "match": 34607,
++            "difference": 0,
++            "notApplicable": 0
++          },
++          "slice_contribution": {
++            "match": 34480,
++            "difference": 127,
++            "notApplicable": 0
++          },
++          "pitch": {
++            "match": 28028,
++            "difference": 6579,
++            "notApplicable": 0
++          },
++          "macro_offset": {
++            "match": 34607,
++            "difference": 0,
++            "notApplicable": 0
++          }
++        },
++        "isolated": {
++          "first_tail": {
++            "match": 9960,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "slice_sum": {
++            "match": 9960,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "slice_contribution": {
++            "match": 31125,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "macro_offset": {
++            "match": 31125,
++            "difference": 0,
++            "notApplicable": 550
++          },
++          "pitch_outside_tail": {
++            "match": 24079,
++            "difference": 0,
++            "notApplicable": 7596
++          }
++        }
++      },
++      "eligibleConfigurations": 10510
++    }
++  },
++  "trustedRegression": [
++    {
++      "id": "case0",
++      "file": "case/case0_mip4_xyz_5_6_3.md",
++      "mip": 4,
++      "output": [
++        64,
++        "90112",
++        1,
++        "0",
++        18,
++        6,
++        6,
++        6,
++        6
++      ]
++    },
++    {
++      "id": "case1",
++      "file": "case/case1_mip0_xyz_69_134_195.md",
++      "mip": 0,
++      "output": [
++        256,
++        "90112",
++        17,
++        "6144",
++        18,
++        6,
++        6,
++        6,
++        6
++      ]
++    },
++    {
++      "id": "case2",
++      "file": "case/case2_mip6_xyz_1_1_17.md",
++      "mip": 6,
++      "output": [
++        32,
++        "22528",
++        3,
++        "0",
++        16,
++        5,
++        5,
++        4,
++        5
++      ]
++    }
++  ],
++  "invariance": {
++    "probes": 500,
++    "failures": [
++      {
++        "id": "r2",
++        "field": "depth",
++        "model": "gfx12"
++      }
++    ]
++  },
++  "representatives": [
++    {
++      "key": "gfx10:numerical_difference:l2_ms",
++      "original": {
++        "id": "r0",
++        "mip": 0,
++        "input": {
++          "x": 146,
++          "y": 8,
++          "z": 4,
++          "s": 0,
++          "map0_w_minus_1": 255,
++          "map0_h_minus_1": 30,
++          "map0_d_minus_1": 35,
++          "sw_mode": "SW_LINEAR",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 1,
++          "numSlices": 36
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_LINEAR"
++        },
++        "document": {
++          "raw": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "converted": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "7936"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 256,
++            "sliceSize": "7936",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              256,
++              1,
++              1
++            ],
++            "pitchForSlice": 256
++          },
++          "derived": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 8,
++            "l2_blk_w": 8,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "tailCapacity": null,
++          "bytesPerMip": [
++            "7936"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "numerical_difference",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 3,
++        "original": {
++          "id": "r0",
++          "mip": 0
++        },
++        "field": "l2_ms",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r0",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 0,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_LINEAR",
++            "log2_num_samples": 0,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 1,
++            "numFragments": 1,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_LINEAR"
++          },
++          "document": {
++            "raw": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 1,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 256,
++              "sliceSize": "256",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                256,
++                1,
++                1
++              ],
++              "pitchForSlice": 256
++            },
++            "derived": {
++              "pitch": 256,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 8,
++              "l2_blk_w": 8,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "tailCapacity": null,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "match",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "numerical_difference",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "match",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "match"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:numerical_difference:l2_blk_w",
++      "original": {
++        "id": "r0",
++        "mip": 0,
++        "input": {
++          "x": 146,
++          "y": 8,
++          "z": 4,
++          "s": 0,
++          "map0_w_minus_1": 255,
++          "map0_h_minus_1": 30,
++          "map0_d_minus_1": 35,
++          "sw_mode": "SW_LINEAR",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 1,
++          "numSlices": 36
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_LINEAR"
++        },
++        "document": {
++          "raw": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "converted": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "7936"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 256,
++            "sliceSize": "7936",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              256,
++              1,
++              1
++            ],
++            "pitchForSlice": 256
++          },
++          "derived": {
++            "pitch": 256,
++            "slice": "7936",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 8,
++            "l2_blk_w": 8,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "tailCapacity": null,
++          "bytesPerMip": [
++            "7936"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "numerical_difference",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 3,
++        "original": {
++          "id": "r0",
++          "mip": 0
++        },
++        "field": "l2_blk_w",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r0",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 0,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_LINEAR",
++            "log2_num_samples": 0,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 1,
++            "numFragments": 1,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_LINEAR"
++          },
++          "document": {
++            "raw": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 1,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 256,
++              "sliceSize": "256",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                256,
++                1,
++                1
++              ],
++              "pitchForSlice": 256
++            },
++            "derived": {
++              "pitch": 256,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 8,
++              "l2_blk_w": 8,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "tailCapacity": null,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "match",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "numerical_difference",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "match",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "match"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:numerical_difference:pitch",
++      "original": {
++        "id": "r1",
++        "mip": 2,
++        "input": {
++          "x": 1170,
++          "y": 469,
++          "z": 0,
++          "s": 0,
++          "map0_w_minus_1": 1279,
++          "map0_h_minus_1": 1024,
++          "map0_d_minus_1": 0,
++          "sw_mode": "SW_LINEAR",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 1,
++          "mip_level": 2,
++          "maxmip": 9
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 16,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 10,
++          "numSlices": 1
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_LINEAR"
++        },
++        "document": {
++          "raw": {
++            "pitch": 320,
++            "slice": "1788928",
++            "mip_in_tail": 17,
++            "mip_offset_b": "390",
++            "l2_ms": 7,
++            "l2_blk_w": 6,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "converted": {
++            "pitch": 320,
++            "slice": "3577856",
++            "mip_in_tail": 17,
++            "mip_offset_b": "99840",
++            "l2_ms": 7,
++            "l2_blk_w": 6,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "2624000",
++            "656640",
++            "197376",
++            "66048",
++            "16640",
++            "8448",
++            "4352",
++            "2304",
++            "1280",
++            "768"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 384,
++            "sliceSize": "3577856",
++            "macroBlockOffset": "99840",
++            "firstMipIdInTail": 10,
++            "blockDimensions": [
++              128,
++              1,
++              1
++            ],
++            "pitchForSlice": 384
++          },
++          "derived": {
++            "pitch": 384,
++            "slice": "3577856",
++            "mip_in_tail": 17,
++            "mip_offset_b": "99840",
++            "l2_ms": 8,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "tailCapacity": null,
++          "bytesPerMip": [
++            "2624000",
++            "656640",
++            "197376",
++            "66048",
++            "16640",
++            "8448",
++            "4352",
++            "2304",
++            "1280",
++            "768"
++          ]
++        },
++        "fields": {
++          "pitch": "numerical_difference",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "numerical_difference",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 6,
++        "original": {
++          "id": "r1",
++          "mip": 2
++        },
++        "field": "pitch",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r1",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 0,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_LINEAR",
++            "log2_num_samples": 0,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 1,
++            "numFragments": 1,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_LINEAR"
++          },
++          "document": {
++            "raw": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 1,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 256,
++              "sliceSize": "256",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                256,
++                1,
++                1
++              ],
++              "pitchForSlice": 256
++            },
++            "derived": {
++              "pitch": 256,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 8,
++              "l2_blk_w": 8,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "tailCapacity": null,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "match",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "numerical_difference",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "match",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "match"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx12:numerical_difference:slice",
++      "original": {
++        "id": "r2",
++        "mip": 0,
++        "input": {
++          "x": 10530,
++          "y": 1044,
++          "z": 0,
++          "s": 0,
++          "map0_w_minus_1": 12609,
++          "map0_h_minus_1": 3170,
++          "map0_d_minus_1": 0,
++          "sw_mode": "SW_LINEAR",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 2,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 32,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 1,
++          "numSlices": 1
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR3_LINEAR"
++        },
++        "document": {
++          "raw": {
++            "pitch": 12640,
++            "slice": "40182912",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 5,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "converted": {
++            "pitch": 12640,
++            "slice": "160731648",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 5,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "160731648"
++          ]
++        },
++        "reference": {
++          "version": "gfx12",
++          "raw": {
++            "pitch": 12640,
++            "sliceSize": "160325888",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              64,
++              1,
++              1
++            ],
++            "pitchForSlice": 12640
++          },
++          "derived": {
++            "pitch": 12640,
++            "slice": "160325888",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 7,
++            "l2_blk_w": 5,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "160325888"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "numerical_difference",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "match",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 10,
++        "original": {
++          "id": "r2",
++          "mip": 0
++        },
++        "field": "slice",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r2",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 1,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_LINEAR",
++            "log2_num_samples": 0,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 1,
++            "numFragments": 1,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR3_LINEAR"
++          },
++          "document": {
++            "raw": {
++              "pitch": 128,
++              "slice": "512",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 128,
++              "slice": "512",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 1,
++            "bytesPerMip": [
++              "512"
++            ]
++          },
++          "reference": {
++            "version": "gfx12",
++            "raw": {
++              "pitch": 128,
++              "sliceSize": "256",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                256,
++                1,
++                1
++              ],
++              "pitchForSlice": 128
++            },
++            "derived": {
++              "pitch": 128,
++              "slice": "256",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 7,
++              "l2_blk_w": 7,
++              "l2_blk_h": 0,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "tailCapacity": 1,
++            "bytesPerMip": [
++              "256"
++            ]
++          },
++          "fields": {
++            "pitch": "match",
++            "slice": "numerical_difference",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "match",
++            "l2_blk_w": "match",
++            "l2_blk_h": "match",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "match"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:reference_rejected:reference_rejected",
++      "original": {
++        "id": "r6",
++        "mip": 0,
++        "input": {
++          "x": 129,
++          "y": 661,
++          "z": 0,
++          "s": 0,
++          "map0_w_minus_1": 255,
++          "map0_h_minus_1": 1130,
++          "map0_d_minus_1": 0,
++          "sw_mode": "SW_256B_2D",
++          "log2_num_samples": 1,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 2,
++          "numFragments": 2,
++          "numMipLevels": 1,
++          "numSlices": 1
++        },
++        "eligibility": {
++          "status": "reference_rejected",
++          "reason": "256B/4KB display swizzle does not support MSAA"
++        },
++        "document": {
++          "raw": {
++            "pitch": 256,
++            "slice": "290816",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 8,
++            "l2_blk_w": 4,
++            "l2_blk_h": 3,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 4
++          },
++          "converted": {
++            "pitch": 256,
++            "slice": "581632",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 8,
++            "l2_blk_w": 4,
++            "l2_blk_h": 3,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 4
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "581632"
++          ]
++        },
++        "classification": "reference_rejected"
++      },
++      "reduced": null
++    },
++    {
++      "key": "gfx10:representation_difference:pitch",
++      "original": {
++        "id": "r29",
++        "mip": 6,
++        "input": {
++          "x": 117,
++          "y": 55,
++          "z": 30,
++          "s": 0,
++          "map0_w_minus_1": 1285,
++          "map0_h_minus_1": 255,
++          "map0_d_minus_1": 224,
++          "sw_mode": "SW_4KB_2D",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 1,
++          "mip_level": 6,
++          "maxmip": 10
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 16,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 11,
++          "numSlices": 225
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_4KB_D"
++        },
++        "document": {
++          "raw": {
++            "pitch": 64,
++            "slice": "473088",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "converted": {
++            "pitch": 64,
++            "slice": "946176",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "firstTailRaw": 6,
++          "firstTailInRequestedChain": 6,
++          "tailCapacity": 8,
++          "bytesPerMip": [
++            "688128",
++            "180224",
++            "49152",
++            "12288",
++            "8192",
++            "4096",
++            "4096",
++            "0",
++            "0",
++            "0",
++            "0"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 32,
++            "sliceSize": "946176",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 6,
++            "blockDimensions": [
++              64,
++              32,
++              1
++            ],
++            "pitchForSlice": 32
++          },
++          "derived": {
++            "pitch": 32,
++            "slice": "946176",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "tailCapacity": 8,
++          "bytesPerMip": [
++            "688128",
++            "180224",
++            "49152",
++            "12288",
++            "8192",
++            "4096",
++            "4096",
++            "0",
++            "0",
++            "0",
++            "0"
++          ]
++        },
++        "fields": {
++          "pitch": "representation_difference",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "match",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "representation_difference"
++      },
++      "reduced": null
++    },
++    {
++      "key": "gfx12:representation_difference:pitch",
++      "original": {
++        "id": "r29",
++        "mip": 6,
++        "input": {
++          "x": 117,
++          "y": 55,
++          "z": 30,
++          "s": 0,
++          "map0_w_minus_1": 1285,
++          "map0_h_minus_1": 255,
++          "map0_d_minus_1": 224,
++          "sw_mode": "SW_4KB_2D",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 1,
++          "mip_level": 6,
++          "maxmip": 10
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 16,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 11,
++          "numSlices": 225
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR3_4KB_2D"
++        },
++        "document": {
++          "raw": {
++            "pitch": 64,
++            "slice": "473088",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "converted": {
++            "pitch": 64,
++            "slice": "946176",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "firstTailRaw": 6,
++          "firstTailInRequestedChain": 6,
++          "tailCapacity": 8,
++          "bytesPerMip": [
++            "688128",
++            "180224",
++            "49152",
++            "12288",
++            "8192",
++            "4096",
++            "4096",
++            "0",
++            "0",
++            "0",
++            "0"
++          ]
++        },
++        "reference": {
++          "version": "gfx12",
++          "raw": {
++            "pitch": 32,
++            "sliceSize": "946176",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 6,
++            "blockDimensions": [
++              64,
++              32,
++              1
++            ],
++            "pitchForSlice": null
++          },
++          "derived": {
++            "pitch": 32,
++            "slice": "946176",
++            "mip_in_tail": 0,
++            "mip_offset_b": "0",
++            "l2_ms": 12,
++            "l2_blk_w": 6,
++            "l2_blk_h": 5,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "tailCapacity": 8,
++          "bytesPerMip": [
++            "688128",
++            "180224",
++            "49152",
++            "12288",
++            "8192",
++            "4096",
++            "4096",
++            "0",
++            "0",
++            "0",
++            "0"
++          ]
++        },
++        "fields": {
++          "pitch": "representation_difference",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "match",
++          "l2_blk_h": "match",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "match"
++        },
++        "classification": "representation_difference"
++      },
++      "reduced": null
++    },
++    {
++      "key": "gfx10:numerical_difference:l2_blk_h",
++      "original": {
++        "id": "r46",
++        "mip": 0,
++        "input": {
++          "x": 4989,
++          "y": 400,
++          "z": 17,
++          "s": 0,
++          "map0_w_minus_1": 9471,
++          "map0_h_minus_1": 1022,
++          "map0_d_minus_1": 64,
++          "sw_mode": "SW_64KB_2D",
++          "log2_num_samples": 1,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 2,
++          "numFragments": 2,
++          "numMipLevels": 1,
++          "numSlices": 65
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_64KB_R_X"
++        },
++        "document": {
++          "raw": {
++            "pitch": 9472,
++            "slice": "9699328",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 8,
++            "l2_blk_h": 7,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "converted": {
++            "pitch": 9472,
++            "slice": "19398656",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 8,
++            "l2_blk_h": 7,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "19398656"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 9472,
++            "sliceSize": "19398656",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              128,
++              256,
++              1
++            ],
++            "pitchForSlice": 9472
++          },
++          "derived": {
++            "pitch": 9472,
++            "slice": "19398656",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 7,
++            "l2_blk_h": 8,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "19398656"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "numerical_difference",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "numerical_difference"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 12,
++        "original": {
++          "id": "r46",
++          "mip": 0
++        },
++        "field": "l2_blk_h",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r46",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 0,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_64KB_2D",
++            "log2_num_samples": 1,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 2,
++            "numFragments": 2,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_64KB_R_X"
++          },
++          "document": {
++            "raw": {
++              "pitch": 256,
++              "slice": "32768",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 8,
++              "l2_blk_h": 7,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 256,
++              "slice": "65536",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 8,
++              "l2_blk_h": 7,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "65536"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 128,
++              "sliceSize": "65536",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                128,
++                256,
++                1
++              ],
++              "pitchForSlice": 128
++            },
++            "derived": {
++              "pitch": 128,
++              "slice": "65536",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 7,
++              "l2_blk_h": 8,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 7
++            },
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "65536"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "match",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "match",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "numerical_difference",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "numerical_difference"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:numerical_difference:l2_blk_w_slice",
++      "original": {
++        "id": "r46",
++        "mip": 0,
++        "input": {
++          "x": 4989,
++          "y": 400,
++          "z": 17,
++          "s": 0,
++          "map0_w_minus_1": 9471,
++          "map0_h_minus_1": 1022,
++          "map0_d_minus_1": 64,
++          "sw_mode": "SW_64KB_2D",
++          "log2_num_samples": 1,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 2,
++          "numFragments": 2,
++          "numMipLevels": 1,
++          "numSlices": 65
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_64KB_R_X"
++        },
++        "document": {
++          "raw": {
++            "pitch": 9472,
++            "slice": "9699328",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 8,
++            "l2_blk_h": 7,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "converted": {
++            "pitch": 9472,
++            "slice": "19398656",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 8,
++            "l2_blk_h": 7,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "19398656"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 9472,
++            "sliceSize": "19398656",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              128,
++              256,
++              1
++            ],
++            "pitchForSlice": 9472
++          },
++          "derived": {
++            "pitch": 9472,
++            "slice": "19398656",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 7,
++            "l2_blk_h": 8,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "19398656"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "match",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "numerical_difference",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "numerical_difference"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 12,
++        "original": {
++          "id": "r46",
++          "mip": 0
++        },
++        "field": "l2_blk_w_slice",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r46",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 0,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_64KB_2D",
++            "log2_num_samples": 1,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 2,
++            "numFragments": 2,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_64KB_R_X"
++          },
++          "document": {
++            "raw": {
++              "pitch": 256,
++              "slice": "32768",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 8,
++              "l2_blk_h": 7,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "converted": {
++              "pitch": 256,
++              "slice": "65536",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 8,
++              "l2_blk_h": 7,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 8
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "65536"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 128,
++              "sliceSize": "65536",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                128,
++                256,
++                1
++              ],
++              "pitchForSlice": 128
++            },
++            "derived": {
++              "pitch": 128,
++              "slice": "65536",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 7,
++              "l2_blk_h": 8,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 7
++            },
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "65536"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "match",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "match",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "numerical_difference",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "numerical_difference"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:numerical_difference:slice",
++      "original": {
++        "id": "r48",
++        "mip": 0,
++        "input": {
++          "x": 1916,
++          "y": 3635,
++          "z": 0,
++          "s": 6,
++          "map0_w_minus_1": 2046,
++          "map0_h_minus_1": 4480,
++          "map0_d_minus_1": 0,
++          "sw_mode": "SW_64KB_2D",
++          "log2_num_samples": 3,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 0
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 8,
++          "numFragments": 8,
++          "numMipLevels": 1,
++          "numSlices": 1
++        },
++        "eligibility": {
++          "status": "comparable",
++          "mapping": "ADDR_SW_64KB_R_X"
++        },
++        "document": {
++          "raw": {
++            "pitch": 2048,
++            "slice": "9306112",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 7,
++            "l2_blk_h": 6,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "converted": {
++            "pitch": 2048,
++            "slice": "74448896",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 7,
++            "l2_blk_h": 6,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 7
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "74448896"
++          ]
++        },
++        "reference": {
++          "version": "gfx10",
++          "raw": {
++            "pitch": 2048,
++            "sliceSize": "75497472",
++            "macroBlockOffset": "0",
++            "firstMipIdInTail": 1,
++            "blockDimensions": [
++              64,
++              128,
++              1
++            ],
++            "pitchForSlice": 2048
++          },
++          "derived": {
++            "pitch": 2048,
++            "slice": "75497472",
++            "mip_in_tail": 17,
++            "mip_offset_b": "0",
++            "l2_ms": 16,
++            "l2_blk_w": 6,
++            "l2_blk_h": 7,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 6
++          },
++          "tailCapacity": 12,
++          "bytesPerMip": [
++            "75497472"
++          ]
++        },
++        "fields": {
++          "pitch": "match",
++          "slice": "numerical_difference",
++          "mip_in_tail": "match",
++          "mip_offset_b": "match",
++          "l2_ms": "match",
++          "l2_blk_w": "numerical_difference",
++          "l2_blk_h": "numerical_difference",
++          "l2_blk_d": "match",
++          "l2_blk_w_slice": "numerical_difference"
++        },
++        "classification": "numerical_difference"
++      },
++      "reduced": {
++        "method": "bounded greedy; not global minimum",
++        "trials": 42,
++        "original": {
++          "id": "r48",
++          "mip": 0
++        },
++        "field": "slice",
++        "classification": "numerical_difference",
++        "result": {
++          "id": "r48",
++          "mip": 0,
++          "input": {
++            "x": 0,
++            "y": 0,
++            "z": 0,
++            "s": 0,
++            "map0_w_minus_1": 0,
++            "map0_h_minus_1": 125,
++            "map0_d_minus_1": 0,
++            "sw_mode": "SW_64KB_2D",
++            "log2_num_samples": 3,
++            "log2_element_bytes": 0,
++            "mip_level": 0,
++            "maxmip": 0
++          },
++          "adapter": {
++            "resourceType": "2D",
++            "bpp": 8,
++            "numSamples": 8,
++            "numFragments": 8,
++            "numMipLevels": 1,
++            "numSlices": 1
++          },
++          "eligibility": {
++            "status": "comparable",
++            "mapping": "ADDR_SW_64KB_R_X"
++          },
++          "document": {
++            "raw": {
++              "pitch": 128,
++              "slice": "16384",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 7,
++              "l2_blk_h": 6,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 7
++            },
++            "converted": {
++              "pitch": 128,
++              "slice": "131072",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 7,
++              "l2_blk_h": 6,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 7
++            },
++            "firstTailRaw": 17,
++            "firstTailInRequestedChain": 17,
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "131072"
++            ]
++          },
++          "reference": {
++            "version": "gfx10",
++            "raw": {
++              "pitch": 64,
++              "sliceSize": "65536",
++              "macroBlockOffset": "0",
++              "firstMipIdInTail": 1,
++              "blockDimensions": [
++                64,
++                128,
++                1
++              ],
++              "pitchForSlice": 64
++            },
++            "derived": {
++              "pitch": 64,
++              "slice": "65536",
++              "mip_in_tail": 17,
++              "mip_offset_b": "0",
++              "l2_ms": 16,
++              "l2_blk_w": 6,
++              "l2_blk_h": 7,
++              "l2_blk_d": 0,
++              "l2_blk_w_slice": 6
++            },
++            "tailCapacity": 12,
++            "bytesPerMip": [
++              "65536"
++            ]
++          },
++          "fields": {
++            "pitch": "numerical_difference",
++            "slice": "numerical_difference",
++            "mip_in_tail": "match",
++            "mip_offset_b": "match",
++            "l2_ms": "match",
++            "l2_blk_w": "numerical_difference",
++            "l2_blk_h": "numerical_difference",
++            "l2_blk_d": "match",
++            "l2_blk_w_slice": "numerical_difference"
++          },
++          "classification": "numerical_difference"
++        }
++      }
++    },
++    {
++      "key": "gfx10:no_equivalent:no_equivalent",
++      "original": {
++        "id": "r65",
++        "mip": 0,
++        "input": {
++          "x": 4337,
++          "y": 9033,
++          "z": 137,
++          "s": 0,
++          "map0_w_minus_1": 8190,
++          "map0_h_minus_1": 10677,
++          "map0_d_minus_1": 219,
++          "sw_mode": "SW_256KB_2D",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 10
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 11,
++          "numSlices": 220
++        },
++        "eligibility": {
++          "status": "no_equivalent",
++          "reason": "Fixed 256KB is not GFX10 VAR"
++        },
++        "document": {
++          "raw": {
++            "pitch": 8192,
++            "slice": "119799808",
++            "mip_in_tail": 17,
++            "mip_offset_b": "123904",
++            "l2_ms": 18,
++            "l2_blk_w": 9,
++            "l2_blk_h": 9,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 9
++          },
++          "converted": {
++            "pitch": 8192,
++            "slice": "119799808",
++            "mip_in_tail": 17,
++            "mip_offset_b": "31719424",
++            "l2_ms": 18,
++            "l2_blk_w": 9,
++            "l2_blk_h": 9,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 9
++          },
++          "firstTailRaw": 5,
++          "firstTailInRequestedChain": 5,
++          "tailCapacity": 14,
++          "bytesPerMip": [
++            "88080384",
++            "23068672",
++            "6291456",
++            "1572864",
++            "524288",
++            "262144",
++            "0",
++            "0",
++            "0",
++            "0",
++            "0"
++          ]
++        },
++        "classification": "no_equivalent"
++      },
++      "reduced": null
++    },
++    {
++      "key": "gfx12:reference_rejected:reference_rejected",
++      "original": {
++        "id": "d3",
++        "mip": 0,
++        "input": {
++          "x": 0,
++          "y": 0,
++          "z": 0,
++          "s": 0,
++          "map0_w_minus_1": 65535,
++          "map0_h_minus_1": 65535,
++          "map0_d_minus_1": 0,
++          "sw_mode": "SW_LINEAR",
++          "log2_num_samples": 0,
++          "log2_element_bytes": 0,
++          "mip_level": 0,
++          "maxmip": 16
++        },
++        "adapter": {
++          "resourceType": "2D",
++          "bpp": 8,
++          "numSamples": 1,
++          "numFragments": 1,
++          "numMipLevels": 17,
++          "numSlices": 1
++        },
++        "eligibility": {
++          "status": "reference_rejected",
++          "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
++        },
++        "document": {
++          "raw": {
++            "pitch": 65536,
++            "slice": "5726666496",
++            "mip_in_tail": 17,
++            "mip_offset_b": "5592575",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "converted": {
++            "pitch": 65536,
++            "slice": "5726666496",
++            "mip_in_tail": 17,
++            "mip_offset_b": "1431699200",
++            "l2_ms": 7,
++            "l2_blk_w": 7,
++            "l2_blk_h": 0,
++            "l2_blk_d": 0,
++            "l2_blk_w_slice": 8
++          },
++          "firstTailRaw": 17,
++          "firstTailInRequestedChain": 17,
++          "tailCapacity": 1,
++          "bytesPerMip": [
++            "4294967296",
++            "1073741824",
++            "268435456",
++            "67108864",
++            "16777216",
++            "4194304",
++            "1048576",
++            "262144",
++            "65536",
++            "32768",
++            "16384",
++            "8192",
++            "4096",
++            "2048",
++            "1024",
++            "512",
++            "256"
++          ]
++        },
++        "classification": "reference_rejected"
++      },
++      "reduced": null
++    }
++  ],
++  "hashes": {
++    "inputSummarySha256": "3b480db81b8a2bda35b49f0b213973a75badc61003083ff2a0d892da54fb4419",
++    "outputSummarySha256": "9be204580dbdde236ec7cda08a77089c1c3a8773f2423bbab889a07d307d89e5"
++  }
++}
+diff --git a/scripts/mipmap_compare/README.md b/scripts/mipmap_compare/README.md
+index 6a2c42adc5040735da8954ffab99f2a565f9ece2..04bbc54be3269c30f508091d8772f855d2b6d58b 100644
+--- a/scripts/mipmap_compare/README.md
++++ b/scripts/mipmap_compare/README.md
+@@ -1,15 +1,30 @@
+-# mipmap 比较工具（开发中）
++# mipmap 比较工具
+ 
+-当前包含文档/GFX10/GFX12 的独立转写草稿、输入生成器和比较辅助函数。统一批量入口、逐式复核和随机测试报告尚未完成；不能引用为“算法已匹配”的证据。
++当前包含文档/GFX10/GFX12 的独立模型、输入生成器、比较辅助函数和统一批量入口。小规模结果及模型边界见
++[MIPMAP_COMPARE_SMALL_REPORT.md](../../docs/MIPMAP_COMPARE_SMALL_REPORT.md)，机器可读结果见
++[mipmap_compare_small_results.json](../../docs/mipmap_compare_small_results.json)。有限随机测试不能作为数学证明。
+ 
+ 云端续做范围和用户最新要求见 [CLOUD_HANDOFF.md](../../docs/CLOUD_HANDOFF.md)。**先讨论小规模结果，再决定百万组。**
+ 
+-迁移后可运行基本检查：
++运行基本检查和小规模对比：
+ 
+ ```sh
+ node scripts/mipmap_compare/smoke.cjs
++node scripts/mipmap_compare/run.cjs --seed 0x20260922 --config-count 10000 \
++  --out docs/mipmap_compare_small_results.json
++node scripts/mipmap_compare/summary.cjs
+ ```
+ 
+-这只检查可信文件及参考源哈希、三个文档回归值、生成器组合数和模块可加载性，不运行随机对比，不验证参考转写正确性。Node.js 20+，仅用内置库。
++`smoke.cjs` 只检查可信文件及参考源哈希、三个文档回归值、生成器组合数和模块可加载性；随机比较由
++`run.cjs` 执行。后者支持 `--seed`、`--config-count`、`--config-number` 和 `--mip`，可按配置编号与 mip
++重放。Node.js 20+，仅用内置模块。
++
++若当前界面不能直接打开云端生成的 Markdown 或 JSON，可执行 `summary.cjs` 在终端直接查看已提交结果的
++核心规模、分类、扰动检查和摘要哈希；也可把其他结果 JSON 路径作为第一个参数传入。小规模已提交结果为：
++
++- 10,000 个随机配置加 670 个定向配置，共 36,607 个 mip、658,926 次字段比较；
++- 公开 GFX10 按配置分类：2,688 一致、1,169 数值差异、938 表达口径不同、2,665 无等价、3,210 参考拒绝；
++- GFX12 按配置分类：8,919 一致、127 数值差异、1,464 表达口径不同、160 参考拒绝；
++- 已发现否定“模块与公开 GFX10 完全匹配”的明确反例，未执行百万组。
+ 
+ upstream/ 是 AMD PAL 固定提交的原始文件，出处和字节基准见 provenance.json。保留其版权和许可声明。位置索引见 [SOURCES.md](SOURCES.md)。
+diff --git a/scripts/mipmap_compare/gfx10.cjs b/scripts/mipmap_compare/gfx10.cjs
+index 44ee178c385715b50d4ce92ca9663a59e640405f..7306b76322e6bee0c0b00a550e76f075eb905a83 100644
+--- a/scripts/mipmap_compare/gfx10.cjs
++++ b/scripts/mipmap_compare/gfx10.cjs
+@@ -36,47 +36,54 @@ function capacity(b) {
+  if(b.thick) effective-=Math.floor((b.L-8)/3);
+  return effective<=11?1+2**(effective-9):effective-4;
+ }
+ function mipDims(i,m) {return [Math.ceil(i.W/2**m),Math.ceil(i.H/2**m)];}
+ function firstTail(i,b,cap) {
+  const dims=b.logs.map(v=>2**v);
+  if(b.thick) dims[b.L%3===0?1:b.L%3===1?0:2]/=2; else dims[0]/=2;
+  let first=17;
+  if(b.L>8&&i.maxmip>0) for(let m=0;m<=i.maxmip;m++) {
+   const [w,h]=mipDims(i,m);
+   if(w<=dims[0]&&h<=dims[1]&&i.maxmip+1-m<=cap) {first=m;break;}
+  }
+  return {first,threshold:dims.slice(0,2)};
+ }
+ const align=(v,a)=>Math.ceil(v/a)*a;
+ function surface(i,overrides={}) {
+  const b=overrides.block||block(i),cap=overrides.capacity??capacity(b),tail=firstTail(i,b,cap);
+  const first=overrides.first??tail.first,dims=b.logs.map(v=>2**v),unit=BigInt(2**i.e),samples=BigInt(2**i.s);
+  const pitch=[],height=[],slicePitch=[],bytesPerMip=[],macroBlockOffset=[],mipSizes=[];
+  let sliceSize=0n;
+  for(let m=0;m<=i.maxmip;m++) {
+   const wh=mipDims(i,m);mipSizes.push(wh);
+   const p=align(wh[0],dims[0]),h=align(wh[1],dims[1]);
+   pitch.push(p);height.push(h);slicePitch.push(p);
+   let bytes=0n;
+-  if(m<first) bytes=BigInt(p)*BigInt(h)*unit*(i.maxmip===0?samples:1n);
++  if(m<first) {
++   if((b.L===8)&&!b.linear&&(i.maxmip>0)) {
++    // ComputeSurfaceInfoMicroTiled adds a UINT_32 product to UINT_64.
++    // Preserve the C++ intermediate wrap instead of widening every operand.
++    const product=(Math.imul(Math.imul(p,h),2**i.e))>>>0;
++    bytes=BigInt(product);
++   } else bytes=BigInt(p)*BigInt(h)*unit*(i.maxmip===0?samples:1n);
++  }
+   else if(m===first) bytes=BigInt(2**b.L)/BigInt(dims[2]);
+   bytesPerMip.push(bytes);sliceSize+=bytes;
+  }
+  // Macro offsets advance by a block-depth slab, not the entire volume.
+  let off=first<=i.maxmip?BigInt(2**b.L):0n;
+  for(let m=Math.min(first-1,i.maxmip);m>=0;m--) {
+   macroBlockOffset[m]=off;off+=bytesPerMip[m]*BigInt(dims[2]);
+  }
+  if(first<=i.maxmip) {
+   let p=tail.threshold[0],h=tail.threshold[1];
+   const micro=b.thick?[[8,4,8],[4,4,8],[4,4,4],[4,2,4],[2,2,4]][i.e]:
+    [[16,16],[16,8],[8,8],[8,4],[4,4]][i.e];
+   for(let m=first;m<=i.maxmip;m++) {
+    pitch[m]=p;height[m]=h;slicePitch[m]=p;macroBlockOffset[m]=0n;
+    p=Math.max(Math.floor(p/2),micro[0]);h=Math.max(Math.floor(h/2),micro[1]);
+   }
+  }
+  return {b,cap,first,firstMipIdInTail:first===17?i.maxmip+1:first,threshold:tail.threshold,
+   pitch,height,slicePitch,bytesPerMip,mipSizes,macroBlockOffset,sliceSize,blockDimensions:dims};
+ }
+ module.exports={MAP,eligibility,block,capacity,firstTail,mipDims,surface};
+diff --git a/scripts/mipmap_compare/run.cjs b/scripts/mipmap_compare/run.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..bec2045e1280e8c7ccfc6a30f9ccd039feaaf502
+--- /dev/null
++++ b/scripts/mipmap_compare/run.cjs
+@@ -0,0 +1,92 @@
++#!/usr/bin/env node
++'use strict';
++const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
++const gen=require('./generate.cjs'),doc=require('./document.cjs'),cmp=require('./compare.cjs');
++
++function args(argv) {
++ const o={seed:0x20260922,count:10000,directed:true,out:null,configNumbers:null,mip:null};
++ for(let n=0;n<argv.length;n++) {
++  const a=argv[n],v=argv[n+1];
++  if(a==='--seed') {o.seed=Number(BigInt(v));n++;}
++  else if(a==='--config-count') {o.count=Number(v);n++;}
++  else if(a==='--config-number') {o.configNumbers=v.split(',').map(Number);n++;}
++  else if(a==='--mip') {o.mip=Number(v);n++;}
++  else if(a==='--no-directed') o.directed=false;
++  else if(a==='--directed-only') {o.count=0;o.directed=true;}
++  else if(a==='--out') {o.out=v;n++;}
++  else if(a==='--help') {console.log('node run.cjs [--seed 0x...] [--config-count N] [--config-number N[,N]] [--mip N] [--no-directed|--directed-only] [--out FILE]');process.exit(0);}
++  else throw Error('Unknown argument: '+a);
++ }
++ if(!Number.isSafeInteger(o.seed)||o.seed<0||o.seed>0xffffffff) throw Error('seed must be uint32');
++ if(!Number.isSafeInteger(o.count)||o.count<0) throw Error('config-count must be nonnegative');
++ if(o.configNumbers&&o.configNumbers.some(v=>!Number.isSafeInteger(v)||v<0)) throw Error('invalid config-number');
++ if(o.mip!==null&&(!Number.isSafeInteger(o.mip)||o.mip<0||o.mip>16)) throw Error('mip must be 0..16');
++ return o;
++}
++const json=(v,space=0)=>JSON.stringify(v,(_,x)=>typeof x==='bigint'?x.toString():x,space);
++const hash=v=>crypto.createHash('sha256').update(json(v)).digest('hex');
++const blank=()=>({match:0,numerical_difference:0,representation_difference:0,no_equivalent:0,reference_rejected:0,model_assumption:0});
++const add=(x,k,n=1)=>{if(x[k]===undefined)x[k]=0;x[k]+=n;};
++function selfCheck() {
++ for(const c of gen.trusted) assert.deepEqual(doc.outputs(doc.surface(c),c.mip),c.expected,c.id);
++ assert.deepEqual(cmp.refs.gfx10.block({mode:'SW_64KB_2D',e:0,s:0}).logs,[8,8,0]);
++ assert.deepEqual(cmp.refs.gfx10.block({mode:'SW_64KB_3D',e:2,s:0}).logs,[5,5,4]);
++ assert.equal(cmp.refs.gfx10.capacity({L:16,thick:true}),10);
++ assert.deepEqual(cmp.refs.gfx12.block({mode:'SW_256KB_3D',e:0,s:0}).logs,[6,6,6]);
++ const huge={mode:'SW_256B_2D',e:4,s:0,W:65536,H:65536,D:1,maxmip:1,x:0,y:0,z:0,coordS:0};
++ assert.equal(cmp.refs.gfx10.surface(huge).bytesPerMip[0],0n,'GFX10 UINT32 micro-tile product wraps');
++ return {trustedCases:gen.trusted.length,formulaAssertions:5,uint32WrapAssertion:true};
++}
++function stageBucket() {return {shared:{},isolated:{}};}
++function summarizeConfig(classes) {
++ if(classes.includes('numerical_difference')) return 'numerical_difference';
++ if(classes.includes('representation_difference')) return 'representation_difference';
++ return classes[0]||'model_assumption';
++}
++function main() {
++ const opt=args(process.argv.slice(2)),self=selfCheck();
++ const randomIds=opt.configNumbers||Array.from({length:opt.count},(_,i)=>i);
++ const configs=randomIds.map(i=>gen.random(opt.seed,i));
++ if(opt.directed&&!opt.configNumbers) configs.push(...gen.directed());
++ const result={schemaVersion:1,scope:'mipmap_param_calc_core_gc small-scale comparison',generatedAt:new Date().toISOString(),
++  parameters:{seed:'0x'+opt.seed.toString(16).padStart(8,'0'),randomConfigurationCount:randomIds.length,
++   combinationCount:100,randomPerCombination:opt.configNumbers?null:opt.count/100,directed:opt.directed&&!opt.configNumbers,
++   replay:{configNumbers:opt.configNumbers,mip:opt.mip}},assumptions:{documentArithmetic:'BigInt for products/masks/offsets; dimensions are exact Number; unknown RTL widths are not simulated',
++   gfx10Identity:'public GFX10 PAL implementation; not claimed to be exactly GFX10.2',maxMip:'PAL MaxMipLevels=16 (indices 0..15); document MAXMIP=17 (indices 0..16)'},
++  selfCheck:self,counts:{configurations:configs.length,requestedMips:0,fieldComparisons:0},modes:{},references:{},trustedRegression:[],invariance:{probes:0,failures:[]},representatives:[]};
++ for(const c of gen.trusted) result.trustedRegression.push({id:c.id,file:c.file,mip:c.mip,output:doc.outputs(doc.surface(c),c.mip)});
++ for(const version of ['gfx10','gfx12']) result.references[version]={configurations:blank(),mips:blank(),fields:Object.fromEntries(cmp.FIELDS.map(f=>[f,blank()])),stages:stageBucket(),eligibleConfigurations:0};
++ const repKeys=new Set(),inputSummary=[];
++ for(const i of configs) {
++  const mips=opt.mip===null?Array.from({length:i.maxmip+1},(_,m)=>m):(opt.mip<=i.maxmip?[opt.mip]:[]);
++  result.counts.requestedMips+=mips.length;inputSummary.push(gen.rawInput(i,mips[0]??0));
++  const mode=result.modes[i.mode]||(result.modes[i.mode]={configurations:0,mips:0});mode.configurations++;mode.mips+=mips.length;
++  for(const version of ['gfx10','gfx12']) {
++   const ref=result.references[version],R=cmp.refs[version],eligible=R.eligibility(i),configClasses=[];
++   if(eligible.status==='comparable') {ref.eligibleConfigurations++;cmp.stages({stages:ref.stages.shared,isolatedStages:ref.stages.isolated},i,doc.surface(i),R.surface(i));}
++   for(const m of mips) {
++    const snap=cmp.snapshot(i,m,version),cl=snap.classification;configClasses.push(cl);add(ref.mips,cl);
++    for(const f of cmp.FIELDS) {const fc=snap.fields?snap.fields[f]:cl;add(ref.fields[f],fc);result.counts.fieldComparisons++;}
++    if(cl!=='match') {
++     const differing=snap.fields?cmp.FIELDS.filter(f=>snap.fields[f]!=='match'):[cl];
++     for(const f of differing) {const key=version+':'+cl+':'+f;if(repKeys.size<36&&!repKeys.has(key)) {repKeys.add(key);let reduced=null;
++       if(snap.fields&&snap.fields[f]==='numerical_difference') reduced=cmp.shrink(i,m,version,cmp.FIELDS.indexOf(f),'numerical_difference');
++       result.representatives.push({key,original:snap,reduced});}}
++    }
++   }
++   add(ref.configurations,eligible.status==='comparable'?summarizeConfig(configClasses):eligible.status);
++  }
++ }
++ // Coordinates and the depth input are absent from the document arithmetic. Probe all three models on a bounded sample.
++ for(const i of configs.slice(0,100)) {
++  const variants=[['x',{...i,x:i.W+7}],['y',{...i,y:i.H+11}],['z',{...i,z:i.D+13}],['s',{...i,coordS:2**i.s+1}],['depth',{...i,D:i.D===65536?65535:i.D+1}]];
++  for(const [field,j] of variants) {result.invariance.probes++;const base=hash(doc.surface(i)),changed=hash(doc.surface(j));if(base!==changed) result.invariance.failures.push({id:i.id,field,model:'document'});
++   for(const version of ['gfx10','gfx12']) if(cmp.refs[version].eligibility(i).status==='comparable'&&hash(cmp.refs[version].surface(i))!==hash(cmp.refs[version].surface(j))) result.invariance.failures.push({id:i.id,field,model:version});
++  }
++ }
++ result.hashes={inputSummarySha256:hash(inputSummary)};
++ result.hashes.outputSummarySha256=hash({counts:result.counts,modes:result.modes,references:result.references,invariance:result.invariance});
++ const body=json(result,2)+'\n';if(opt.out) {fs.mkdirSync(path.dirname(opt.out),{recursive:true});fs.writeFileSync(opt.out,body);} else process.stdout.write(body);
++ console.error(`DONE: ${configs.length} configs, ${result.counts.requestedMips} mips, ${result.counts.fieldComparisons} field comparisons; output ${result.hashes.outputSummarySha256}`);
++}
++main();
+diff --git a/scripts/mipmap_compare/smoke.cjs b/scripts/mipmap_compare/smoke.cjs
+index 769601c520a792a4aa06db307239827e70404648..ee19e01292fc3c75fb1ababbf7b28dbc63c602dc 100644
+--- a/scripts/mipmap_compare/smoke.cjs
++++ b/scripts/mipmap_compare/smoke.cjs
+@@ -1,16 +1,16 @@
+ 'use strict';
+ // Migration smoke check only. This is NOT the requested randomized validation.
+ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+ require('../verify_trusted_baseline.cjs');
+ const provenance=require('./provenance.json');
+ for(const f of provenance.files) {
+  const bytes=fs.readFileSync(path.join(__dirname,f.local_path));
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),f.sha256,f.local_path);
+  assert.equal(crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex'),f.git_blob,f.local_path);
+ }
+ const doc=require('./document.cjs'),G=require('./generate.cjs');
+ for(const c of G.trusted) assert.deepEqual(doc.outputs(doc.surface(c),c.mip),c.expected,c.id);
+ assert.equal(G.combos.length,100);
+ for(const file of ['gfx10.cjs','gfx12.cjs','compare.cjs']) require('./'+file);
+ console.log('PASS: 9 upstream files verified; 3 document regressions; 100 generator combinations.');
+-console.log('Reference ports remain unreviewed. Randomized comparison has not run.');
++console.log('Smoke does not run the randomized comparison; use run.cjs for the reviewed small-scale comparison.');
+diff --git a/scripts/mipmap_compare/summary.cjs b/scripts/mipmap_compare/summary.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..323ce1679c193d843788c0b56e91ec0f64acfe5c
+--- /dev/null
++++ b/scripts/mipmap_compare/summary.cjs
+@@ -0,0 +1,24 @@
++#!/usr/bin/env node
++'use strict';
++// Print the checked-in machine result in a terminal-friendly form so the
++// outcome is not dependent on Markdown/JSON artifact viewing support.
++const fs=require('node:fs'),path=require('node:path');
++const file=process.argv[2]||path.join(__dirname,'../../docs/mipmap_compare_small_results.json');
++const r=JSON.parse(fs.readFileSync(file,'utf8'));
++const fmt=n=>Number(n).toLocaleString('en-US');
++function row(name,x) {
++ return `${name}: 一致 ${fmt(x.match)}；数值差异 ${fmt(x.numerical_difference)}；`+
++  `表达口径不同 ${fmt(x.representation_difference)}；无等价模式 ${fmt(x.no_equivalent)}；`+
++  `参考拒绝 ${fmt(x.reference_rejected)}；模型假设未明确 ${fmt(x.model_assumption)}`;
++}
++console.log('mipmap_param_calc_core_gc 小规模对比摘要');
++console.log(`种子 ${r.parameters.seed}；随机配置 ${fmt(r.parameters.randomConfigurationCount)}；`+
++ `总配置 ${fmt(r.counts.configurations)}；mip ${fmt(r.counts.requestedMips)}；字段比较 ${fmt(r.counts.fieldComparisons)}`);
++console.log(row('公开 GFX10（按配置）',r.references.gfx10.configurations));
++console.log(row('GFX12 辅助（按配置）',r.references.gfx12.configurations));
++console.log(row('公开 GFX10（按 mip）',r.references.gfx10.mips));
++console.log(row('GFX12 辅助（按 mip）',r.references.gfx12.mips));
++console.log(`扰动 ${fmt(r.invariance.probes)} 次；异常 ${fmt(r.invariance.failures.length)} 次`);
++console.log(`输入摘要 ${r.hashes.inputSummarySha256}`);
++console.log(`输出摘要 ${r.hashes.outputSummarySha256}`);
++console.log('结论：存在否定“与公开 GFX10 完全匹配”的明确反例；未执行百万组。');

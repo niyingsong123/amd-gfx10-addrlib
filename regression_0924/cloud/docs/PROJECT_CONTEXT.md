@@ -4,14 +4,13 @@
 
 项目用于研究 AddrLib 地址计算。ADDRLIB.md 为主文档，case/ 保存用例；具体可信文件及字节基准见 TRUSTED_BASELINE.json。
 
-mipmap_param_calc_core_gc 的云端小规模报告、结果 JSON、代码补丁和 GFX12 差异分析已归档至 regression_0924/，入口见其中 README.md。GFX12 剩余差异集中在 Linear slice 裁剪与 tail pitch 表示；候选修正尚未实施或验证。用户接受云端结果并要求不复跑；百万组未启动。本地主线 scripts/mipmap_compare/ 仍是迁移时草稿，不能当作云端已测版本。
+已完成 mipmap_param_calc_core_gc 与公开 GFX10/GFX12 独立模型的小规模比较。统一入口为 `node scripts/mipmap_compare/run.cjs`，结果和限制见 `docs/MIPMAP_COMPARE_SMALL_REPORT.md`；结果否定模块与公开 GFX10 完全匹配，若干宏块阶段则在可比样本中一致。先与用户讨论，再决定是否做百万组，本阶段不得自行扩展。
 
 文件哈希一致仅证明字节未变，不证明算法正确；不同用例的源哈希差异不能单凭此判断用例错误。未做 RTL 仿真。
 
 ## 目录与使用范围
 
 - ADDRLIB.md、case/：日常研究依据，用例导航见 case/README.md。
-- ADDRLIB_MAS.md：按原稿格式补全的讲解稿，不属于可信基准；配图及 Mermaid 源码在 assets/addrlib_mas/。原稿保存于提交 669bb67，可用于逐项比较。
 - docs/：当前上下文、可信清单和工作记录。
 - scripts/：维护校验脚本、开发中的算法对比工具及固定版本参考源码。
 - backup/：历史备份，默认不读取、不作为依据、不主动复核。

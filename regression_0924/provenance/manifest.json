@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "archived_on": "2026-09-24",
+  "task": {
+    "id": "task_e_6ab3d09d7da8832889f0370c4333c5e4",
+    "title": "Conduct mipmap_param_calc_core_gc comparison",
+    "url": "https://chatgpt.com/codex/tasks/task_e_6ab3d09d7da8832889f0370c4333c5e4",
+    "status": "ready",
+    "updated_at": "2026-09-23T14:11:31.717945Z",
+    "environment_label": "niyingsong123/amd-gfx10-addrlib",
+    "attempt_total": 1,
+    "summary": {
+      "files_changed": 9,
+      "lines_added": 2739,
+      "lines_removed": 9
+    },
+    "observed_on": "2026-09-24",
+    "source": "codex cloud list --json and codex cloud status"
+  },
+  "result_generated_at": "2026-09-23T13:18:55.528Z",
+  "archive_parent_head": "12d101958d3d107557814bac002564e689d42725",
+  "compatible_local_base_commit": "3aab68455e4a7455004f620499ad8f65add29226",
+  "base_evidence": "Every modified old blob in the cloud diff matches this local commit. CLI did not supply the exact cloud checkout commit.",
+  "upstream": {
+    "repository": "https://github.com/GPUOpen-Drivers/pal",
+    "commit": "c5e800072a32f68b6ccc4422936d96167c6e0728",
+    "gfx12_branch": "ADDR_GFX12_SHARED_BUILD=0",
+    "files_verified": [
+      {
+        "path": "scripts/mipmap_compare/upstream/src/core/addrlib2.cpp",
+        "sha256": "639e5218917e3f1becbe6712c7158c72b70c22934633aa93d6823c79a7357f66",
+        "git_blob": "61f29795441c8787539e8a0fa603cead999e704e"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/core/addrlib2.h",
+        "sha256": "dd3bcc01e1c0055d31b7d73b254c6cdb365acc4c4b1c9eeac483f6812b9f6264",
+        "git_blob": "5b359c78dc6cd2686476e3fe6a10a5149a61db03"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/core/addrlib3.cpp",
+        "sha256": "068c124ef619aad4d83f636bee425146b9bf590e47d899f7c751a1736676a8fd",
+        "git_blob": "ee31a36c12350f8b620068dfb85402b2eae2dbc9"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/core/addrlib3.h",
+        "sha256": "f4f8581af6d7a86f60d09aa5fa9a69afa3653720f7c158da60bb060ad832f7f6",
+        "git_blob": "8afbaff2ce3886278b39b22e3b3f752f308573f9"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/gfx10/gfx10addrlib.cpp",
+        "sha256": "1783ef59438185ac365aac5f041fcc4d743b84b9374501d723ee833aaf9b0f58",
+        "git_blob": "e674d6b203a62281da93bee1dc2ced597cec3e40"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/gfx10/gfx10addrlib.h",
+        "sha256": "5bd1d35af0cb8f6c218eaf07e0fdbb67beca23b416af67d6643b16ab1e4942bc",
+        "git_blob": "a99826e747b52cdb0e5bde82153ad66fb029d13e"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/gfx12/gfx12addrlib.cpp",
+        "sha256": "9210bb10078c48a3757e1f1a2f9483d5a355b04d83fbca19a65485938b1da8db",
+        "git_blob": "a167ed3066e718c0b461cd1ea8c022403d11021f"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/src/gfx12/gfx12addrlib.h",
+        "sha256": "89efb2aa8819f3f7dc4a2775de080cebb704c5bf7d1ac75c96077c7f45dda79e",
+        "git_blob": "8453e1a21588a950ca77d4d9aa468c46eccdc0c9"
+      },
+      {
+        "path": "scripts/mipmap_compare/upstream/inc/addrinterface.h",
+        "sha256": "566a5b9815094818027fc2b8b84382b5fa217310846ea5d0cb855139fd55fae2",
+        "git_blob": "80f455558f4fba6f5481c003c2ef6d884edade67"
+      }
+    ]
+  },
+  "validation": {
+    "cloud_changed_files_git_blob_verified": 9,
+    "source_supplements_verified": 8,
+    "result_totals_verified": true,
+    "output_summary_sha256_verified": "9be204580dbdde236ec7cda08a77089c1c3a8773f2423bbab889a07d307d89e5",
+    "input_summary_sha256_claim": "3b480db81b8a2bda35b49f0b213973a75badc61003083ff2a0d892da54fb4419",
+    "input_summary_recomputed": false,
+    "random_tests_rerun": false,
+    "model_functions_executed": false,
+    "full_cpp_executed": false,
+    "trusted_algorithm_files_modified": false,
+    "mainline_models_modified": false
+  },
+  "files": [
+    {
+      "path": "cloud/docs/MIPMAP_COMPARE_SMALL_REPORT.md",
+      "sha256": "10a31aeee8339fc47b48c2c3bbe2a71e25e58a47683bfaaef7de6377761e3a3d",
+      "bytes": 7737,
+      "source": "latest cloud diff",
+      "repository_path": "docs/MIPMAP_COMPARE_SMALL_REPORT.md",
+      "git_blob": "eb8cbeb5278d38272bec6c27db5ec6b52e258c47"
+    },
+    {
+      "path": "cloud/docs/PROJECT_CONTEXT.md",
+      "sha256": "8f9bf5996a22be8ce78a92b00b69670850d96166188a602dac893a5ff81342a8",
+      "bytes": 1409,
+      "source": "latest cloud diff",
+      "repository_path": "docs/PROJECT_CONTEXT.md",
+      "git_blob": "f209a0dd355ab0ae777d6f092590b040539f9011"
+    },
+    {
+      "path": "cloud/docs/WORK_LOG.md",
+      "sha256": "92df4f8877c74bda79d3ce5f2624636c20b550afaf5c5a50baee8998fa0f3b06",
+      "bytes": 665,
+      "source": "latest cloud diff",
+      "repository_path": "docs/WORK_LOG.md",
+      "git_blob": "b6443d136fa41f811fd012a5b28844b84957ee34"
+    },
+    {
+      "path": "cloud/docs/mipmap_compare_small_results.json",
+      "sha256": "1efa4aee12a4447e4f0dd1d9e1875d8dabc30132a4320841865e972e95a03c4b",
+      "bytes": 64756,
+      "source": "latest cloud diff",
+      "repository_path": "docs/mipmap_compare_small_results.json",
+      "git_blob": "c9af3471aa310de51251df1cc91d6195792d6f84"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/README.md",
+      "sha256": "af7ee82f38c25aaae01b52a57951298162ad49ae01a057eed5e854ca607cdb11",
+      "bytes": 1991,
+      "source": "latest cloud diff",
+      "repository_path": "scripts/mipmap_compare/README.md",
+      "git_blob": "04bbc54be3269c30f508091d8772f855d2b6d58b"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/gfx10.cjs",
+      "sha256": "5dd15f7fee51970833fe125a7aa19d63555687b661a7904a6ecc5d325f087055",
+      "bytes": 4241,
+      "source": "latest cloud diff",
+      "repository_path": "scripts/mipmap_compare/gfx10.cjs",
+      "git_blob": "7306b76322e6bee0c0b00a550e76f075eb905a83"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/run.cjs",
+      "sha256": "578e9739b3a304bef11e6d59c092a5738f228bac3328cdc7eb6ea93881771874",
+      "bytes": 7267,
+      "source": "latest cloud diff",
+      "repository_path": "scripts/mipmap_compare/run.cjs",
+      "git_blob": "bec2045e1280e8c7ccfc6a30f9ccd039feaaf502"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/smoke.cjs",
+      "sha256": "007c9c27a361e998d0f202a15d6e85439bbf2ca2a02391e57486e60082b5a843",
+      "bytes": 1133,
+      "source": "latest cloud diff",
+      "repository_path": "scripts/mipmap_compare/smoke.cjs",
+      "git_blob": "ee19e01292fc3c75fb1ababbf7b28dbc63c602dc"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/summary.cjs",
+      "sha256": "0aacd02498b3ec4bf520221efc41339866ff039d0267a215ddea2c676824d908",
+      "bytes": 1698,
+      "source": "latest cloud diff",
+      "repository_path": "scripts/mipmap_compare/summary.cjs",
+      "git_blob": "323ce1679c193d843788c0b56e91ec0f64acfe5c"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/document.cjs",
+      "sha256": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+      "bytes": 3022,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/document.cjs",
+      "git_blob": "b2d851326ce45d25e1bcd9cd0379f185b3e0d570"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/gfx12.cjs",
+      "sha256": "fcbb4895e0f957f2468614a3d76e1fda35fd540698e701dcd969a170a898ff23",
+      "bytes": 3713,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/gfx12.cjs",
+      "git_blob": "7db8e70cb3a0ed1f149b2699e103b9987ec709e6"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/compare.cjs",
+      "sha256": "0cd105f95f873621e2f60416d89e8e6b574d6afe9b7dd278e27de5236ea81db9",
+      "bytes": 5437,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/compare.cjs",
+      "git_blob": "3a9bf6544ec3c204bde7bf6d68e5a377ce24943b"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/generate.cjs",
+      "sha256": "da13dcdec0f916d0c24ece9086bdfd10d25dd4022ddbe2146cd9d1798b8176a0",
+      "bytes": 3792,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/generate.cjs",
+      "git_blob": "2123b22c4dccae960d7ce8588f2e9eb7b6c1f9f0"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/SOURCES.md",
+      "sha256": "916938eb5b069d02c51caeeca8649a26b51a0938e7a3dde0fca09277748d23c9",
+      "bytes": 1676,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/SOURCES.md",
+      "git_blob": "7a9da36954c59a21d0cf6bf3f13475319c13464c"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/provenance.json",
+      "sha256": "c77b8023972859d98d4d7dd2078a65a76ed685b2e810c6c98a8b5296ff46130e",
+      "bytes": 2693,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/provenance.json",
+      "git_blob": "0cd538ea4ccc26c0b780486cd4e97a89ad0cb3b2"
+    },
+    {
+      "path": "cloud/scripts/mipmap_compare/NOTICE.txt",
+      "sha256": "6e6a474f7b71271c816bede6e8bee37d3901d3e70650eae3d0c24236a089550b",
+      "bytes": 219,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "scripts/mipmap_compare/NOTICE.txt",
+      "git_blob": "570991b4c093c387f28d0f242924d0beec8392dc"
+    },
+    {
+      "path": "cloud/docs/CLOUD_HANDOFF.md",
+      "sha256": "affc9e286771a808cb09eab2d5d6cf7bb786141ed908ad3ce19e6a91e9f739ea",
+      "bytes": 4403,
+      "source": "compatible local base; unchanged by cloud diff",
+      "repository_path": "docs/CLOUD_HANDOFF.md",
+      "git_blob": "e8c53f884166b235b0a97de8ab60b0e44a943bed"
+    },
+    {
+      "path": "provenance/cloud.diff",
+      "sha256": "1605a300d9e9a182b1f02adb52d9d6ac3168ba839fff63a7bd60b121afd1f9b5",
+      "bytes": 95789
+    },
+    {
+      "path": "provenance/task.json",
+      "sha256": "db41225194ad46fbc926f5127670c300b244cd52daa52f82d05430b23553beda",
+      "bytes": 530
+    },
+    {
+      "path": "summary/RESULT_SUMMARY.md",
+      "sha256": "e4a206318298bba8c2cd61ec578637c7d65833ebcad08dc4b6bf6f81a7c91ec2",
+      "bytes": 5294
+    },
+    {
+      "path": "summary/field_stats.csv",
+      "sha256": "9482aebfc40a809de1f1d8dfdfa8876a6508e1644f1ba3835d4b444b94bb1ab8",
+      "bytes": 789
+    },
+    {
+      "path": "summary/stage_stats.csv",
+      "sha256": "3527b5b8df71d96a2429dd5e086edcce782e114b0c2ff323f48787e367f26b54",
+      "bytes": 1752
+    },
+    {
+      "path": "summary/mode_coverage.csv",
+      "sha256": "a442be20e92ab6fb02a12dba2d4ca07aad6322b2967e4d989796310846ee8b4b",
+      "bytes": 198
+    },
+    {
+      "path": "summary/REPRESENTATIVE_CASES.md",
+      "sha256": "9bd48b2442ace879b2833352daebc69f497d799fe20c96ebf05221e92a22939b",
+      "bytes": 4821
+    },
+    {
+      "path": "summary/representatives.json",
+      "sha256": "fe908c0fb3b48fb478d7bb83a7867195f5108d92bb10939f6a0a55929c3e2d18",
+      "bytes": 26927
+    },
+    {
+      "path": "README.md",
+      "sha256": "1f3917da2aa14813102ccd83ff92c6d6d2e9569010942f5fcef792989a0afd03",
+      "bytes": 2535
+    },
+    {
+      "path": "GFX12_MATCHING_ANALYSIS.md",
+      "sha256": "e60d09fa17352d4deafda895cb26bf9940a1b2785cb3b43ab458936781c82055",
+      "bytes": 12143
+    }
+  ]
+}

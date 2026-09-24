@@ -1,0 +1,2471 @@
+{
+  "schemaVersion": 1,
+  "scope": "mipmap_param_calc_core_gc small-scale comparison",
+  "generatedAt": "2026-09-23T13:18:55.528Z",
+  "parameters": {
+    "seed": "0x20260922",
+    "randomConfigurationCount": 10000,
+    "combinationCount": 100,
+    "randomPerCombination": 100,
+    "directed": true,
+    "replay": {
+      "configNumbers": null,
+      "mip": null
+    }
+  },
+  "assumptions": {
+    "documentArithmetic": "BigInt for products/masks/offsets; dimensions are exact Number; unknown RTL widths are not simulated",
+    "gfx10Identity": "public GFX10 PAL implementation; not claimed to be exactly GFX10.2",
+    "maxMip": "PAL MaxMipLevels=16 (indices 0..15); document MAXMIP=17 (indices 0..16)"
+  },
+  "selfCheck": {
+    "trustedCases": 3,
+    "formulaAssertions": 5,
+    "uint32WrapAssertion": true
+  },
+  "counts": {
+    "configurations": 10670,
+    "requestedMips": 36607,
+    "fieldComparisons": 658926
+  },
+  "modes": {
+    "SW_LINEAR": {
+      "configurations": 555,
+      "mips": 3567
+    },
+    "SW_256B_2D": {
+      "configurations": 2120,
+      "mips": 5475
+    },
+    "SW_4KB_2D": {
+      "configurations": 2120,
+      "mips": 5627
+    },
+    "SW_64KB_2D": {
+      "configurations": 2120,
+      "mips": 5502
+    },
+    "SW_256KB_2D": {
+      "configurations": 2120,
+      "mips": 5667
+    },
+    "SW_4KB_3D": {
+      "configurations": 545,
+      "mips": 3629
+    },
+    "SW_64KB_3D": {
+      "configurations": 545,
+      "mips": 3444
+    },
+    "SW_256KB_3D": {
+      "configurations": 545,
+      "mips": 3696
+    }
+  },
+  "references": {
+    "gfx10": {
+      "configurations": {
+        "match": 2688,
+        "numerical_difference": 1169,
+        "representation_difference": 938,
+        "no_equivalent": 2665,
+        "reference_rejected": 3210,
+        "model_assumption": 0
+      },
+      "mips": {
+        "match": 14684,
+        "numerical_difference": 4103,
+        "representation_difference": 3867,
+        "no_equivalent": 9363,
+        "reference_rejected": 4590,
+        "model_assumption": 0
+      },
+      "fields": {
+        "pitch": {
+          "match": 16114,
+          "numerical_difference": 2673,
+          "representation_difference": 3867,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "slice": {
+          "match": 22213,
+          "numerical_difference": 441,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "mip_in_tail": {
+          "match": 22654,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "mip_offset_b": {
+          "match": 22654,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "l2_ms": {
+          "match": 19172,
+          "numerical_difference": 3482,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "l2_blk_w": {
+          "match": 18554,
+          "numerical_difference": 4100,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "l2_blk_h": {
+          "match": 22036,
+          "numerical_difference": 618,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "l2_blk_d": {
+          "match": 22654,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        },
+        "l2_blk_w_slice": {
+          "match": 22036,
+          "numerical_difference": 618,
+          "representation_difference": 0,
+          "no_equivalent": 9363,
+          "reference_rejected": 4590,
+          "model_assumption": 0
+        }
+      },
+      "stages": {
+        "shared": {
+          "block_dimensions": {
+            "match": 3627,
+            "difference": 1168,
+            "notApplicable": 0
+          },
+          "tail_capacity": {
+            "match": 3705,
+            "difference": 0,
+            "notApplicable": 1090
+          },
+          "first_tail": {
+            "match": 4795,
+            "difference": 0,
+            "notApplicable": 0
+          },
+          "slice_sum": {
+            "match": 4356,
+            "difference": 439,
+            "notApplicable": 0
+          },
+          "mip_dimensions": {
+            "match": 22654,
+            "difference": 0,
+            "notApplicable": 0
+          },
+          "slice_contribution": {
+            "match": 22215,
+            "difference": 439,
+            "notApplicable": 0
+          },
+          "pitch": {
+            "match": 16114,
+            "difference": 6540,
+            "notApplicable": 0
+          },
+          "macro_offset": {
+            "match": 22654,
+            "difference": 0,
+            "notApplicable": 0
+          }
+        },
+        "isolated": {
+          "first_tail": {
+            "match": 4245,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "slice_sum": {
+            "match": 4244,
+            "difference": 1,
+            "notApplicable": 550
+          },
+          "slice_contribution": {
+            "match": 19171,
+            "difference": 1,
+            "notApplicable": 550
+          },
+          "macro_offset": {
+            "match": 19172,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "pitch_outside_tail": {
+            "match": 15087,
+            "difference": 0,
+            "notApplicable": 4635
+          }
+        }
+      },
+      "eligibleConfigurations": 4795
+    },
+    "gfx12": {
+      "configurations": {
+        "match": 8919,
+        "numerical_difference": 127,
+        "representation_difference": 1464,
+        "no_equivalent": 0,
+        "reference_rejected": 160,
+        "model_assumption": 0
+      },
+      "mips": {
+        "match": 27198,
+        "numerical_difference": 830,
+        "representation_difference": 6579,
+        "no_equivalent": 0,
+        "reference_rejected": 2000,
+        "model_assumption": 0
+      },
+      "fields": {
+        "pitch": {
+          "match": 28028,
+          "numerical_difference": 0,
+          "representation_difference": 6579,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "slice": {
+          "match": 33777,
+          "numerical_difference": 830,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "mip_in_tail": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "mip_offset_b": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "l2_ms": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "l2_blk_w": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "l2_blk_h": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "l2_blk_d": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        },
+        "l2_blk_w_slice": {
+          "match": 34607,
+          "numerical_difference": 0,
+          "representation_difference": 0,
+          "no_equivalent": 0,
+          "reference_rejected": 2000,
+          "model_assumption": 0
+        }
+      },
+      "stages": {
+        "shared": {
+          "block_dimensions": {
+            "match": 9960,
+            "difference": 550,
+            "notApplicable": 0
+          },
+          "tail_capacity": {
+            "match": 10510,
+            "difference": 0,
+            "notApplicable": 0
+          },
+          "first_tail": {
+            "match": 10510,
+            "difference": 0,
+            "notApplicable": 0
+          },
+          "slice_sum": {
+            "match": 10383,
+            "difference": 127,
+            "notApplicable": 0
+          },
+          "mip_dimensions": {
+            "match": 34607,
+            "difference": 0,
+            "notApplicable": 0
+          },
+          "slice_contribution": {
+            "match": 34480,
+            "difference": 127,
+            "notApplicable": 0
+          },
+          "pitch": {
+            "match": 28028,
+            "difference": 6579,
+            "notApplicable": 0
+          },
+          "macro_offset": {
+            "match": 34607,
+            "difference": 0,
+            "notApplicable": 0
+          }
+        },
+        "isolated": {
+          "first_tail": {
+            "match": 9960,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "slice_sum": {
+            "match": 9960,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "slice_contribution": {
+            "match": 31125,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "macro_offset": {
+            "match": 31125,
+            "difference": 0,
+            "notApplicable": 550
+          },
+          "pitch_outside_tail": {
+            "match": 24079,
+            "difference": 0,
+            "notApplicable": 7596
+          }
+        }
+      },
+      "eligibleConfigurations": 10510
+    }
+  },
+  "trustedRegression": [
+    {
+      "id": "case0",
+      "file": "case/case0_mip4_xyz_5_6_3.md",
+      "mip": 4,
+      "output": [
+        64,
+        "90112",
+        1,
+        "0",
+        18,
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "id": "case1",
+      "file": "case/case1_mip0_xyz_69_134_195.md",
+      "mip": 0,
+      "output": [
+        256,
+        "90112",
+        17,
+        "6144",
+        18,
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "id": "case2",
+      "file": "case/case2_mip6_xyz_1_1_17.md",
+      "mip": 6,
+      "output": [
+        32,
+        "22528",
+        3,
+        "0",
+        16,
+        5,
+        5,
+        4,
+        5
+      ]
+    }
+  ],
+  "invariance": {
+    "probes": 500,
+    "failures": [
+      {
+        "id": "r2",
+        "field": "depth",
+        "model": "gfx12"
+      }
+    ]
+  },
+  "representatives": [
+    {
+      "key": "gfx10:numerical_difference:l2_ms",
+      "original": {
+        "id": "r0",
+        "mip": 0,
+        "input": {
+          "x": 146,
+          "y": 8,
+          "z": 4,
+          "s": 0,
+          "map0_w_minus_1": 255,
+          "map0_h_minus_1": 30,
+          "map0_d_minus_1": 35,
+          "sw_mode": "SW_LINEAR",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 1,
+          "numSlices": 36
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_LINEAR"
+        },
+        "document": {
+          "raw": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "converted": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "7936"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 256,
+            "sliceSize": "7936",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              256,
+              1,
+              1
+            ],
+            "pitchForSlice": 256
+          },
+          "derived": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 8,
+            "l2_blk_w": 8,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "tailCapacity": null,
+          "bytesPerMip": [
+            "7936"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "numerical_difference",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 3,
+        "original": {
+          "id": "r0",
+          "mip": 0
+        },
+        "field": "l2_ms",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r0",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 0,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_LINEAR",
+            "log2_num_samples": 0,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 1,
+            "numFragments": 1,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_LINEAR"
+          },
+          "document": {
+            "raw": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 1,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 256,
+              "sliceSize": "256",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                256,
+                1,
+                1
+              ],
+              "pitchForSlice": 256
+            },
+            "derived": {
+              "pitch": 256,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 8,
+              "l2_blk_w": 8,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "tailCapacity": null,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "match",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "numerical_difference",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "match",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "match"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:numerical_difference:l2_blk_w",
+      "original": {
+        "id": "r0",
+        "mip": 0,
+        "input": {
+          "x": 146,
+          "y": 8,
+          "z": 4,
+          "s": 0,
+          "map0_w_minus_1": 255,
+          "map0_h_minus_1": 30,
+          "map0_d_minus_1": 35,
+          "sw_mode": "SW_LINEAR",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 1,
+          "numSlices": 36
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_LINEAR"
+        },
+        "document": {
+          "raw": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "converted": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "7936"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 256,
+            "sliceSize": "7936",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              256,
+              1,
+              1
+            ],
+            "pitchForSlice": 256
+          },
+          "derived": {
+            "pitch": 256,
+            "slice": "7936",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 8,
+            "l2_blk_w": 8,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "tailCapacity": null,
+          "bytesPerMip": [
+            "7936"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "numerical_difference",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 3,
+        "original": {
+          "id": "r0",
+          "mip": 0
+        },
+        "field": "l2_blk_w",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r0",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 0,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_LINEAR",
+            "log2_num_samples": 0,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 1,
+            "numFragments": 1,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_LINEAR"
+          },
+          "document": {
+            "raw": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 1,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 256,
+              "sliceSize": "256",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                256,
+                1,
+                1
+              ],
+              "pitchForSlice": 256
+            },
+            "derived": {
+              "pitch": 256,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 8,
+              "l2_blk_w": 8,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "tailCapacity": null,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "match",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "numerical_difference",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "match",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "match"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:numerical_difference:pitch",
+      "original": {
+        "id": "r1",
+        "mip": 2,
+        "input": {
+          "x": 1170,
+          "y": 469,
+          "z": 0,
+          "s": 0,
+          "map0_w_minus_1": 1279,
+          "map0_h_minus_1": 1024,
+          "map0_d_minus_1": 0,
+          "sw_mode": "SW_LINEAR",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 1,
+          "mip_level": 2,
+          "maxmip": 9
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 16,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 10,
+          "numSlices": 1
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_LINEAR"
+        },
+        "document": {
+          "raw": {
+            "pitch": 320,
+            "slice": "1788928",
+            "mip_in_tail": 17,
+            "mip_offset_b": "390",
+            "l2_ms": 7,
+            "l2_blk_w": 6,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "converted": {
+            "pitch": 320,
+            "slice": "3577856",
+            "mip_in_tail": 17,
+            "mip_offset_b": "99840",
+            "l2_ms": 7,
+            "l2_blk_w": 6,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "2624000",
+            "656640",
+            "197376",
+            "66048",
+            "16640",
+            "8448",
+            "4352",
+            "2304",
+            "1280",
+            "768"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 384,
+            "sliceSize": "3577856",
+            "macroBlockOffset": "99840",
+            "firstMipIdInTail": 10,
+            "blockDimensions": [
+              128,
+              1,
+              1
+            ],
+            "pitchForSlice": 384
+          },
+          "derived": {
+            "pitch": 384,
+            "slice": "3577856",
+            "mip_in_tail": 17,
+            "mip_offset_b": "99840",
+            "l2_ms": 8,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "tailCapacity": null,
+          "bytesPerMip": [
+            "2624000",
+            "656640",
+            "197376",
+            "66048",
+            "16640",
+            "8448",
+            "4352",
+            "2304",
+            "1280",
+            "768"
+          ]
+        },
+        "fields": {
+          "pitch": "numerical_difference",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "numerical_difference",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 6,
+        "original": {
+          "id": "r1",
+          "mip": 2
+        },
+        "field": "pitch",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r1",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 0,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_LINEAR",
+            "log2_num_samples": 0,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 1,
+            "numFragments": 1,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_LINEAR"
+          },
+          "document": {
+            "raw": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 1,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 256,
+              "sliceSize": "256",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                256,
+                1,
+                1
+              ],
+              "pitchForSlice": 256
+            },
+            "derived": {
+              "pitch": 256,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 8,
+              "l2_blk_w": 8,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "tailCapacity": null,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "match",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "numerical_difference",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "match",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "match"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx12:numerical_difference:slice",
+      "original": {
+        "id": "r2",
+        "mip": 0,
+        "input": {
+          "x": 10530,
+          "y": 1044,
+          "z": 0,
+          "s": 0,
+          "map0_w_minus_1": 12609,
+          "map0_h_minus_1": 3170,
+          "map0_d_minus_1": 0,
+          "sw_mode": "SW_LINEAR",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 2,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 32,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 1,
+          "numSlices": 1
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR3_LINEAR"
+        },
+        "document": {
+          "raw": {
+            "pitch": 12640,
+            "slice": "40182912",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 5,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "converted": {
+            "pitch": 12640,
+            "slice": "160731648",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 5,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "160731648"
+          ]
+        },
+        "reference": {
+          "version": "gfx12",
+          "raw": {
+            "pitch": 12640,
+            "sliceSize": "160325888",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              64,
+              1,
+              1
+            ],
+            "pitchForSlice": 12640
+          },
+          "derived": {
+            "pitch": 12640,
+            "slice": "160325888",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 7,
+            "l2_blk_w": 5,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "160325888"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "numerical_difference",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "match",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 10,
+        "original": {
+          "id": "r2",
+          "mip": 0
+        },
+        "field": "slice",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r2",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 1,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_LINEAR",
+            "log2_num_samples": 0,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 1,
+            "numFragments": 1,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR3_LINEAR"
+          },
+          "document": {
+            "raw": {
+              "pitch": 128,
+              "slice": "512",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 128,
+              "slice": "512",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 1,
+            "bytesPerMip": [
+              "512"
+            ]
+          },
+          "reference": {
+            "version": "gfx12",
+            "raw": {
+              "pitch": 128,
+              "sliceSize": "256",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                256,
+                1,
+                1
+              ],
+              "pitchForSlice": 128
+            },
+            "derived": {
+              "pitch": 128,
+              "slice": "256",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 7,
+              "l2_blk_w": 7,
+              "l2_blk_h": 0,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "tailCapacity": 1,
+            "bytesPerMip": [
+              "256"
+            ]
+          },
+          "fields": {
+            "pitch": "match",
+            "slice": "numerical_difference",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "match",
+            "l2_blk_w": "match",
+            "l2_blk_h": "match",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "match"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:reference_rejected:reference_rejected",
+      "original": {
+        "id": "r6",
+        "mip": 0,
+        "input": {
+          "x": 129,
+          "y": 661,
+          "z": 0,
+          "s": 0,
+          "map0_w_minus_1": 255,
+          "map0_h_minus_1": 1130,
+          "map0_d_minus_1": 0,
+          "sw_mode": "SW_256B_2D",
+          "log2_num_samples": 1,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 2,
+          "numFragments": 2,
+          "numMipLevels": 1,
+          "numSlices": 1
+        },
+        "eligibility": {
+          "status": "reference_rejected",
+          "reason": "256B/4KB display swizzle does not support MSAA"
+        },
+        "document": {
+          "raw": {
+            "pitch": 256,
+            "slice": "290816",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 8,
+            "l2_blk_w": 4,
+            "l2_blk_h": 3,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 4
+          },
+          "converted": {
+            "pitch": 256,
+            "slice": "581632",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 8,
+            "l2_blk_w": 4,
+            "l2_blk_h": 3,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 4
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "581632"
+          ]
+        },
+        "classification": "reference_rejected"
+      },
+      "reduced": null
+    },
+    {
+      "key": "gfx10:representation_difference:pitch",
+      "original": {
+        "id": "r29",
+        "mip": 6,
+        "input": {
+          "x": 117,
+          "y": 55,
+          "z": 30,
+          "s": 0,
+          "map0_w_minus_1": 1285,
+          "map0_h_minus_1": 255,
+          "map0_d_minus_1": 224,
+          "sw_mode": "SW_4KB_2D",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 1,
+          "mip_level": 6,
+          "maxmip": 10
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 16,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 11,
+          "numSlices": 225
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_4KB_D"
+        },
+        "document": {
+          "raw": {
+            "pitch": 64,
+            "slice": "473088",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "converted": {
+            "pitch": 64,
+            "slice": "946176",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "firstTailRaw": 6,
+          "firstTailInRequestedChain": 6,
+          "tailCapacity": 8,
+          "bytesPerMip": [
+            "688128",
+            "180224",
+            "49152",
+            "12288",
+            "8192",
+            "4096",
+            "4096",
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 32,
+            "sliceSize": "946176",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 6,
+            "blockDimensions": [
+              64,
+              32,
+              1
+            ],
+            "pitchForSlice": 32
+          },
+          "derived": {
+            "pitch": 32,
+            "slice": "946176",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "tailCapacity": 8,
+          "bytesPerMip": [
+            "688128",
+            "180224",
+            "49152",
+            "12288",
+            "8192",
+            "4096",
+            "4096",
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        "fields": {
+          "pitch": "representation_difference",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "match",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "representation_difference"
+      },
+      "reduced": null
+    },
+    {
+      "key": "gfx12:representation_difference:pitch",
+      "original": {
+        "id": "r29",
+        "mip": 6,
+        "input": {
+          "x": 117,
+          "y": 55,
+          "z": 30,
+          "s": 0,
+          "map0_w_minus_1": 1285,
+          "map0_h_minus_1": 255,
+          "map0_d_minus_1": 224,
+          "sw_mode": "SW_4KB_2D",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 1,
+          "mip_level": 6,
+          "maxmip": 10
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 16,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 11,
+          "numSlices": 225
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR3_4KB_2D"
+        },
+        "document": {
+          "raw": {
+            "pitch": 64,
+            "slice": "473088",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "converted": {
+            "pitch": 64,
+            "slice": "946176",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "firstTailRaw": 6,
+          "firstTailInRequestedChain": 6,
+          "tailCapacity": 8,
+          "bytesPerMip": [
+            "688128",
+            "180224",
+            "49152",
+            "12288",
+            "8192",
+            "4096",
+            "4096",
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        "reference": {
+          "version": "gfx12",
+          "raw": {
+            "pitch": 32,
+            "sliceSize": "946176",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 6,
+            "blockDimensions": [
+              64,
+              32,
+              1
+            ],
+            "pitchForSlice": null
+          },
+          "derived": {
+            "pitch": 32,
+            "slice": "946176",
+            "mip_in_tail": 0,
+            "mip_offset_b": "0",
+            "l2_ms": 12,
+            "l2_blk_w": 6,
+            "l2_blk_h": 5,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "tailCapacity": 8,
+          "bytesPerMip": [
+            "688128",
+            "180224",
+            "49152",
+            "12288",
+            "8192",
+            "4096",
+            "4096",
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        "fields": {
+          "pitch": "representation_difference",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "match",
+          "l2_blk_h": "match",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "match"
+        },
+        "classification": "representation_difference"
+      },
+      "reduced": null
+    },
+    {
+      "key": "gfx10:numerical_difference:l2_blk_h",
+      "original": {
+        "id": "r46",
+        "mip": 0,
+        "input": {
+          "x": 4989,
+          "y": 400,
+          "z": 17,
+          "s": 0,
+          "map0_w_minus_1": 9471,
+          "map0_h_minus_1": 1022,
+          "map0_d_minus_1": 64,
+          "sw_mode": "SW_64KB_2D",
+          "log2_num_samples": 1,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 2,
+          "numFragments": 2,
+          "numMipLevels": 1,
+          "numSlices": 65
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_64KB_R_X"
+        },
+        "document": {
+          "raw": {
+            "pitch": 9472,
+            "slice": "9699328",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 8,
+            "l2_blk_h": 7,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "converted": {
+            "pitch": 9472,
+            "slice": "19398656",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 8,
+            "l2_blk_h": 7,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "19398656"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 9472,
+            "sliceSize": "19398656",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              128,
+              256,
+              1
+            ],
+            "pitchForSlice": 9472
+          },
+          "derived": {
+            "pitch": 9472,
+            "slice": "19398656",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 7,
+            "l2_blk_h": 8,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "19398656"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "numerical_difference",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "numerical_difference"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 12,
+        "original": {
+          "id": "r46",
+          "mip": 0
+        },
+        "field": "l2_blk_h",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r46",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 0,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_64KB_2D",
+            "log2_num_samples": 1,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 2,
+            "numFragments": 2,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_64KB_R_X"
+          },
+          "document": {
+            "raw": {
+              "pitch": 256,
+              "slice": "32768",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 8,
+              "l2_blk_h": 7,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 256,
+              "slice": "65536",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 8,
+              "l2_blk_h": 7,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "65536"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 128,
+              "sliceSize": "65536",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                128,
+                256,
+                1
+              ],
+              "pitchForSlice": 128
+            },
+            "derived": {
+              "pitch": 128,
+              "slice": "65536",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 7,
+              "l2_blk_h": 8,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 7
+            },
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "65536"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "match",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "match",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "numerical_difference",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "numerical_difference"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:numerical_difference:l2_blk_w_slice",
+      "original": {
+        "id": "r46",
+        "mip": 0,
+        "input": {
+          "x": 4989,
+          "y": 400,
+          "z": 17,
+          "s": 0,
+          "map0_w_minus_1": 9471,
+          "map0_h_minus_1": 1022,
+          "map0_d_minus_1": 64,
+          "sw_mode": "SW_64KB_2D",
+          "log2_num_samples": 1,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 2,
+          "numFragments": 2,
+          "numMipLevels": 1,
+          "numSlices": 65
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_64KB_R_X"
+        },
+        "document": {
+          "raw": {
+            "pitch": 9472,
+            "slice": "9699328",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 8,
+            "l2_blk_h": 7,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "converted": {
+            "pitch": 9472,
+            "slice": "19398656",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 8,
+            "l2_blk_h": 7,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "19398656"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 9472,
+            "sliceSize": "19398656",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              128,
+              256,
+              1
+            ],
+            "pitchForSlice": 9472
+          },
+          "derived": {
+            "pitch": 9472,
+            "slice": "19398656",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 7,
+            "l2_blk_h": 8,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "19398656"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "match",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "numerical_difference",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "numerical_difference"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 12,
+        "original": {
+          "id": "r46",
+          "mip": 0
+        },
+        "field": "l2_blk_w_slice",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r46",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 0,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_64KB_2D",
+            "log2_num_samples": 1,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 2,
+            "numFragments": 2,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_64KB_R_X"
+          },
+          "document": {
+            "raw": {
+              "pitch": 256,
+              "slice": "32768",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 8,
+              "l2_blk_h": 7,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "converted": {
+              "pitch": 256,
+              "slice": "65536",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 8,
+              "l2_blk_h": 7,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 8
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "65536"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 128,
+              "sliceSize": "65536",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                128,
+                256,
+                1
+              ],
+              "pitchForSlice": 128
+            },
+            "derived": {
+              "pitch": 128,
+              "slice": "65536",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 7,
+              "l2_blk_h": 8,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 7
+            },
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "65536"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "match",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "match",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "numerical_difference",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "numerical_difference"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:numerical_difference:slice",
+      "original": {
+        "id": "r48",
+        "mip": 0,
+        "input": {
+          "x": 1916,
+          "y": 3635,
+          "z": 0,
+          "s": 6,
+          "map0_w_minus_1": 2046,
+          "map0_h_minus_1": 4480,
+          "map0_d_minus_1": 0,
+          "sw_mode": "SW_64KB_2D",
+          "log2_num_samples": 3,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 0
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 8,
+          "numFragments": 8,
+          "numMipLevels": 1,
+          "numSlices": 1
+        },
+        "eligibility": {
+          "status": "comparable",
+          "mapping": "ADDR_SW_64KB_R_X"
+        },
+        "document": {
+          "raw": {
+            "pitch": 2048,
+            "slice": "9306112",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 7,
+            "l2_blk_h": 6,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "converted": {
+            "pitch": 2048,
+            "slice": "74448896",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 7,
+            "l2_blk_h": 6,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 7
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "74448896"
+          ]
+        },
+        "reference": {
+          "version": "gfx10",
+          "raw": {
+            "pitch": 2048,
+            "sliceSize": "75497472",
+            "macroBlockOffset": "0",
+            "firstMipIdInTail": 1,
+            "blockDimensions": [
+              64,
+              128,
+              1
+            ],
+            "pitchForSlice": 2048
+          },
+          "derived": {
+            "pitch": 2048,
+            "slice": "75497472",
+            "mip_in_tail": 17,
+            "mip_offset_b": "0",
+            "l2_ms": 16,
+            "l2_blk_w": 6,
+            "l2_blk_h": 7,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 6
+          },
+          "tailCapacity": 12,
+          "bytesPerMip": [
+            "75497472"
+          ]
+        },
+        "fields": {
+          "pitch": "match",
+          "slice": "numerical_difference",
+          "mip_in_tail": "match",
+          "mip_offset_b": "match",
+          "l2_ms": "match",
+          "l2_blk_w": "numerical_difference",
+          "l2_blk_h": "numerical_difference",
+          "l2_blk_d": "match",
+          "l2_blk_w_slice": "numerical_difference"
+        },
+        "classification": "numerical_difference"
+      },
+      "reduced": {
+        "method": "bounded greedy; not global minimum",
+        "trials": 42,
+        "original": {
+          "id": "r48",
+          "mip": 0
+        },
+        "field": "slice",
+        "classification": "numerical_difference",
+        "result": {
+          "id": "r48",
+          "mip": 0,
+          "input": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "s": 0,
+            "map0_w_minus_1": 0,
+            "map0_h_minus_1": 125,
+            "map0_d_minus_1": 0,
+            "sw_mode": "SW_64KB_2D",
+            "log2_num_samples": 3,
+            "log2_element_bytes": 0,
+            "mip_level": 0,
+            "maxmip": 0
+          },
+          "adapter": {
+            "resourceType": "2D",
+            "bpp": 8,
+            "numSamples": 8,
+            "numFragments": 8,
+            "numMipLevels": 1,
+            "numSlices": 1
+          },
+          "eligibility": {
+            "status": "comparable",
+            "mapping": "ADDR_SW_64KB_R_X"
+          },
+          "document": {
+            "raw": {
+              "pitch": 128,
+              "slice": "16384",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 7,
+              "l2_blk_h": 6,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 7
+            },
+            "converted": {
+              "pitch": 128,
+              "slice": "131072",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 7,
+              "l2_blk_h": 6,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 7
+            },
+            "firstTailRaw": 17,
+            "firstTailInRequestedChain": 17,
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "131072"
+            ]
+          },
+          "reference": {
+            "version": "gfx10",
+            "raw": {
+              "pitch": 64,
+              "sliceSize": "65536",
+              "macroBlockOffset": "0",
+              "firstMipIdInTail": 1,
+              "blockDimensions": [
+                64,
+                128,
+                1
+              ],
+              "pitchForSlice": 64
+            },
+            "derived": {
+              "pitch": 64,
+              "slice": "65536",
+              "mip_in_tail": 17,
+              "mip_offset_b": "0",
+              "l2_ms": 16,
+              "l2_blk_w": 6,
+              "l2_blk_h": 7,
+              "l2_blk_d": 0,
+              "l2_blk_w_slice": 6
+            },
+            "tailCapacity": 12,
+            "bytesPerMip": [
+              "65536"
+            ]
+          },
+          "fields": {
+            "pitch": "numerical_difference",
+            "slice": "numerical_difference",
+            "mip_in_tail": "match",
+            "mip_offset_b": "match",
+            "l2_ms": "match",
+            "l2_blk_w": "numerical_difference",
+            "l2_blk_h": "numerical_difference",
+            "l2_blk_d": "match",
+            "l2_blk_w_slice": "numerical_difference"
+          },
+          "classification": "numerical_difference"
+        }
+      }
+    },
+    {
+      "key": "gfx10:no_equivalent:no_equivalent",
+      "original": {
+        "id": "r65",
+        "mip": 0,
+        "input": {
+          "x": 4337,
+          "y": 9033,
+          "z": 137,
+          "s": 0,
+          "map0_w_minus_1": 8190,
+          "map0_h_minus_1": 10677,
+          "map0_d_minus_1": 219,
+          "sw_mode": "SW_256KB_2D",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 10
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 11,
+          "numSlices": 220
+        },
+        "eligibility": {
+          "status": "no_equivalent",
+          "reason": "Fixed 256KB is not GFX10 VAR"
+        },
+        "document": {
+          "raw": {
+            "pitch": 8192,
+            "slice": "119799808",
+            "mip_in_tail": 17,
+            "mip_offset_b": "123904",
+            "l2_ms": 18,
+            "l2_blk_w": 9,
+            "l2_blk_h": 9,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 9
+          },
+          "converted": {
+            "pitch": 8192,
+            "slice": "119799808",
+            "mip_in_tail": 17,
+            "mip_offset_b": "31719424",
+            "l2_ms": 18,
+            "l2_blk_w": 9,
+            "l2_blk_h": 9,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 9
+          },
+          "firstTailRaw": 5,
+          "firstTailInRequestedChain": 5,
+          "tailCapacity": 14,
+          "bytesPerMip": [
+            "88080384",
+            "23068672",
+            "6291456",
+            "1572864",
+            "524288",
+            "262144",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        "classification": "no_equivalent"
+      },
+      "reduced": null
+    },
+    {
+      "key": "gfx12:reference_rejected:reference_rejected",
+      "original": {
+        "id": "d3",
+        "mip": 0,
+        "input": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "s": 0,
+          "map0_w_minus_1": 65535,
+          "map0_h_minus_1": 65535,
+          "map0_d_minus_1": 0,
+          "sw_mode": "SW_LINEAR",
+          "log2_num_samples": 0,
+          "log2_element_bytes": 0,
+          "mip_level": 0,
+          "maxmip": 16
+        },
+        "adapter": {
+          "resourceType": "2D",
+          "bpp": 8,
+          "numSamples": 1,
+          "numFragments": 1,
+          "numMipLevels": 17,
+          "numSlices": 1
+        },
+        "eligibility": {
+          "status": "reference_rejected",
+          "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+        },
+        "document": {
+          "raw": {
+            "pitch": 65536,
+            "slice": "5726666496",
+            "mip_in_tail": 17,
+            "mip_offset_b": "5592575",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "converted": {
+            "pitch": 65536,
+            "slice": "5726666496",
+            "mip_in_tail": 17,
+            "mip_offset_b": "1431699200",
+            "l2_ms": 7,
+            "l2_blk_w": 7,
+            "l2_blk_h": 0,
+            "l2_blk_d": 0,
+            "l2_blk_w_slice": 8
+          },
+          "firstTailRaw": 17,
+          "firstTailInRequestedChain": 17,
+          "tailCapacity": 1,
+          "bytesPerMip": [
+            "4294967296",
+            "1073741824",
+            "268435456",
+            "67108864",
+            "16777216",
+            "4194304",
+            "1048576",
+            "262144",
+            "65536",
+            "32768",
+            "16384",
+            "8192",
+            "4096",
+            "2048",
+            "1024",
+            "512",
+            "256"
+          ]
+        },
+        "classification": "reference_rejected"
+      },
+      "reduced": null
+    }
+  ],
+  "hashes": {
+    "inputSummarySha256": "3b480db81b8a2bda35b49f0b213973a75badc61003083ff2a0d892da54fb4419",
+    "outputSummarySha256": "9be204580dbdde236ec7cda08a77089c1c3a8773f2423bbab889a07d307d89e5"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "task_e_6ab3d09d7da8832889f0370c4333c5e4",
+  "title": "Conduct mipmap_param_calc_core_gc comparison",
+  "url": "https://chatgpt.com/codex/tasks/task_e_6ab3d09d7da8832889f0370c4333c5e4",
+  "status": "ready",
+  "updated_at": "2026-09-23T14:11:31.717945Z",
+  "environment_label": "niyingsong123/amd-gfx10-addrlib",
+  "attempt_total": 1,
+  "summary": {
+    "files_changed": 9,
+    "lines_added": 2739,
+    "lines_removed": 9
+  },
+  "observed_on": "2026-09-24",
+  "source": "codex cloud list --json and codex cloud status"
+}

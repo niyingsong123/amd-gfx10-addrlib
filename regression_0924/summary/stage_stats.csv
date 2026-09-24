@@ -1,0 +1,27 @@
+reference,group,stage,comparison_unit,match,difference,notApplicable,notApplicable_unit_note
+gfx10,shared,block_dimensions,配置,3627,1168,0,不适用原计数
+gfx10,shared,tail_capacity,配置,3705,0,1090,不适用原计数
+gfx10,shared,first_tail,配置,4795,0,0,不适用原计数
+gfx10,shared,slice_sum,配置,4356,439,0,不适用原计数
+gfx10,shared,mip_dimensions,mip,22654,0,0,不适用原计数
+gfx10,shared,slice_contribution,mip,22215,439,0,不适用原计数
+gfx10,shared,pitch,mip,16114,6540,0,不适用原计数
+gfx10,shared,macro_offset,mip,22654,0,0,不适用原计数
+gfx10,isolated,first_tail,配置,4245,0,550,不适用原计数
+gfx10,isolated,slice_sum,配置,4244,1,550,不适用原计数
+gfx10,isolated,slice_contribution,mip,19171,1,550,Linear 按配置
+gfx10,isolated,macro_offset,mip,19172,0,550,Linear 按配置
+gfx10,isolated,pitch_outside_tail,mip,15087,0,4635,Linear 按配置；tail 按 mip
+gfx12,shared,block_dimensions,配置,9960,550,0,不适用原计数
+gfx12,shared,tail_capacity,配置,10510,0,0,不适用原计数
+gfx12,shared,first_tail,配置,10510,0,0,不适用原计数
+gfx12,shared,slice_sum,配置,10383,127,0,不适用原计数
+gfx12,shared,mip_dimensions,mip,34607,0,0,不适用原计数
+gfx12,shared,slice_contribution,mip,34480,127,0,不适用原计数
+gfx12,shared,pitch,mip,28028,6579,0,不适用原计数
+gfx12,shared,macro_offset,mip,34607,0,0,不适用原计数
+gfx12,isolated,first_tail,配置,9960,0,550,不适用原计数
+gfx12,isolated,slice_sum,配置,9960,0,550,不适用原计数
+gfx12,isolated,slice_contribution,mip,31125,0,550,Linear 按配置
+gfx12,isolated,macro_offset,mip,31125,0,550,Linear 按配置
+gfx12,isolated,pitch_outside_tail,mip,24079,0,7596,Linear 按配置；tail 按 mip
