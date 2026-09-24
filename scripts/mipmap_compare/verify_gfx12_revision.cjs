@@ -12,7 +12,7 @@ const gen = require('./generate.cjs');
 const json = (v, pretty = false) => JSON.stringify(v, (_, x) => typeof x === 'bigint' ? x.toString() : x, pretty ? 2 : undefined);
 const sha = file => crypto.createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex');
 const EXPECTED = {
-  'ADDRLIB.md': 'a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c',
+  'ADDRLIB_GFX12.md': 'a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c',
   'regression_0924/cloud/scripts/mipmap_compare/document.cjs': 'f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78',
   'regression_0924/cloud/scripts/mipmap_compare/gfx12.cjs': 'fcbb4895e0f957f2468614a3d76e1fda35fd540698e701dcd969a170a898ff23',
   'scripts/mipmap_compare/upstream/src/gfx12/gfx12addrlib.cpp': '9210bb10078c48a3757e1f1a2f9483d5a355b04d83fbca19a65485938b1da8db',
@@ -40,8 +40,8 @@ const fields = ['pitch', 'slice_bytes', 'mip_in_tail', 'macro_offset_bytes', 'l2
 const rawFields = ['pitch', 'slice', 'mip_in_tail', 'mip_offset_b', 'l2_ms', 'l2_blk_w', 'l2_blk_h', 'l2_blk_d', 'l2_blk_w_slice'];
 
 // Only these marked changes differ from the immutable document transcription.
-// GFX12-01: ADDRLIB.md, slice_b_drop; PAL GetMipOffset + CanTrimLinearPadding.
-// GFX12-02: ADDRLIB.md, micro exponent table; PAL GetMipOrigin + HwlGetMicroBlockSize.
+// GFX12-01: ADDRLIB_GFX12.md, slice_b_drop; PAL GetMipOffset + CanTrimLinearPadding.
+// GFX12-02: ADDRLIB_GFX12.md, micro exponent table; PAL GetMipOrigin + HwlGetMicroBlockSize.
 function revised(i, base = doc.surface(i)) {
   const out = {...base, pitch: base.pitch.slice()};
   const quantum = BigInt(base.b.bws + base.b.logs[1]);
@@ -97,7 +97,7 @@ if (opts.replay !== null) {
   const i = gen.random(opts.seed, opts.replay);
   const eligibility = legal(i);
   if (opts.mip !== null && opts.mip > i.maxmip) throw Error('Requested mip exceeds maxmip');
-  const output = {seed: opts.seed, sourceDocumentSha256: EXPECTED['ADDRLIB.md'], eligibility, configuration: i};
+  const output = {seed: opts.seed, sourceDocumentSha256: EXPECTED['ADDRLIB_GFX12.md'], eligibility, configuration: i};
   if (eligibility.status === 'comparable') {
     const s = revised(i), r = gfx12.surface(i);
     const levels = opts.mip === null ? Array.from({length: i.maxmip + 1}, (_, m) => m) : [opts.mip];
@@ -123,7 +123,7 @@ function stats() {
 const output = {
   schema_version: 1, kind: 'gfx12-revised-functional-comparison', seed: opts.seed, seedHex: '0x' + opts.seed.toString(16),
   requestedRandomConfigurations: opts.count, palCommit: 'c5e800072a32f68b6ccc4422936d96167c6e0728',
-  branch: 'ADDR_GFX12_SHARED_BUILD=0', sourceDocumentSha256: EXPECTED['ADDRLIB.md'],
+  branch: 'ADDR_GFX12_SHARED_BUILD=0', sourceDocumentSha256: EXPECTED['ADDRLIB_GFX12.md'],
   sourceHashes: {...EXPECTED, 'scripts/mipmap_compare/generate.cjs': sha('scripts/mipmap_compare/generate.cjs'),
     'scripts/mipmap_compare/verify_gfx12_revision.cjs': sha('scripts/mipmap_compare/verify_gfx12_revision.cjs')},
   method: 'One Node.js process, exact integer functional evaluation. Revised document formulas vs independent archived PAL GFX12 C++ transcription. No C++ compilation, RTL simulation or synthesis.',

@@ -1,4 +1,4 @@
-# ADDRLIB.md 的 GFX12 算法修订与百万组比较
+# ADDRLIB_GFX12.md 的算法修订与百万组比较
 
 ## 1. 结论与版本
 
@@ -10,11 +10,11 @@
 | --- | --- |
 | 原文 | [字节快照](baselines/ADDRLIB_pre_gfx12_20260924.md)，修改前提交 1b6fa4a |
 | 原文 SHA256 | 537CFA6D9FAFBAF3601B219B686D94CAA4B7C69FDFE89005DFF36A0B4CB6D3BB |
-| 当前 ADDRLIB.md SHA256 | A6864BD26943078ADD333142BB40B87A9600B106572928F8B94621522CCACD8C |
+| ADDRLIB_GFX12.md SHA256 | A6864BD26943078ADD333142BB40B87A9600B106572928F8B94621522CCACD8C |
 | PAL 提交 | c5e800072a32f68b6ccc4422936d96167c6e0728 |
 | GFX12 分支 | ADDR_GFX12_SHARED_BUILD=0 |
 
-主文档保持 UTF-8 无 BOM、LF；未改写无关研究正文。[可信清单](TRUSTED_BASELINE.json)仍保存原哈希和可信声明，没有被新测试结果自动替换。
+[原版 ADDRLIB.md](../ADDRLIB.md) 与 [修订版 ADDRLIB_GFX12.md](../ADDRLIB_GFX12.md) 分开保存，均保持 UTF-8 无 BOM、LF；未改写无关研究正文。[可信清单](TRUSTED_BASELINE.json)仍保存原哈希和可信声明，没有被新测试结果自动替换。
 
 ## 2. GFX12-01：Linear mip0 的 slice 裁剪
 
@@ -127,6 +127,8 @@ pitch_b = (pitch_b_raw == 0) ? 1 : pitch_b_raw
 
 ## 6. 百万组结果与覆盖
 
+既有百万组与定向 JSON 是提交 52e8d11 的运行记录，原样保留其中当时的源路径和脚本哈希；其记录的修订文档 SHA256 对应现在的 ADDRLIB_GFX12.md，文件字节未变。当前入口只调整了文档路径，未修改计算公式。
+
 入口：[verify_gfx12_revision.cjs](../scripts/mipmap_compare/verify_gfx12_revision.cjs)；完整计数、源码哈希、输入输出样例和有限反例槽位见 [机器结果](gfx12_million_results.json)。
 
 文档端复用已核对的未修改阶段，并单独实现本轮两个模块改动及 pitch_b 适配；GFX12 端使用独立的 [公开 C++ 算法转写](../regression_0924/cloud/scripts/mipmap_compare/gfx12.cjs)，不调用文档模型的逻辑。旧模型和归档资料保持原样。
@@ -179,14 +181,14 @@ node scripts/mipmap_compare/verify_gfx12_revision.cjs --seed 0x20260922 --replay
 node scripts/mipmap_compare/verify_gfx12_revision.cjs --seed 0x20260922 --replay 999999 --mip 0
 ~~~
 
-入口会核对当前主文档、原模型、参考转写和固定 C++ 文件的哈希，防止源版本改变后仍套用本次结论。重放返回全部 12 个输入、模块原始九输出、参考原始量及换算结果。
+入口会核对 ADDRLIB_GFX12.md、原模型、参考转写和固定 C++ 文件的哈希，防止源版本改变后仍套用本次结论。重放返回全部 12 个输入、模块原始九输出、参考原始量及换算结果。
 
 原 case0～case4 保持不变，新公式的五份用例单独使用 _GFX12 后缀保存，见 [用例索引](../case/README.md)。主要变化：case0 的 pitch 64→32；case2 的 pitch 32→4；case3 的 slice 512→256；case4 的 pitch 64→32；case1 九输出不变。新用例没有自动取得可信基准身份，也没有宣称重算完整最终地址。
 
 ## 8. 基准与限制
 
-规定的 verify_trusted_baseline.ps1 仍按原可信清单检查：三个可信 case 通过，ADDRLIB.md 因用户授权的算法修改而报告 CHANGED。原文快照的 SHA256 和长度与原清单完全一致；没有通过更新旧哈希掩盖变化。
+规定的 verify_trusted_baseline.ps1 按原可信清单检查：ADDRLIB.md 原版及三个可信 case 均通过。原文快照的 SHA256 和长度与原清单完全一致；GFX12 版独立保存，未改写原可信哈希。
 
 新结果支持本轮声明域内的算法匹配；未知 RTL 位宽、硬件综合与时序、域外资源、完整地址流水线仍未验证。两处代数恒等关系有推导依据，但百万随机通过不构成整个模块的无限输入域证明。
 
-旧 document.cjs 与 smoke.cjs 仍属于原文模型与原基准校验；验证当前算法应使用本报告的新入口。旧云端结果保留在 regression_0924/，本轮没有改写其内容或结论。
+document.cjs 与 smoke.cjs 属于 ADDRLIB.md 原版及其基准校验；验证 GFX12 版应使用本报告的新入口。旧云端结果保留在 regression_0924/，本轮没有改写其内容或结论。

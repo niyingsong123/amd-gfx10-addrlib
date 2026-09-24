@@ -1,11 +1,12 @@
 # AddrLib 地址计算项目
 
-以 [ADDRLIB.md](ADDRLIB.md) 为主文档，[case/](case/README.md) 保存计算用例。历史分析归入 backup/，仅作备份，默认不参与后续工作。
+[ADDRLIB.md](ADDRLIB.md) 保存原始算法，[ADDRLIB_GFX12.md](ADDRLIB_GFX12.md) 保存适配 GFX12 的算法，[case/](case/README.md) 保存计算用例。历史分析归入 backup/，仅作备份，默认不参与后续工作。
 
 ## 项目结构
 
 ```text
-ADDRLIB.md                  主文档
+ADDRLIB.md                  原始算法（可信基准）
+ADDRLIB_GFX12.md            GFX12 修订算法
 case/                       计算用例及索引
 docs/
   PROJECT_CONTEXT.md        当前上下文
@@ -39,4 +40,4 @@ node scripts/verify_trusted_baseline.cjs
 node scripts/mipmap_compare/verify_gfx12_revision.cjs --directed-only
 ```
 
-当前 GFX12 修订版已完成百万组功能比较，结果和复现入口见 [修订报告](docs/GFX12_ALGORITHM_REVISION.md)。原可信清单保持不变，基准校验会如实报告 ADDRLIB.md 已修改；原文快照及旧可信 case 保持原字节。旧 smoke 仅适用于修订前基准。
+当前 GFX12 修订版已完成百万组功能比较，结果和复现入口见 [修订报告](docs/GFX12_ALGORITHM_REVISION.md)。原可信清单保持不变，ADDRLIB.md 和原可信 case 均匹配基准；旧 smoke 检查原版，新比较入口核对 ADDRLIB_GFX12.md。

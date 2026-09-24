@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "sourceDocument": "ADDRLIB_GFX12.md",
+  "sourceSha256": "a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c",
+  "counts": {
+    "linearWidthParity": 327680,
+    "halfHeightFromMinusOne": 65536,
+    "tailExponentPrecompute": 4080,
+    "thermometerEncoder": 18
+  },
+  "total": 397314,
+  "method": "Exhaustive integer identity checks on declared dimensions/exponents and all 17-bit monotonic tail vectors. Does not evaluate physical delay, RTL timing, synthesis or pipeline behavior.",
+  "assumptions": [
+    "W,H are actual dimensions 1..65536; minus-one inputs are exact, without truncation.",
+    "Linear rendering exponent is 7-e, e=0..4. H/2 result must retain 16 bits at H=65536.",
+    "Tail mode is legal and single-sampled; precomputed base/stop retain at least five unsigned bits.",
+    "Parallel tail encoder applies only to a monotonic tail vector; forced no-tail modes still override to 17."
+  ]
+}

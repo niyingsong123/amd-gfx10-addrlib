@@ -2,10 +2,10 @@
 
 ## 0. 版本、可信状态与范围
 
-- 版本：2026-09-24 的 ADDRLIB.md GFX12 修订稿。此文件与原 case 分开保存。
+- 版本：2026-09-24 的 ADDRLIB_GFX12.md GFX12 修订稿。此文件与原 case 分开保存。
 - 状态：已完成本轮定向功能复算，与独立 GFX12 转写的九字段同口径结果一致；未获独立可信确认，未加入 TRUSTED_BASELINE.json。
 - 原用例：[case3_mip0_xyz_0_0_0.md](case3_mip0_xyz_0_0_0.md)，原文件 SHA256：F23084410CE61135758F1E2546254AD9D2D251E2C7CD43AE430B48881D9BB713。
-- 计算依据：[ADDRLIB.md](../ADDRLIB.md)，SHA256：A6864BD26943078ADD333142BB40B87A9600B106572928F8B94621522CCACD8C。
+- 计算依据：[ADDRLIB_GFX12.md](../ADDRLIB_GFX12.md)，SHA256：A6864BD26943078ADD333142BB40B87A9600B106572928F8B94621522CCACD8C。
 - GFX12 参考：AMD PAL c5e800072a32f68b6ccc4422936d96167c6e0728，ADDR_GFX12_SHARED_BUILD=0；源位置与比对说明见 [修订报告](../docs/GFX12_ALGORITHM_REVISION.md)。
 - 只重新计算 mipmap_param_calc_core_gc 的十二输入、九输出及 pitch_b 接入；不把原用例的最终 texel 地址当成本次已重算结果。
 - 使用足宽整数和 BigInt，MAXMIP=17；范围按修订稿的资源约定、默认 flags、mip 0～15 执行。没有编译完整 C++ 或进行 RTL 仿真。

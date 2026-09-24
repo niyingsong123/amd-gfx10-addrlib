@@ -1,10 +1,10 @@
 # 计算用例
 
-当前主文档：[ADDRLIB.md](../ADDRLIB.md)；[GFX12 修订与验证说明](../docs/GFX12_ALGORITHM_REVISION.md)。
+原版：[ADDRLIB.md](../ADDRLIB.md)；GFX12 修订版：[ADDRLIB_GFX12.md](../ADDRLIB_GFX12.md)；[GFX12 修订与验证说明](../docs/GFX12_ALGORITHM_REVISION.md)。
 
 ## 原始用例
 
-原文件保持原样，以各自记录的源版本和哈希为准。case0～case2 已获用户确认，见 [可信清单](../docs/TRUSTED_BASELINE.json)；case3～case4 是修订前差异的手工推导，尚未加入可信基准。它们不是当前修订稿的输出预期。
+原文件保持原样，以各自记录的源版本和哈希为准。case0～case2 已获用户确认，见 [可信清单](../docs/TRUSTED_BASELINE.json)；case3～case4 是修订前差异的手工推导，尚未加入可信基准。它们对应原版算法，不作为 GFX12 修订版的输出预期。
 
 - [case0](case0_mip4_xyz_5_6_3.md)
 - [case1](case1_mip0_xyz_69_134_195.md)

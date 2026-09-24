@@ -1,3 +1,7 @@
+> **2026-09-24 GFX12 算法修订。** 修订前可信原文保存在 [历史基准](docs/baselines/ADDRLIB_pre_gfx12_20260924.md)，原 SHA256 保留不变。当前文件是已获用户授权修改的工作版本，不自动成为新的可信基准。
+>
+> 修改标记：**GFX12-01** 为 Linear mip0 slice 裁剪；**GFX12-02** 为 tail 内 pitch；**GFX12-03** 为下游宏块 pitch 换算。依据、验证结果和适用范围见 [修订说明](docs/GFX12_ALGORITHM_REVISION.md)。
+
 
 
 ADDRLIB is top module
@@ -98,15 +102,32 @@ l2_eb //log2_element_bytes //0:1byte 1:2byte 2:4byte 3:8 bytes 4:16byte
 
 l2_ns = log2_num_samples; // specifies the log2 of 'the number of samples', for non-MSAA hardware, tie 0 0: 1sample 1: 2samples 2: 4samples 3: 8samples
 
-pitch //padded_width 
+pitch //elements: rendering width outside tail; micro-block-aligned tail width [GFX12-02]
 
-slice //(padded_width * padded_ht)
+slice //whole mip-chain XY area; byte conversion includes element bytes and samples
 
 \`define PAD_W_MSB(mip) ((mip < W0_B_WIDTH) ? (mip-1) : (W0_B_WIDTH-1))
 
 \`define PAD_H_MSB(mip) ((mip < H0_B_WIDTH) ? (mip-1) : (H0_B_WIDTH-1))
 
 `define MAXMIP 17
+
+// GFX12 revision contract (PAL c5e800072a32f68b6ccc4422936d96167c6e0728,
+// ADDR_GFX12_SHARED_BUILD=0; ordinary formats, default flags):
+// 0 <= mip_level <= maxmip <= 15; MAXMIP=17 remains an internal array/sentinel.
+// 0 <= l2_eb <= 4; 0 <= l2_ns <= 3.
+// MSAA is supported here only for 2D tiled single-mip resources.
+// Linear and 3D swizzles require l2_ns=0.
+// Preserve the 12-input interface: Linear is a non-3D resource and map0_d is its
+// array-layer count. 2D swizzles mean 2D resources; 3D swizzles mean 3D resources.
+// Linear 3D and 3D resources using 2D swizzles are outside this interface contract;
+// supporting those combinations requires an explicit resource-type input.
+// No custom pitch/height, denseSliceExact, compressed-format preprocessing here.
+// All new products, shifts and byte alignment additions use wide integers;
+// extend operands before multiplication/shifts (at least unsigned 64 bits for
+// W/H<=65536, 3D depth<=2048 in this validation scope). Keep signed tail checks.
+// Preconditions must be checked by the caller; unsupported inputs are not matches.
+
 
 
 
@@ -231,7 +252,7 @@ else //1D or linear
 
 //fix for 128B pitch alignment
 
-//slice must still be calculated at 256B alignment, so use this for slice calculations
+//Ordinary slice contributions use 256B pitch alignment; [GFX12-01] may trim mip0 only.
 
 l2_blk_w_slice = (linear && (l2_blk_w < 'd8)) ? ('d8 - l2_eb) : l2_blk_w; //log2 width (block unit) 256B align
 
@@ -456,7 +477,33 @@ mip_off_input_en = slice_input_en & ~mip_mask; //no miptails for linear case
 
 //S2 stage: compute outputs
 
-pitch = Wb[mip_level] << l2_blk_w;
+// [GFX12-02, RTL form] Keep macro dimensions intact; only output pitch changes.
+pitch_block = Wb[mip_level] << l2_blk_w;
+
+if (mip_level < tail_mipid) begin
+    pitch = pitch_block;
+end else begin
+    // 256B micro-block WIDTH exponent, derived from HwlGetMicroBlockSize.
+    // Five-entry decode replaces division/remainder; legal tails are single-sampled.
+    case (l2_eb)
+        3'd0: l2_pitch_micro_w = dim3D ? 4'd3 : 4'd4;
+        3'd1: l2_pitch_micro_w = dim3D ? 4'd2 : 4'd4;
+        3'd2: l2_pitch_micro_w = dim3D ? 4'd2 : 4'd3;
+        3'd3: l2_pitch_micro_w = dim3D ? 4'd2 : 4'd3;
+        3'd4: l2_pitch_micro_w = dim3D ? 4'd1 : 4'd2;
+        default: l2_pitch_micro_w = 0; // invalid input; caller must reject l2_eb>4
+    endcase
+    l2_tail_w = l2_blk_w - (y_bias ? 0 : 1); // w_tail_sz = 2^l2_tail_w
+    pitch_tail_level = mip_level - tail_mipid;
+    tail_shrink_limit = l2_tail_w - l2_pitch_micro_w; // nonnegative for legal tail modes
+    l2_pitch_tail = (pitch_tail_level < tail_shrink_limit)
+        ? (l2_tail_w - pitch_tail_level) : l2_pitch_micro_w;
+    pitch = 1 << l2_pitch_tail; // one-hot decode; preserve the declared output width
+end
+// Equivalent to GFX12 AlignUp(max(w_tail_sz >> k,1),micro_width):
+// both widths are powers of two, so the output exponent is max(l2_tail_w-k,l2_micro_w).
+// The guarded subtraction prevents unsigned underflow. New exponents fit in 4 bits;
+// keep pitch_tail_level wide enough for the declared mip index.
 
 
 
@@ -552,9 +599,20 @@ slice_b = slice_b +
 
 //////////output of mipmap_param_calc_core_gc//////////////////////
 
-slice = slice_b << ({1'b0, l2_blk_w_slice} + {1'b0, l2_blk_h}); //
+// [GFX12-01, RTL form] Apply the GFX12 mip0-only trim in existing slice-block units.
+// Linear is non-3D by the interface contract, and map0_d is its layer count.
+linear_can_trim_mip0 = linear && (map0_d == 1);
+slice_b_drop = (linear_can_trim_mip0 && Wb[0][0]) ? (map0_h >> 1) : 0;
+slice_b_gfx12 = slice_b - slice_b_drop;
+slice = slice_b_gfx12 << ({1'b0, l2_blk_w_slice} + {1'b0, l2_blk_h});
+// Derivation: let n=Wb[0] count 128B rendering units, H=map0_h.
+// Old mip0 allocation in 256B units = ceil(n/2)*H.
+// GFX12 trimmed allocation = ceil(n*H/2).
+// Their difference is (n odd) ? floor(H/2) : 0; no new multiply/divide is needed.
+// Replace mip0's contribution for EVERY requested mip_level, since slice is the chain total.
+// Keep l2_blk_w_slice and the original mip-offset accumulation; offsets never include mip0.
 
-pitch = pitch;
+// pitch is assigned by the [GFX12-02] branch above.
 
 mip_offset_b = mip_offset_in_blks << l2_mip_offset;
 
@@ -862,7 +920,13 @@ output blk_index;
 
 log2_blk_slice = l2_blk_w_slice + l2_blk_h;
 
-pitch_b = pitch >> l2_blk_w;
+// [GFX12-03, RTL form] The input pitch comes from mipmap_param_calc_core_gc:
+// outside tails it is macro-aligned; inside tails 0 < pitch <= macro_block_width.
+// Under this contract ceil(pitch/macro_width) equals max(pitch>>l2_blk_w,1).
+pitch_b_raw = pitch >> l2_blk_w;
+pitch_b = (pitch_b_raw == 0) ? 1 : pitch_b_raw;
+// Zero detection plus mux preserves the original macro grid; no rounding adder.
+// This shortcut is not a generic conversion for arbitrary unaligned external pitches.
 
 slice_b = slice >> log2_blk_slice;
 
