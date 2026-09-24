@@ -1,6 +1,6 @@
 # 转写依据
 
-AMD PAL 固定提交：[c5e800072a32f68b6ccc4422936d96167c6e0728](https://github.com/GPUOpen-Drivers/pal/tree/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib)。下列路径相对于 upstream/，行号依据原始文件。文档模型依据根目录 ADDRLIB.md 第 43～569 行。
+AMD PAL 固定提交：[c5e800072a32f68b6ccc4422936d96167c6e0728](https://github.com/GPUOpen-Drivers/pal/tree/c5e800072a32f68b6ccc4422936d96167c6e0728/src/core/imported/addrlib)。下列路径相对于 upstream/，行号依据原始文件。原 document.cjs 依据修订前 ADDRLIB.md（现保存在 docs/baselines/ADDRLIB_pre_gfx12_20260924.md）。当前 verify_gfx12_revision.cjs 复用未改阶段，并实现主文档 GFX12-01/02/03 标记的等价式；详见 docs/GFX12_ALGORITHM_REVISION.md。
 
 | 阶段 | 公开 GFX10 | GFX12 非 shared 分支 |
 |---|---|---|

@@ -1,0 +1,1567 @@
+{
+  "schema_version": 1,
+  "kind": "gfx12-revised-functional-comparison",
+  "seed": 539363618,
+  "seedHex": "0x20260922",
+  "requestedRandomConfigurations": 1000000,
+  "palCommit": "c5e800072a32f68b6ccc4422936d96167c6e0728",
+  "branch": "ADDR_GFX12_SHARED_BUILD=0",
+  "sourceDocumentSha256": "a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c",
+  "sourceHashes": {
+    "ADDRLIB.md": "a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c",
+    "regression_0924/cloud/scripts/mipmap_compare/document.cjs": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+    "regression_0924/cloud/scripts/mipmap_compare/gfx12.cjs": "fcbb4895e0f957f2468614a3d76e1fda35fd540698e701dcd969a170a898ff23",
+    "scripts/mipmap_compare/upstream/src/gfx12/gfx12addrlib.cpp": "9210bb10078c48a3757e1f1a2f9483d5a355b04d83fbca19a65485938b1da8db",
+    "scripts/mipmap_compare/upstream/src/core/addrlib3.cpp": "068c124ef619aad4d83f636bee425146b9bf590e47d899f7c751a1736676a8fd",
+    "scripts/mipmap_compare/generate.cjs": "da13dcdec0f916d0c24ece9086bdfd10d25dd4022ddbe2146cd9d1798b8176a0",
+    "scripts/mipmap_compare/verify_gfx12_revision.cjs": "8e27a32d9481d35bb8d29060ef8cd9ad00b533cfde5b968823961a0adcc4be5a"
+  },
+  "method": "One Node.js process, exact integer functional evaluation. Revised document formulas vs independent archived PAL GFX12 C++ transcription. No C++ compilation, RTL simulation or synthesis.",
+  "normalization": "slice*2^(e+s) to bytes (s=0 for Linear/3D); mip_offset_b*256 to macroBlockOffset; no-tail=17; Linear l2_ms and l2_blk_w are derived 128B rendering values, not raw physical blockExtent.",
+  "contract": {
+    "maxmip": [
+      0,
+      15
+    ],
+    "randomWidthHeight": [
+      1,
+      16384
+    ],
+    "random3DDepth": [
+      1,
+      2048
+    ],
+    "elementBytes": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "samples": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "resources": "Linear non-3D; 2D swizzles use 2D; 3D swizzles use 3D. MSAA only single-level tiled 2D. Default flags, uncompressed elements, no custom pitch/height or denseSliceExact."
+  },
+  "random": {
+    "configurations": 1000000,
+    "comparableConfigurations": 1000000,
+    "mips": 3365705,
+    "fieldComparisons": 30291345,
+    "classes": {
+      "match": 1000000,
+      "numeric_difference": 0,
+      "representation_difference": 0,
+      "no_equivalent_mode": 0,
+      "reference_rejected": 0,
+      "model_assumption_unresolved": 0
+    },
+    "matchingMips": 3365705,
+    "differentMips": 0,
+    "fields": {
+      "pitch": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "slice_bytes": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "mip_in_tail": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "l2_ms": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "l2_blk_w": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "l2_blk_h": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "l2_blk_d": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "l2_blk_w_slice": {
+        "match": 3365705,
+        "difference": 0
+      }
+    },
+    "stages": {
+      "block_dimensions": {
+        "match": 1000000,
+        "difference": 0
+      },
+      "tail_capacity": {
+        "match": 1000000,
+        "difference": 0
+      },
+      "first_tail_effective": {
+        "match": 1000000,
+        "difference": 0
+      },
+      "mip_dimensions": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "pitch": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "slice_contribution_bytes": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 3365705,
+        "difference": 0
+      },
+      "address_pitch_blocks": {
+        "match": 3365705,
+        "difference": 0
+      }
+    },
+    "modes": {
+      "SW_LINEAR": {
+        "configurations": 50000,
+        "mips": 341772,
+        "differentMips": 0
+      },
+      "SW_256B_2D": {
+        "configurations": 200000,
+        "mips": 490958,
+        "differentMips": 0
+      },
+      "SW_4KB_2D": {
+        "configurations": 200000,
+        "mips": 492992,
+        "differentMips": 0
+      },
+      "SW_64KB_2D": {
+        "configurations": 200000,
+        "mips": 497338,
+        "differentMips": 0
+      },
+      "SW_256KB_2D": {
+        "configurations": 200000,
+        "mips": 499476,
+        "differentMips": 0
+      },
+      "SW_4KB_3D": {
+        "configurations": 50000,
+        "mips": 348079,
+        "differentMips": 0
+      },
+      "SW_64KB_3D": {
+        "configurations": 50000,
+        "mips": 346073,
+        "differentMips": 0
+      },
+      "SW_256KB_3D": {
+        "configurations": 50000,
+        "mips": 349017,
+        "differentMips": 0
+      }
+    },
+    "combinations": {
+      "SW_LINEAR/0/0": 10000,
+      "SW_LINEAR/1/0": 10000,
+      "SW_LINEAR/2/0": 10000,
+      "SW_LINEAR/3/0": 10000,
+      "SW_LINEAR/4/0": 10000,
+      "SW_256B_2D/0/0": 10000,
+      "SW_256B_2D/0/1": 10000,
+      "SW_256B_2D/0/2": 10000,
+      "SW_256B_2D/0/3": 10000,
+      "SW_256B_2D/1/0": 10000,
+      "SW_256B_2D/1/1": 10000,
+      "SW_256B_2D/1/2": 10000,
+      "SW_256B_2D/1/3": 10000,
+      "SW_256B_2D/2/0": 10000,
+      "SW_256B_2D/2/1": 10000,
+      "SW_256B_2D/2/2": 10000,
+      "SW_256B_2D/2/3": 10000,
+      "SW_256B_2D/3/0": 10000,
+      "SW_256B_2D/3/1": 10000,
+      "SW_256B_2D/3/2": 10000,
+      "SW_256B_2D/3/3": 10000,
+      "SW_256B_2D/4/0": 10000,
+      "SW_256B_2D/4/1": 10000,
+      "SW_256B_2D/4/2": 10000,
+      "SW_256B_2D/4/3": 10000,
+      "SW_4KB_2D/0/0": 10000,
+      "SW_4KB_2D/0/1": 10000,
+      "SW_4KB_2D/0/2": 10000,
+      "SW_4KB_2D/0/3": 10000,
+      "SW_4KB_2D/1/0": 10000,
+      "SW_4KB_2D/1/1": 10000,
+      "SW_4KB_2D/1/2": 10000,
+      "SW_4KB_2D/1/3": 10000,
+      "SW_4KB_2D/2/0": 10000,
+      "SW_4KB_2D/2/1": 10000,
+      "SW_4KB_2D/2/2": 10000,
+      "SW_4KB_2D/2/3": 10000,
+      "SW_4KB_2D/3/0": 10000,
+      "SW_4KB_2D/3/1": 10000,
+      "SW_4KB_2D/3/2": 10000,
+      "SW_4KB_2D/3/3": 10000,
+      "SW_4KB_2D/4/0": 10000,
+      "SW_4KB_2D/4/1": 10000,
+      "SW_4KB_2D/4/2": 10000,
+      "SW_4KB_2D/4/3": 10000,
+      "SW_64KB_2D/0/0": 10000,
+      "SW_64KB_2D/0/1": 10000,
+      "SW_64KB_2D/0/2": 10000,
+      "SW_64KB_2D/0/3": 10000,
+      "SW_64KB_2D/1/0": 10000,
+      "SW_64KB_2D/1/1": 10000,
+      "SW_64KB_2D/1/2": 10000,
+      "SW_64KB_2D/1/3": 10000,
+      "SW_64KB_2D/2/0": 10000,
+      "SW_64KB_2D/2/1": 10000,
+      "SW_64KB_2D/2/2": 10000,
+      "SW_64KB_2D/2/3": 10000,
+      "SW_64KB_2D/3/0": 10000,
+      "SW_64KB_2D/3/1": 10000,
+      "SW_64KB_2D/3/2": 10000,
+      "SW_64KB_2D/3/3": 10000,
+      "SW_64KB_2D/4/0": 10000,
+      "SW_64KB_2D/4/1": 10000,
+      "SW_64KB_2D/4/2": 10000,
+      "SW_64KB_2D/4/3": 10000,
+      "SW_256KB_2D/0/0": 10000,
+      "SW_256KB_2D/0/1": 10000,
+      "SW_256KB_2D/0/2": 10000,
+      "SW_256KB_2D/0/3": 10000,
+      "SW_256KB_2D/1/0": 10000,
+      "SW_256KB_2D/1/1": 10000,
+      "SW_256KB_2D/1/2": 10000,
+      "SW_256KB_2D/1/3": 10000,
+      "SW_256KB_2D/2/0": 10000,
+      "SW_256KB_2D/2/1": 10000,
+      "SW_256KB_2D/2/2": 10000,
+      "SW_256KB_2D/2/3": 10000,
+      "SW_256KB_2D/3/0": 10000,
+      "SW_256KB_2D/3/1": 10000,
+      "SW_256KB_2D/3/2": 10000,
+      "SW_256KB_2D/3/3": 10000,
+      "SW_256KB_2D/4/0": 10000,
+      "SW_256KB_2D/4/1": 10000,
+      "SW_256KB_2D/4/2": 10000,
+      "SW_256KB_2D/4/3": 10000,
+      "SW_4KB_3D/0/0": 10000,
+      "SW_4KB_3D/1/0": 10000,
+      "SW_4KB_3D/2/0": 10000,
+      "SW_4KB_3D/3/0": 10000,
+      "SW_4KB_3D/4/0": 10000,
+      "SW_64KB_3D/0/0": 10000,
+      "SW_64KB_3D/1/0": 10000,
+      "SW_64KB_3D/2/0": 10000,
+      "SW_64KB_3D/3/0": 10000,
+      "SW_64KB_3D/4/0": 10000,
+      "SW_256KB_3D/0/0": 10000,
+      "SW_256KB_3D/1/0": 10000,
+      "SW_256KB_3D/2/0": 10000,
+      "SW_256KB_3D/3/0": 10000,
+      "SW_256KB_3D/4/0": 10000
+    },
+    "coverage": {
+      "linearSingleLayer": 25138,
+      "linearArray": 24862,
+      "linearTrimChanged": 12120,
+      "tail": 141458,
+      "noTail": 858542,
+      "firstTailZero": 2410,
+      "msaa": 600000,
+      "singleLevel": 743923,
+      "fullChain": 144529,
+      "truncatedChain": 111548,
+      "mip15": 0
+    }
+  },
+  "directed": {
+    "configurations": 610,
+    "comparableConfigurations": 610,
+    "mips": 2282,
+    "fieldComparisons": 20538,
+    "classes": {
+      "match": 610,
+      "numeric_difference": 0,
+      "representation_difference": 0,
+      "no_equivalent_mode": 0,
+      "reference_rejected": 0,
+      "model_assumption_unresolved": 0
+    },
+    "matchingMips": 2282,
+    "differentMips": 0,
+    "fields": {
+      "pitch": {
+        "match": 2282,
+        "difference": 0
+      },
+      "slice_bytes": {
+        "match": 2282,
+        "difference": 0
+      },
+      "mip_in_tail": {
+        "match": 2282,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 2282,
+        "difference": 0
+      },
+      "l2_ms": {
+        "match": 2282,
+        "difference": 0
+      },
+      "l2_blk_w": {
+        "match": 2282,
+        "difference": 0
+      },
+      "l2_blk_h": {
+        "match": 2282,
+        "difference": 0
+      },
+      "l2_blk_d": {
+        "match": 2282,
+        "difference": 0
+      },
+      "l2_blk_w_slice": {
+        "match": 2282,
+        "difference": 0
+      }
+    },
+    "stages": {
+      "block_dimensions": {
+        "match": 610,
+        "difference": 0
+      },
+      "tail_capacity": {
+        "match": 610,
+        "difference": 0
+      },
+      "first_tail_effective": {
+        "match": 610,
+        "difference": 0
+      },
+      "mip_dimensions": {
+        "match": 2282,
+        "difference": 0
+      },
+      "pitch": {
+        "match": 2282,
+        "difference": 0
+      },
+      "slice_contribution_bytes": {
+        "match": 2282,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 2282,
+        "difference": 0
+      },
+      "address_pitch_blocks": {
+        "match": 2282,
+        "difference": 0
+      }
+    },
+    "modes": {
+      "SW_LINEAR": {
+        "configurations": 301,
+        "mips": 750,
+        "differentMips": 0
+      },
+      "SW_256B_2D": {
+        "configurations": 50,
+        "mips": 193,
+        "differentMips": 0
+      },
+      "SW_4KB_2D": {
+        "configurations": 51,
+        "mips": 227,
+        "differentMips": 0
+      },
+      "SW_64KB_2D": {
+        "configurations": 50,
+        "mips": 236,
+        "differentMips": 0
+      },
+      "SW_256KB_2D": {
+        "configurations": 50,
+        "mips": 241,
+        "differentMips": 0
+      },
+      "SW_4KB_3D": {
+        "configurations": 35,
+        "mips": 180,
+        "differentMips": 0
+      },
+      "SW_64KB_3D": {
+        "configurations": 36,
+        "mips": 220,
+        "differentMips": 0
+      },
+      "SW_256KB_3D": {
+        "configurations": 37,
+        "mips": 235,
+        "differentMips": 0
+      }
+    },
+    "combinations": {
+      "SW_LINEAR/0/0": 61,
+      "SW_LINEAR/1/0": 60,
+      "SW_LINEAR/2/0": 60,
+      "SW_LINEAR/3/0": 60,
+      "SW_LINEAR/4/0": 60,
+      "SW_256B_2D/0/0": 7,
+      "SW_256B_2D/0/1": 1,
+      "SW_256B_2D/0/2": 1,
+      "SW_256B_2D/0/3": 1,
+      "SW_256B_2D/1/0": 7,
+      "SW_256B_2D/1/1": 1,
+      "SW_256B_2D/1/2": 1,
+      "SW_256B_2D/1/3": 1,
+      "SW_256B_2D/2/0": 7,
+      "SW_256B_2D/2/1": 1,
+      "SW_256B_2D/2/2": 1,
+      "SW_256B_2D/2/3": 1,
+      "SW_256B_2D/3/0": 7,
+      "SW_256B_2D/3/1": 1,
+      "SW_256B_2D/3/2": 1,
+      "SW_256B_2D/3/3": 1,
+      "SW_256B_2D/4/0": 7,
+      "SW_256B_2D/4/1": 1,
+      "SW_256B_2D/4/2": 1,
+      "SW_256B_2D/4/3": 1,
+      "SW_4KB_2D/0/0": 8,
+      "SW_4KB_2D/0/1": 1,
+      "SW_4KB_2D/0/2": 1,
+      "SW_4KB_2D/0/3": 1,
+      "SW_4KB_2D/1/0": 7,
+      "SW_4KB_2D/1/1": 1,
+      "SW_4KB_2D/1/2": 1,
+      "SW_4KB_2D/1/3": 1,
+      "SW_4KB_2D/2/0": 7,
+      "SW_4KB_2D/2/1": 1,
+      "SW_4KB_2D/2/2": 1,
+      "SW_4KB_2D/2/3": 1,
+      "SW_4KB_2D/3/0": 7,
+      "SW_4KB_2D/3/1": 1,
+      "SW_4KB_2D/3/2": 1,
+      "SW_4KB_2D/3/3": 1,
+      "SW_4KB_2D/4/0": 7,
+      "SW_4KB_2D/4/1": 1,
+      "SW_4KB_2D/4/2": 1,
+      "SW_4KB_2D/4/3": 1,
+      "SW_64KB_2D/0/0": 7,
+      "SW_64KB_2D/0/1": 1,
+      "SW_64KB_2D/0/2": 1,
+      "SW_64KB_2D/0/3": 1,
+      "SW_64KB_2D/1/0": 7,
+      "SW_64KB_2D/1/1": 1,
+      "SW_64KB_2D/1/2": 1,
+      "SW_64KB_2D/1/3": 1,
+      "SW_64KB_2D/2/0": 7,
+      "SW_64KB_2D/2/1": 1,
+      "SW_64KB_2D/2/2": 1,
+      "SW_64KB_2D/2/3": 1,
+      "SW_64KB_2D/3/0": 7,
+      "SW_64KB_2D/3/1": 1,
+      "SW_64KB_2D/3/2": 1,
+      "SW_64KB_2D/3/3": 1,
+      "SW_64KB_2D/4/0": 7,
+      "SW_64KB_2D/4/1": 1,
+      "SW_64KB_2D/4/2": 1,
+      "SW_64KB_2D/4/3": 1,
+      "SW_256KB_2D/0/0": 7,
+      "SW_256KB_2D/0/1": 1,
+      "SW_256KB_2D/0/2": 1,
+      "SW_256KB_2D/0/3": 1,
+      "SW_256KB_2D/1/0": 7,
+      "SW_256KB_2D/1/1": 1,
+      "SW_256KB_2D/1/2": 1,
+      "SW_256KB_2D/1/3": 1,
+      "SW_256KB_2D/2/0": 7,
+      "SW_256KB_2D/2/1": 1,
+      "SW_256KB_2D/2/2": 1,
+      "SW_256KB_2D/2/3": 1,
+      "SW_256KB_2D/3/0": 7,
+      "SW_256KB_2D/3/1": 1,
+      "SW_256KB_2D/3/2": 1,
+      "SW_256KB_2D/3/3": 1,
+      "SW_256KB_2D/4/0": 7,
+      "SW_256KB_2D/4/1": 1,
+      "SW_256KB_2D/4/2": 1,
+      "SW_256KB_2D/4/3": 1,
+      "SW_4KB_3D/0/0": 7,
+      "SW_4KB_3D/1/0": 7,
+      "SW_4KB_3D/2/0": 7,
+      "SW_4KB_3D/3/0": 7,
+      "SW_4KB_3D/4/0": 7,
+      "SW_64KB_3D/0/0": 7,
+      "SW_64KB_3D/1/0": 7,
+      "SW_64KB_3D/2/0": 8,
+      "SW_64KB_3D/3/0": 7,
+      "SW_64KB_3D/4/0": 7,
+      "SW_256KB_3D/0/0": 9,
+      "SW_256KB_3D/1/0": 7,
+      "SW_256KB_3D/2/0": 7,
+      "SW_256KB_3D/3/0": 7,
+      "SW_256KB_3D/4/0": 7
+    },
+    "coverage": {
+      "linearSingleLayer": 151,
+      "linearArray": 150,
+      "linearTrimChanged": 81,
+      "tail": 154,
+      "noTail": 456,
+      "firstTailZero": 60,
+      "msaa": 60,
+      "singleLevel": 251,
+      "fullChain": 117,
+      "truncatedChain": 242,
+      "mip15": 40
+    }
+  },
+  "probes": {
+    "configurations": 160,
+    "comparableConfigurations": 0,
+    "mips": 0,
+    "fieldComparisons": 0,
+    "classes": {
+      "match": 0,
+      "numeric_difference": 0,
+      "representation_difference": 0,
+      "no_equivalent_mode": 0,
+      "reference_rejected": 160,
+      "model_assumption_unresolved": 0
+    },
+    "matchingMips": 0,
+    "differentMips": 0,
+    "fields": {
+      "pitch": {
+        "match": 0,
+        "difference": 0
+      },
+      "slice_bytes": {
+        "match": 0,
+        "difference": 0
+      },
+      "mip_in_tail": {
+        "match": 0,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 0,
+        "difference": 0
+      },
+      "l2_ms": {
+        "match": 0,
+        "difference": 0
+      },
+      "l2_blk_w": {
+        "match": 0,
+        "difference": 0
+      },
+      "l2_blk_h": {
+        "match": 0,
+        "difference": 0
+      },
+      "l2_blk_d": {
+        "match": 0,
+        "difference": 0
+      },
+      "l2_blk_w_slice": {
+        "match": 0,
+        "difference": 0
+      }
+    },
+    "stages": {
+      "block_dimensions": {
+        "match": 0,
+        "difference": 0
+      },
+      "tail_capacity": {
+        "match": 0,
+        "difference": 0
+      },
+      "first_tail_effective": {
+        "match": 0,
+        "difference": 0
+      },
+      "mip_dimensions": {
+        "match": 0,
+        "difference": 0
+      },
+      "pitch": {
+        "match": 0,
+        "difference": 0
+      },
+      "slice_contribution_bytes": {
+        "match": 0,
+        "difference": 0
+      },
+      "macro_offset_bytes": {
+        "match": 0,
+        "difference": 0
+      },
+      "address_pitch_blocks": {
+        "match": 0,
+        "difference": 0
+      }
+    },
+    "modes": {},
+    "combinations": {},
+    "coverage": {
+      "linearSingleLayer": 0,
+      "linearArray": 0,
+      "linearTrimChanged": 0,
+      "tail": 0,
+      "noTail": 0,
+      "firstTailZero": 0,
+      "msaa": 0,
+      "singleLevel": 0,
+      "fullChain": 0,
+      "truncatedChain": 0,
+      "mip15": 0
+    }
+  },
+  "examples": [
+    {
+      "status": "match",
+      "configurationId": "case3",
+      "mip": 0,
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 0,
+        "map0_h_minus_1": 1,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 0
+      },
+      "documentRaw": {
+        "pitch": 128,
+        "slice": "256",
+        "mip_in_tail": 17,
+        "mip_offset_b": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      },
+      "referenceRaw": {
+        "pitch": 128,
+        "sliceSize": "256",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 1,
+        "blockDimensions": [
+          256,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 128,
+        "slice_bytes": "256",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      },
+      "referenceNormalized": {
+        "pitch": 128,
+        "slice_bytes": "256",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "case4",
+      "mip": 1,
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 63,
+        "map0_h_minus_1": 63,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_4KB_2D",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 1,
+        "maxmip": 2
+      },
+      "documentRaw": {
+        "pitch": 32,
+        "slice": "8192",
+        "mip_in_tail": 0,
+        "mip_offset_b": "0",
+        "l2_ms": 12,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      },
+      "referenceRaw": {
+        "pitch": 32,
+        "sliceSize": "8192",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 1,
+        "blockDimensions": [
+          64,
+          64,
+          1
+        ],
+        "physicalBlockSizeLog2": 12
+      },
+      "documentNormalized": {
+        "pitch": 32,
+        "slice_bytes": "8192",
+        "mip_in_tail": 0,
+        "macro_offset_bytes": "0",
+        "l2_ms": 12,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      },
+      "referenceNormalized": {
+        "pitch": 32,
+        "slice_bytes": "8192",
+        "mip_in_tail": 0,
+        "macro_offset_bytes": "0",
+        "l2_ms": 12,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "case0",
+      "mip": 4,
+      "input": {
+        "x": 5,
+        "y": 6,
+        "z": 3,
+        "s": 0,
+        "map0_w_minus_1": 255,
+        "map0_h_minus_1": 255,
+        "map0_d_minus_1": 255,
+        "sw_mode": "SW_256KB_3D",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 4,
+        "maxmip": 12
+      },
+      "documentRaw": {
+        "pitch": 32,
+        "slice": "90112",
+        "mip_in_tail": 1,
+        "mip_offset_b": "0",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      },
+      "referenceRaw": {
+        "pitch": 32,
+        "sliceSize": "90112",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 3,
+        "blockDimensions": [
+          64,
+          64,
+          64
+        ],
+        "physicalBlockSizeLog2": 18
+      },
+      "documentNormalized": {
+        "pitch": 32,
+        "slice_bytes": "90112",
+        "mip_in_tail": 1,
+        "macro_offset_bytes": "0",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      },
+      "referenceNormalized": {
+        "pitch": 32,
+        "slice_bytes": "90112",
+        "mip_in_tail": 1,
+        "macro_offset_bytes": "0",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "case1",
+      "mip": 0,
+      "input": {
+        "x": 69,
+        "y": 134,
+        "z": 195,
+        "s": 0,
+        "map0_w_minus_1": 255,
+        "map0_h_minus_1": 255,
+        "map0_d_minus_1": 255,
+        "sw_mode": "SW_256KB_3D",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 12
+      },
+      "documentRaw": {
+        "pitch": 256,
+        "slice": "90112",
+        "mip_in_tail": 17,
+        "mip_offset_b": "6144",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      },
+      "referenceRaw": {
+        "pitch": 256,
+        "sliceSize": "90112",
+        "macroBlockOffset": "1572864",
+        "firstMipIdInTail": 3,
+        "blockDimensions": [
+          64,
+          64,
+          64
+        ],
+        "physicalBlockSizeLog2": 18
+      },
+      "documentNormalized": {
+        "pitch": 256,
+        "slice_bytes": "90112",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "1572864",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      },
+      "referenceNormalized": {
+        "pitch": 256,
+        "slice_bytes": "90112",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "1572864",
+        "l2_ms": 18,
+        "l2_blk_w": 6,
+        "l2_blk_h": 6,
+        "l2_blk_d": 6,
+        "l2_blk_w_slice": 6
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "case2",
+      "mip": 6,
+      "input": {
+        "x": 1,
+        "y": 1,
+        "z": 17,
+        "s": 0,
+        "map0_w_minus_1": 127,
+        "map0_h_minus_1": 127,
+        "map0_d_minus_1": 2047,
+        "sw_mode": "SW_64KB_3D",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 2,
+        "mip_level": 6,
+        "maxmip": 11
+      },
+      "documentRaw": {
+        "pitch": 4,
+        "slice": "22528",
+        "mip_in_tail": 3,
+        "mip_offset_b": "0",
+        "l2_ms": 16,
+        "l2_blk_w": 5,
+        "l2_blk_h": 5,
+        "l2_blk_d": 4,
+        "l2_blk_w_slice": 5
+      },
+      "referenceRaw": {
+        "pitch": 4,
+        "sliceSize": "90112",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 3,
+        "blockDimensions": [
+          32,
+          32,
+          16
+        ],
+        "physicalBlockSizeLog2": 16
+      },
+      "documentNormalized": {
+        "pitch": 4,
+        "slice_bytes": "90112",
+        "mip_in_tail": 3,
+        "macro_offset_bytes": "0",
+        "l2_ms": 16,
+        "l2_blk_w": 5,
+        "l2_blk_h": 5,
+        "l2_blk_d": 4,
+        "l2_blk_w_slice": 5
+      },
+      "referenceNormalized": {
+        "pitch": 4,
+        "slice_bytes": "90112",
+        "mip_in_tail": 3,
+        "macro_offset_bytes": "0",
+        "l2_ms": 16,
+        "l2_blk_w": 5,
+        "l2_blk_h": 5,
+        "l2_blk_d": 4,
+        "l2_blk_w_slice": 5
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "r0",
+      "mip": 0,
+      "input": {
+        "x": 146,
+        "y": 8,
+        "z": 4,
+        "s": 0,
+        "map0_w_minus_1": 255,
+        "map0_h_minus_1": 30,
+        "map0_d_minus_1": 35,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 0
+      },
+      "documentRaw": {
+        "pitch": 256,
+        "slice": "7936",
+        "mip_in_tail": 17,
+        "mip_offset_b": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      },
+      "referenceRaw": {
+        "pitch": 256,
+        "sliceSize": "7936",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 1,
+        "blockDimensions": [
+          256,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 256,
+        "slice_bytes": "7936",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      },
+      "referenceNormalized": {
+        "pitch": 256,
+        "slice_bytes": "7936",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 7,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 8
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "r1",
+      "mip": 0,
+      "input": {
+        "x": 1170,
+        "y": 469,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 1279,
+        "map0_h_minus_1": 1024,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 1,
+        "mip_level": 0,
+        "maxmip": 9
+      },
+      "documentRaw": {
+        "pitch": 1280,
+        "slice": "1788928",
+        "mip_in_tail": 17,
+        "mip_offset_b": "3726",
+        "l2_ms": 7,
+        "l2_blk_w": 6,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 7
+      },
+      "referenceRaw": {
+        "pitch": 1280,
+        "sliceSize": "3577856",
+        "macroBlockOffset": "953856",
+        "firstMipIdInTail": 10,
+        "blockDimensions": [
+          128,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 1280,
+        "slice_bytes": "3577856",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "953856",
+        "l2_ms": 7,
+        "l2_blk_w": 6,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 7
+      },
+      "referenceNormalized": {
+        "pitch": 1280,
+        "slice_bytes": "3577856",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "953856",
+        "l2_ms": 7,
+        "l2_blk_w": 6,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 7
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "r2",
+      "mip": 0,
+      "input": {
+        "x": 10530,
+        "y": 1044,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 12609,
+        "map0_h_minus_1": 3170,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 2,
+        "mip_level": 0,
+        "maxmip": 0
+      },
+      "documentRaw": {
+        "pitch": 12640,
+        "slice": "40081472",
+        "mip_in_tail": 17,
+        "mip_offset_b": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 5,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      },
+      "referenceRaw": {
+        "pitch": 12640,
+        "sliceSize": "160325888",
+        "macroBlockOffset": "0",
+        "firstMipIdInTail": 1,
+        "blockDimensions": [
+          64,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 12640,
+        "slice_bytes": "160325888",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 5,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      },
+      "referenceNormalized": {
+        "pitch": 12640,
+        "slice_bytes": "160325888",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "0",
+        "l2_ms": 7,
+        "l2_blk_w": 5,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 6
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "r3",
+      "mip": 0,
+      "input": {
+        "x": 4,
+        "y": 5109,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 62,
+        "map0_h_minus_1": 12704,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 3,
+        "mip_level": 0,
+        "maxmip": 13
+      },
+      "documentRaw": {
+        "pitch": 64,
+        "slice": "1219904",
+        "mip_in_tail": 17,
+        "mip_offset_b": "12712",
+        "l2_ms": 7,
+        "l2_blk_w": 4,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 5
+      },
+      "referenceRaw": {
+        "pitch": 64,
+        "sliceSize": "9759232",
+        "macroBlockOffset": "3254272",
+        "firstMipIdInTail": 14,
+        "blockDimensions": [
+          32,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 64,
+        "slice_bytes": "9759232",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "3254272",
+        "l2_ms": 7,
+        "l2_blk_w": 4,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 5
+      },
+      "referenceNormalized": {
+        "pitch": 64,
+        "slice_bytes": "9759232",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "3254272",
+        "l2_ms": 7,
+        "l2_blk_w": 4,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 5
+      }
+    },
+    {
+      "status": "match",
+      "configurationId": "r4",
+      "mip": 0,
+      "input": {
+        "x": 9,
+        "y": 2318,
+        "z": 34,
+        "s": 0,
+        "map0_w_minus_1": 63,
+        "map0_h_minus_1": 2847,
+        "map0_d_minus_1": 144,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 4,
+        "mip_level": 0,
+        "maxmip": 11
+      },
+      "documentRaw": {
+        "pitch": 64,
+        "slice": "250656",
+        "mip_in_tail": 17,
+        "mip_offset_b": "4274",
+        "l2_ms": 7,
+        "l2_blk_w": 3,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 4
+      },
+      "referenceRaw": {
+        "pitch": 64,
+        "sliceSize": "4010496",
+        "macroBlockOffset": "1094144",
+        "firstMipIdInTail": 12,
+        "blockDimensions": [
+          16,
+          1,
+          1
+        ],
+        "physicalBlockSizeLog2": 8
+      },
+      "documentNormalized": {
+        "pitch": 64,
+        "slice_bytes": "4010496",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "1094144",
+        "l2_ms": 7,
+        "l2_blk_w": 3,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 4
+      },
+      "referenceNormalized": {
+        "pitch": 64,
+        "slice_bytes": "4010496",
+        "mip_in_tail": 17,
+        "macro_offset_bytes": "1094144",
+        "l2_ms": 7,
+        "l2_blk_w": 3,
+        "l2_blk_h": 0,
+        "l2_blk_d": 0,
+        "l2_blk_w_slice": 4
+      }
+    }
+  ],
+  "counterexamples": [],
+  "rejectedExamples": [
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 1,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 2,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 3,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_LINEAR",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 4,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 0,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 1,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 256,
+        "map0_h_minus_1": 128,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 1,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 4
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "MSAA requires single-level 2D tiled resource"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 2,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 256,
+        "map0_h_minus_1": 128,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 2,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 4
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "MSAA requires single-level 2D tiled resource"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 65535,
+        "map0_h_minus_1": 65535,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 3,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 16
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "V3 MaxMipLevels=16; mip index 16 outside contract"
+      }
+    },
+    {
+      "group": "probes",
+      "input": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "s": 0,
+        "map0_w_minus_1": 256,
+        "map0_h_minus_1": 128,
+        "map0_d_minus_1": 0,
+        "sw_mode": "SW_256B_2D",
+        "log2_num_samples": 3,
+        "log2_element_bytes": 0,
+        "mip_level": 0,
+        "maxmip": 4
+      },
+      "eligibility": {
+        "status": "reference_rejected",
+        "reason": "MSAA requires single-level 2D tiled resource"
+      }
+    }
+  ],
+  "invariance": {
+    "coordinateConfigurations": 100,
+    "coordinateFieldChecks": 12420,
+    "nonLinearDepthConfigurations": 95,
+    "nonLinearDepthFieldChecks": 2763
+  },
+  "outputDigestFormat": "For every comparable mip, JSON array [group, raw12Input, normalizedDocument9, normalizedReference9] + LF; rejected inputs use [group, config, eligibility] + LF; BigInt decimal strings.",
+  "limitations": [
+    "Finite sampled domain, not a proof for all inputs.",
+    "Both sides are functional transcriptions, not direct execution of compiled upstream C++.",
+    "Only mipmap module outputs and macro-pitch adapter checked; no full texel-address pipeline, RTL timing or synthesis.",
+    "Undefined RTL truncation is not invented. Products, offsets and masks use BigInt."
+  ],
+  "outputSha256": "350d9101096b7df4456d5a1e9aebac01e1e6fd4f5b1e3293be7c25ce9b262173",
+  "elapsedSeconds": 89.4986655,
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "status": "PASS",
+  "totals": {
+    "generatedConfigurations": 1000770,
+    "comparableConfigurations": 1000610,
+    "mips": 3367987,
+    "fieldComparisons": 30311883,
+    "differingMips": 0
+  }
+}

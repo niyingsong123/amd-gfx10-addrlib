@@ -36,7 +36,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify_trusted_basel
 
 ```sh
 node scripts/verify_trusted_baseline.cjs
-node scripts/mipmap_compare/smoke.cjs
+node scripts/mipmap_compare/verify_gfx12_revision.cjs --directed-only
 ```
 
-smoke 不包含随机对比。先完成并讨论小规模结果，再决定百万组。
+当前 GFX12 修订版已完成百万组功能比较，结果和复现入口见 [修订报告](docs/GFX12_ALGORITHM_REVISION.md)。原可信清单保持不变，基准校验会如实报告 ADDRLIB.md 已修改；原文快照及旧可信 case 保持原字节。旧 smoke 仅适用于修订前基准。
