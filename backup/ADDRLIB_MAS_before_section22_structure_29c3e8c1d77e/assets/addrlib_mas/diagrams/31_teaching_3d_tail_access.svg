@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1170" viewBox="0 0 1600 1170" role="img">
+<title>mip4 的坐标、tail 原点与最终地址</title><desc>mip4 的5,6,69位于第二个Z分组。XY平移到37,6，Z组内坐标5。宏块偏移0x480000，块内偏移0x81D5。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1600" height="1170" fill="white"/>
+<text x="64" y="26" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ONE 3D ACCESS</text>
+<text x="64" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="40" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4 的 (5,6,69) 在哪里</text>
+<text x="64" y="125" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">macro 64×64×64 · orig (32,0,0) · 当前 Z 分组 zb=1</text>
+<rect x="88" y="261" width="384" height="384" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="88" y="453" width="186" height="132" fill="#EEE5FC" stroke="#7552B2" stroke-width="2"/>
+<rect x="280" y="261" width="90" height="66" fill="#FBE4EF" stroke="#BB477D" stroke-width="2"/>
+<text x="88" y="227" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<text x="70" y="252" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">0</text>
+<text x="184" y="227" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">16</text>
+<text x="70" y="348" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">16</text>
+<text x="280" y="227" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">32</text>
+<text x="70" y="444" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">32</text>
+<text x="376" y="227" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">48</text>
+<text x="70" y="540" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">48</text>
+<text x="472" y="227" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">64</text>
+<text x="70" y="636" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">64</text>
+<text x="130" y="501" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip3</text>
+<text x="286" y="273" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4</text>
+<circle cx="280" cy="261" r="5" fill="#BB477D"/>
+<circle cx="310" cy="297" r="6" fill="#183248"/>
+<line x1="310" y1="297" x2="553" y2="297" stroke="#183248" stroke-width="1.5"/>
+<text x="579" y="242" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">局部坐标        (5,6,69)</text>
+<text x="579" y="298" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">tail orig          (32,0,0)</text>
+<text x="579" y="354" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">查表坐标        (37,6,69)</text>
+<text x="579" y="414" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块坐标        (0,0,1)</text>
+<text x="579" y="470" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块内有效坐标 (37,6,5)</text>
+<text x="579" y="536" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">Z 高位选择分组，低 6 位参与块内 swizzle。</text>
+<text x="579" y="581" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">orig 改变 X/Y 块内位置；Z 原点为 0。</text>
+<text x="88" y="674" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">Z 组内 z=5 的 XY 截面；斜线区没有有效 texel。</text>
+<line x1="64" y1="733" x2="1536" y2="733" stroke="#D5DFE6" stroke-width="1"/>
+<text x="64" y="769" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">Z 分组</text>
+<rect x="262" y="765" width="302" height="80" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="2"/>
+<text x="413" y="780" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">zb=0 · z=0…63</text>
+<rect x="608" y="765" width="302" height="80" fill="#FBE4EF" stroke="#BB477D" stroke-width="2"/>
+<text x="759" y="780" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">zb=1 · z=64…127</text>
+<rect x="954" y="765" width="302" height="80" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="2"/>
+<text x="1105" y="780" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">zb=2 · z=128…191</text>
+<text x="88" y="875" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4 有效 z=0…95，因此 zb=1 中只有前 32 个 Z 平面有效。</text>
+<rect x="64" y="935" width="1472" height="170" fill="#F3F6F9" stroke="none" stroke-width="1"/>
+<text x="89" y="958" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">基址 0x30000000 + mip 偏移 0 + 宏块偏移 0x480000 + 块内偏移 0x81D5</text>
+<text x="89" y="1012" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="37" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">最终地址 0x304881D5</text>
+<text x="89" y="1071" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">本例 seed=0；orig 的作用已经包含在块内偏移中。</text>
+</svg>

@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1020" viewBox="0 0 1800 1020" role="img">
+<title>S0到S8的计算分工</title><desc>上方为布局参数和块内映射通路；下方为S4基址与宏块中间量，块索引在S7输出。S7合成相对偏移，S8形成最终地址。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1800" height="1020" fill="white"/>
+<text x="64" y="30" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  STAGE MAP</text>
+<text x="64" y="73" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="40" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">先理解地址，再看 S0～S8 如何分工</text>
+<text x="64" y="136" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">表格按变量所属拍次排列；同拍内的依赖仍按计算顺序展开。</text>
+<rect x="64" y="210" width="177" height="58" fill="#E0EDF9" stroke="none" stroke-width="1"/>
+<text x="152.5" y="223" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S0</text>
+<line x1="64" y1="280" x2="64" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="249" y="210" width="177" height="58" fill="#DEF2EF" stroke="none" stroke-width="1"/>
+<text x="337.5" y="223" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S1</text>
+<line x1="249" y1="280" x2="249" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="434" y="210" width="177" height="58" fill="#FFF0CF" stroke="none" stroke-width="1"/>
+<text x="522.5" y="223" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S2</text>
+<line x1="434" y1="280" x2="434" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="619" y="210" width="177" height="58" fill="#EEE5FC" stroke="none" stroke-width="1"/>
+<text x="707.5" y="223" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S3</text>
+<line x1="619" y1="280" x2="619" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="804" y="210" width="177" height="58" fill="#FBE4EF" stroke="none" stroke-width="1"/>
+<text x="892.5" y="223" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S4</text>
+<line x1="804" y1="280" x2="804" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="989" y="210" width="177" height="58" fill="#E5F2DE" stroke="none" stroke-width="1"/>
+<text x="1077.5" y="223" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S5</text>
+<line x1="989" y1="280" x2="989" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1174" y="210" width="177" height="58" fill="#FFF2BB" stroke="none" stroke-width="1"/>
+<text x="1262.5" y="223" fill="#9B7415" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S6</text>
+<line x1="1174" y1="280" x2="1174" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1359" y="210" width="177" height="58" fill="#E2F2FB" stroke="none" stroke-width="1"/>
+<text x="1447.5" y="223" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S7</text>
+<line x1="1359" y1="280" x2="1359" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1544" y="210" width="177" height="58" fill="#E0EDF9" stroke="none" stroke-width="1"/>
+<text x="1632.5" y="223" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">S8</text>
+<line x1="1544" y1="280" x2="1544" y2="866" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="64" y="319" width="173" height="155" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="82" y="339" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">模式与宏块</text>
+<text x="82" y="369" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">tail 容量</text>
+<text x="82" y="399" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip0 块数</text>
+<line x1="241" y1="397" x2="248" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="248" y1="397" x2="238.99552897647322" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="248" y1="397" x2="238.99552897647322" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="249" y="319" width="173" height="155" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="267" y="339" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">各级块数</text>
+<text x="267" y="369" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">tail 与使能</text>
+<text x="267" y="399" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">高编号块贡献</text>
+<line x1="426" y1="397" x2="433" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="433" y1="397" x2="423.9955289764732" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="433" y1="397" x2="423.9955289764732" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="434" y="319" width="173" height="155" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="452" y="339" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">pitch</text>
+<text x="452" y="369" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">低编号块贡献</text>
+<text x="452" y="399" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">高编号部分和</text>
+<line x1="611" y1="397" x2="618" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="618" y1="397" x2="608.9955289764732" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="618" y1="397" x2="608.9955289764732" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="619" y="319" width="173" height="155" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="637" y="339" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">补齐低编号和</text>
+<text x="637" y="369" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">slice / mip 偏移</text>
+<text x="637" y="399" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">tail 相对编号</text>
+<line x1="796" y1="397" x2="803" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="803" y1="397" x2="793.9955289764732" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="803" y1="397" x2="793.9955289764732" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="804" y="319" width="173" height="155" fill="#FBE4EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="822" y="339" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">micro 尺寸</text>
+<text x="822" y="369" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">reverse / 编码</text>
+<text x="822" y="399" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">原点中间量</text>
+<line x1="981" y1="397" x2="988" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="988" y1="397" x2="978.9955289764732" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="988" y1="397" x2="978.9955289764732" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="989" y="319" width="173" height="155" fill="#E5F2DE" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1007" y="339" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">orig</text>
+<text x="1007" y="369" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">+ 局部坐标</text>
+<text x="1007" y="399" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">x/y/z_in_sheet</text>
+<line x1="1166" y1="397" x2="1173" y2="397" stroke="#516577" stroke-width="1"/>
+<line x1="1173" y1="397" x2="1163.9955289764732" y2="401.3496553411123" stroke="#516577" stroke-width="1"/>
+<line x1="1173" y1="397" x2="1163.9955289764732" y2="392.6503446588877" stroke="#516577" stroke-width="1"/>
+<rect x="1174" y="319" width="173" height="155" fill="#FFF2BB" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1192" y="339" fill="#9B7415" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">坐标位映射</text>
+<text x="1192" y="369" fill="#9B7415" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_offset</text>
+<rect x="1359" y="445" width="173" height="175" fill="#E2F2FB" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1377" y="465" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">blk_index</text>
+<text x="1377" y="495" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">高低位 / XOR</text>
+<text x="1377" y="525" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">addr_offset</text>
+<rect x="1544" y="445" width="173" height="175" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1562" y="465" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">address_final</text>
+<text x="1562" y="495" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mipid_in_tail</text>
+<line x1="1349" y1="395" x2="1394" y2="433" stroke="#516577" stroke-width="1.5"/>
+<line x1="1394" y1="433" x2="1384.3140005714076" y2="430.5137548251811" stroke="#516577" stroke-width="1.5"/>
+<line x1="1394" y1="433" x2="1389.9266289518903" y2="423.867221216715" stroke="#516577" stroke-width="1.5"/>
+<line x1="1534" y1="525" x2="1543" y2="525" stroke="#516577" stroke-width="1.5"/>
+<line x1="1543" y1="525" x2="1533.9955289764732" y2="529.3496553411123" stroke="#516577" stroke-width="1.5"/>
+<line x1="1543" y1="525" x2="1533.9955289764732" y2="520.6503446588877" stroke="#516577" stroke-width="1.5"/>
+<rect x="804" y="684" width="173" height="153" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="822" y="704" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">基址处理</text>
+<text x="822" y="734" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">宏块坐标</text>
+<text x="822" y="764" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">乘加中间量</text>
+<line x1="699" y1="483" x2="699" y2="737" stroke="#516577" stroke-width="1.5"/>
+<line x1="699" y1="737" x2="798" y2="737" stroke="#516577" stroke-width="1.5"/>
+<line x1="798" y1="737" x2="788.9955289764732" y2="741.3496553411123" stroke="#516577" stroke-width="1.5"/>
+<line x1="798" y1="737" x2="788.9955289764732" y2="732.6503446588877" stroke="#516577" stroke-width="1.5"/>
+<line x1="981" y1="730" x2="1439" y2="730" stroke="#A56A13" stroke-width="2"/>
+<line x1="1439" y1="730" x2="1439" y2="632" stroke="#A56A13" stroke-width="2"/>
+<line x1="1439" y1="632" x2="1443.3496553411123" y2="641.0044710235268" stroke="#A56A13" stroke-width="2"/>
+<line x1="1439" y1="632" x2="1434.6503446588877" y2="641.0044710235268" stroke="#A56A13" stroke-width="2"/>
+<text x="997" y="689" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块索引中间量 → S7 输出</text>
+<line x1="981" y1="820" x2="1624" y2="820" stroke="#516577" stroke-width="1.5"/>
+<line x1="1624" y1="820" x2="1624" y2="632" stroke="#516577" stroke-width="1.5"/>
+<line x1="1624" y1="632" x2="1628.3496553411123" y2="641.0044710235268" stroke="#516577" stroke-width="1.5"/>
+<line x1="1624" y1="632" x2="1619.6503446588877" y2="641.0044710235268" stroke="#516577" stroke-width="1.5"/>
+<text x="997" y="849" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">基址 + mip 偏移 → 最终地址</text>
+<line x1="64" y1="913" x2="1724" y2="913" stroke="#D5DFE6" stroke-width="1"/>
+<text x="64" y="944" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">每条通路都使用同一次访问的数据；连线不指定寄存器数量、握手或停顿机制。</text>
+</svg>

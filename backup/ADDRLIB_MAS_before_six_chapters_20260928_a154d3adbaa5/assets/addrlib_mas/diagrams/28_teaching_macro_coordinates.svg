@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1010" viewBox="0 0 1440 1010" role="img">
+<title>宏块坐标与边缘对齐</title><desc>mip1尺寸128乘128，由四个64乘64宏块组成；访问69,70位于块1,1，块内坐标5,6。独立小图说明非整齐尺寸的边缘补齐。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="1010" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  COORDINATES &amp; ALIGNMENT</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">先找宏块，再找块内位置</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip1 = 128×128；macro = 64×64；每个元素 1 B。X 向右，Y 向下。</text>
+<rect x="88.0" y="245.0" width="165.0" height="165.0" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="2"/>
+<text x="106.0" y="267.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块 0 · (0,0)</text>
+<rect x="253.0" y="245.0" width="165.0" height="165.0" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="2"/>
+<text x="271.0" y="267.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块 1 · (1,0)</text>
+<rect x="88.0" y="410.0" width="165.0" height="165.0" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="2"/>
+<text x="106.0" y="432.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块 2 · (0,1)</text>
+<rect x="253.0" y="410.0" width="165.0" height="165.0" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="2"/>
+<text x="271.0" y="432.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块 3 · (1,1)</text>
+<text x="88.0" y="209" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<text x="71" y="235.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">0</text>
+<text x="253.0" y="209" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">64</text>
+<text x="71" y="400.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">64</text>
+<text x="418.0" y="209" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">128</text>
+<text x="71" y="565.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">128</text>
+<circle cx="265.890625" cy="425.46875" r="6" fill="#BB477D"/>
+<line x1="275.890625" y1="425.46875" x2="480" y2="425.46875" stroke="#BB477D" stroke-width="2"/>
+<text x="500" y="265" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="30" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">访问坐标 (69,70)</text>
+<text x="500" y="329" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">宏块坐标：floor(69/64), floor(70/64) = (1,1)</text>
+<text x="500" y="381" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">块内坐标：69−64, 70−64 = (5,6)</text>
+<text x="500" y="433" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每行 2 块；块号 = 1×2+1 = 3</text>
+<text x="500" y="485" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块字节偏移 = 3×4096 = 0x3000 B</text>
+<text x="88" y="611" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块内 (5,6) 的字节位置由 swizzle 位表决定，不直接使用 y×64+x。</text>
+<line x1="56" y1="669" x2="1384" y2="669" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="696" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">独立的对齐小例：257×129 → 320×192</text>
+<rect x="88" y="762" width="256.0" height="153.60000000000002" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="88" y="762" width="205.60000000000002" height="103.2" fill="#E0EDF9" stroke="none" stroke-width="1"/>
+<line x1="88.0" y1="762" x2="88.0" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="139.2" y1="762" x2="139.2" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="190.4" y1="762" x2="190.4" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="241.60000000000002" y1="762" x2="241.60000000000002" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="292.8" y1="762" x2="292.8" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="344.0" y1="762" x2="344.0" y2="915.6" stroke="#516577" stroke-width="1"/>
+<line x1="88" y1="762.0" x2="344.0" y2="762.0" stroke="#516577" stroke-width="1"/>
+<line x1="88" y1="813.2" x2="344.0" y2="813.2" stroke="#516577" stroke-width="1"/>
+<line x1="88" y1="864.4" x2="344.0" y2="864.4" stroke="#516577" stroke-width="1"/>
+<line x1="88" y1="915.6" x2="344.0" y2="915.6" stroke="#516577" stroke-width="1"/>
+<text x="396" y="776" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">横向需要 5 块，纵向需要 3 块；有效尺寸仍为 257×129。</text>
+<text x="396" y="824" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">pitch = 5×64 = 320 个元素；斜线区没有有效 texel。</text>
+<text x="396" y="874" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">这是坐标边缘的补齐；swizzle 后不一定是末尾一段连续字节。</text>
+</svg>

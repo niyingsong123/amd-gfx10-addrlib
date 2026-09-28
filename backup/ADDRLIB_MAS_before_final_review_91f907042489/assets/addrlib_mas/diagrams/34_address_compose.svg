@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1420" viewBox="0 0 1600 1420" role="img">
+<title>Tiled地址的高低位、XOR和最终合成</title><desc>块内高位先掩码后XOR再左移八位，块内低八位单独保留，与宏块字节偏移按位或，最后加处理后的基址与mip偏移。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1600" height="1420" fill="white"/>
+<text x="64" y="26" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">TILED ADDRESS COMPOSITION</text>
+<text x="64" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="39" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块内高低位、XOR 与最终地址</text>
+<text x="64" y="124" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">宏块偏移和块内字段先做 OR；基址与 mip 偏移经过单位转换后，再做加法。</text>
+<rect x="64" y="211" width="919" height="110" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="64" y="211" width="5" height="110" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="86" y="228" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">位映射输出：blk_offset</text>
+<text x="86" y="267" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">单位：字节；拆分高于 bit7 的字段与低 8 位</text>
+<rect x="1050" y="211" width="486" height="110" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1050" y="211" width="5" height="110" fill="#7552B2" stroke="none" stroke-width="1"/>
+<text x="1072" y="228" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">基址中提取的 swizzle 字段</text>
+<text x="1072" y="267" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">swizzle_bits_256B</text>
+<line x1="274" y1="321" x2="274" y2="416" stroke="#15867D" stroke-width="2"/>
+<line x1="274" y1="416" x2="269.6503446588877" y2="406.9955289764732" stroke="#15867D" stroke-width="2"/>
+<line x1="274" y1="416" x2="278.3496553411123" y2="406.9955289764732" stroke="#15867D" stroke-width="2"/>
+<line x1="773" y1="321" x2="773" y2="416" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="416" x2="768.6503446588877" y2="406.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="416" x2="777.3496553411123" y2="406.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<rect x="64" y="416" width="420" height="110" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="64" y="416" width="5" height="110" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="86" y="433" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">仅保留低 8 位</text>
+<text x="86" y="472" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_offset[7:0]</text>
+<rect x="563" y="416" width="420" height="110" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="563" y="416" width="5" height="110" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="585" y="433" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">高位截取并 AND 掩码</text>
+<text x="585" y="472" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_offset[…:8] &amp; ms_mask_256B</text>
+<line x1="773" y1="526" x2="773" y2="612" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="612" x2="768.6503446588877" y2="602.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="612" x2="777.3496553411123" y2="602.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<rect x="563" y="612" width="420" height="94" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="563" y="612" width="5" height="94" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="585" y="629" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">XOR</text>
+<text x="585" y="668" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">得到 swizzle_bits</text>
+<line x1="1293" y1="321" x2="1293" y2="659" stroke="#7552B2" stroke-width="2"/>
+<line x1="1293" y1="659" x2="983" y2="659" stroke="#7552B2" stroke-width="2"/>
+<line x1="983" y1="659" x2="992.0044710235268" y2="654.6503446588877" stroke="#7552B2" stroke-width="2"/>
+<line x1="983" y1="659" x2="992.0044710235268" y2="663.3496553411123" stroke="#7552B2" stroke-width="2"/>
+<line x1="773" y1="706" x2="773" y2="772" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="772" x2="768.6503446588877" y2="762.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="772" x2="777.3496553411123" y2="762.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<rect x="563" y="772" width="420" height="96" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="563" y="772" width="5" height="96" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="585" y="789" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">左移 8 位，放回高位位置</text>
+<text x="585" y="828" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(swizzle_bits &lt;&lt; 8)[19:0]</text>
+<rect x="1050" y="772" width="486" height="96" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1050" y="772" width="5" height="96" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="1072" y="789" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块字节偏移</text>
+<text x="1072" y="828" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_index[47:0]</text>
+<line x1="274" y1="526" x2="274" y2="989" stroke="#15867D" stroke-width="2"/>
+<line x1="274" y1="989" x2="563" y2="989" stroke="#15867D" stroke-width="2"/>
+<line x1="563" y1="989" x2="553.9955289764732" y2="993.3496553411123" stroke="#15867D" stroke-width="2"/>
+<line x1="563" y1="989" x2="553.9955289764732" y2="984.6503446588877" stroke="#15867D" stroke-width="2"/>
+<text x="74" y="789" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">blk_offset_final</text>
+<text x="74" y="832" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">低位直接保留</text>
+<line x1="773" y1="868" x2="773" y2="942" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="942" x2="768.6503446588877" y2="932.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<line x1="773" y1="942" x2="777.3496553411123" y2="932.9955289764732" stroke="#A56A13" stroke-width="2"/>
+<line x1="1293" y1="868" x2="1293" y2="989" stroke="#246BB0" stroke-width="2"/>
+<line x1="1293" y1="989" x2="983" y2="989" stroke="#246BB0" stroke-width="2"/>
+<line x1="983" y1="989" x2="992.0044710235268" y2="984.6503446588877" stroke="#246BB0" stroke-width="2"/>
+<line x1="983" y1="989" x2="992.0044710235268" y2="993.3496553411123" stroke="#246BB0" stroke-width="2"/>
+<rect x="563" y="942" width="420" height="94" fill="#F3F6F9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="563" y="942" width="5" height="94" fill="#183248" stroke="none" stroke-width="1"/>
+<text x="585" y="959" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">OR：按字段合成</text>
+<text x="585" y="998" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">addr_offset，单位：字节</text>
+<rect x="64" y="1135" width="650" height="118" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="64" y="1135" width="5" height="118" fill="#7552B2" stroke="none" stroke-width="1"/>
+<text x="86" y="1152" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">基址与 mip 偏移：256 B → 字节</text>
+<text x="86" y="1191" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(baseAddr256B_out + mip_offset_b) &lt;&lt; 8</text>
+<line x1="773" y1="1036" x2="773" y2="1085" stroke="#183248" stroke-width="2"/>
+<line x1="773" y1="1085" x2="880" y2="1085" stroke="#183248" stroke-width="2"/>
+<line x1="880" y1="1085" x2="880" y2="1160" stroke="#183248" stroke-width="2"/>
+<line x1="880" y1="1160" x2="875.6503446588877" y2="1150.9955289764732" stroke="#183248" stroke-width="2"/>
+<line x1="880" y1="1160" x2="884.3496553411123" y2="1150.9955289764732" stroke="#183248" stroke-width="2"/>
+<line x1="714" y1="1191" x2="845" y2="1191" stroke="#7552B2" stroke-width="2"/>
+<line x1="845" y1="1191" x2="835.9955289764732" y2="1195.3496553411123" stroke="#7552B2" stroke-width="2"/>
+<line x1="845" y1="1191" x2="835.9955289764732" y2="1186.6503446588877" stroke="#7552B2" stroke-width="2"/>
+<circle cx="880" cy="1191" r="29" fill="#F3F6F9"/>
+<text x="880" y="1175" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="37" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">+</text>
+<line x1="916" y1="1191" x2="1010" y2="1191" stroke="#183248" stroke-width="2"/>
+<line x1="1010" y1="1191" x2="1000.9955289764732" y2="1195.3496553411123" stroke="#183248" stroke-width="2"/>
+<line x1="1010" y1="1191" x2="1000.9955289764732" y2="1186.6503446588877" stroke="#183248" stroke-width="2"/>
+<rect x="1010" y="1135" width="526" height="118" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1010" y="1135" width="5" height="118" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="1032" y="1152" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="29" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">S8：address_final</text>
+<text x="1032" y="1191" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">最终字节地址</text>
+<text x="64" y="1301" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">不能再把完整 blk_offset OR 进结果，否则会覆盖高位 XOR 的效果。</text>
+<text x="64" y="1349" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">本图展开 Tiled 通路；Linear 使用 micro_offset_linear 作为低位候选。</text>
+<text x="64" y="1388" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">字段截取、基址清理及非零 XOR 的模式条件，按相应公式和位宽约定处理。</text>
+</svg>

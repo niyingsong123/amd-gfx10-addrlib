@@ -1,0 +1,249 @@
+{
+  "status": "derived illustration; not a trusted case",
+  "algorithm": "original ADDRLIB.md",
+  "sources": {
+    "ADDRLIB.md": "537cfa6d9fafbaf3601b219b686d94caa4b7c69fdfe89005dff36a0b4cb6d3bb",
+    "scripts/mipmap_compare/document.cjs": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+    "case/case0_mip4_xyz_5_6_3.md": "54449b421ae88232c5faf3e90dad9516327845ca591a2d931c899c4c6cba84ea",
+    "case/case1_mip0_xyz_69_134_195.md": "dc282d50a42228afa35b6700ec45e5f31538f32cc9cc47f145cedfaa62fff407"
+  },
+  "input": {
+    "mode": "SW_256KB_3D",
+    "W": 250,
+    "H": 180,
+    "D": 130,
+    "e": 0,
+    "s": 0,
+    "maxmip": 7
+  },
+  "byte_base": 0,
+  "swizzle_seed": 0,
+  "macro_dimensions": [
+    64,
+    64,
+    64
+  ],
+  "macro_bytes": 262144,
+  "micro_dimensions": [
+    8,
+    4,
+    8
+  ],
+  "first_tail_mip": 3,
+  "tail_capacity": 11,
+  "chain_blocks_per_z_group": 18,
+  "chain_stride_bytes": 4718592,
+  "slice_raw": 73728,
+  "mips": [
+    {
+      "mip": 0,
+      "logical_dimensions": [
+        250,
+        180,
+        130
+      ],
+      "document_pitch": 256,
+      "xy_macro_blocks": [
+        4,
+        3
+      ],
+      "mipsize_contribution": 12,
+      "macro_offset_256B": 6144,
+      "macro_offset_bytes": 1572864
+    },
+    {
+      "mip": 1,
+      "logical_dimensions": [
+        125,
+        90,
+        65
+      ],
+      "document_pitch": 128,
+      "xy_macro_blocks": [
+        2,
+        2
+      ],
+      "mipsize_contribution": 4,
+      "macro_offset_256B": 2048,
+      "macro_offset_bytes": 524288
+    },
+    {
+      "mip": 2,
+      "logical_dimensions": [
+        62,
+        45,
+        32
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 1,
+      "macro_offset_256B": 1024,
+      "macro_offset_bytes": 262144
+    },
+    {
+      "mip": 3,
+      "logical_dimensions": [
+        31,
+        22,
+        16
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 1,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "tail_relative_mip": 0,
+      "origin": [
+        0,
+        32,
+        0
+      ],
+      "reverse": 10,
+      "origin_generation_code": 16384,
+      "swizzled_origin_bytes": 131072
+    },
+    {
+      "mip": 4,
+      "logical_dimensions": [
+        15,
+        11,
+        8
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "tail_relative_mip": 1,
+      "origin": [
+        32,
+        0,
+        0
+      ],
+      "reverse": 9,
+      "origin_generation_code": 8192,
+      "swizzled_origin_bytes": 32768
+    },
+    {
+      "mip": 5,
+      "logical_dimensions": [
+        7,
+        5,
+        4
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "tail_relative_mip": 2,
+      "origin": [
+        0,
+        16,
+        0
+      ],
+      "reverse": 8,
+      "origin_generation_code": 4096,
+      "swizzled_origin_bytes": 16384
+    },
+    {
+      "mip": 6,
+      "logical_dimensions": [
+        3,
+        2,
+        2
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "tail_relative_mip": 3,
+      "origin": [
+        16,
+        0,
+        0
+      ],
+      "reverse": 7,
+      "origin_generation_code": 2048,
+      "swizzled_origin_bytes": 4096
+    },
+    {
+      "mip": 7,
+      "logical_dimensions": [
+        1,
+        1,
+        1
+      ],
+      "document_pitch": 64,
+      "xy_macro_blocks": [
+        1,
+        1
+      ],
+      "mipsize_contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "tail_relative_mip": 4,
+      "origin": [
+        8,
+        8,
+        0
+      ],
+      "reverse": 6,
+      "origin_generation_code": 1536,
+      "swizzled_origin_bytes": 2560
+    }
+  ],
+  "boundary_macro": {
+    "index": [
+      3,
+      2,
+      2
+    ],
+    "origin": [
+      192,
+      128,
+      128
+    ],
+    "effective_dimensions": [
+      58,
+      52,
+      2
+    ],
+    "valid_texel_bytes": 6032,
+    "interval_bytes": [
+      13893632,
+      14155776
+    ]
+  },
+  "assumptions": [
+    "MAXMIP=17; integer arithmetic has sufficient width",
+    "Logical texel dimensions use max(1, floor(base dimension / 2**mip)); this does not replace the document block recurrence",
+    "The document does not consume map0_d in mipmap layout; depth here only identifies valid local mip coordinates",
+    "Uniform z-group address coverage is not an upstream exact resource allocation size",
+    "Zero swizzle seed, byte base B=0, coordinates local to the selected mip",
+    "Origin generation uses BYTE_OFFSET_IN_MIPTAIL_WIDTH=20 and the original 256KB 3D BPE1 bit table"
+  ],
+  "checks": {
+    "tail_address_injectivity_texels": 12385,
+    "tail_address_collisions": 0,
+    "trusted_mip4_address": "0x30008175",
+    "trusted_mip0_address": "0x31440175",
+    "scope": "one illustrative configuration and two selected known coordinate checks; no RTL or random regression"
+  }
+}

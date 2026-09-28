@@ -2,10 +2,12 @@
 
 [ADDRLIB.md](ADDRLIB.md) 保存原始算法，[ADDRLIB_GFX12.md](ADDRLIB_GFX12.md) 保存适配 GFX12 的算法，[case/](case/README.md) 保存计算用例。历史分析归入 backup/，仅作备份，默认不参与后续工作。
 
+面向初学者的完整讲解：[ADDRLIB 硬件算法](ADDRLIB硬件算法.md)，包含内存布局、流水分工和三维 tail 访问算例。
+
 ## 项目结构
 
 ```text
-ADDRLIB.md                  原始算法（可信基准）
+ADDRLIB.md                  原始算法及用户拍次标注
 ADDRLIB_GFX12.md            GFX12 修订算法
 case/                       计算用例及索引
 docs/
@@ -40,4 +42,4 @@ node scripts/verify_trusted_baseline.cjs
 node scripts/mipmap_compare/verify_gfx12_revision.cjs --directed-only
 ```
 
-当前 GFX12 修订版已完成百万组功能比较，结果和复现入口见 [修订报告](docs/GFX12_ALGORITHM_REVISION.md)。原可信清单保持不变，ADDRLIB.md 和原可信 case 均匹配基准；旧 smoke 检查原版，新比较入口核对 ADDRLIB_GFX12.md。
+当前 GFX12 修订版已完成百万组功能比较，结果和复现入口见 [修订报告](docs/GFX12_ALGORITHM_REVISION.md)。原可信清单保持不变，三个原可信 case 匹配基准；ADDRLIB.md 因用户补充 stage 注释而与历史字节基准不同，校验会报告该差异。旧 smoke 检查原版，新比较入口核对 ADDRLIB_GFX12.md。

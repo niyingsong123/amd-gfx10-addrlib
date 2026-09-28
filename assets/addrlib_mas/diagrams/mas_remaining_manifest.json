@@ -1,0 +1,44 @@
+{
+  "before_sha256": "48a173bae3e4a1da4462dfde02f736f50d02a42dc6c148ba98e316509bc81a8b",
+  "after_sha256": "1636273747474d44ba3147540b3ffa0cb56b2acb814d6c76e44c48fe46677ab8",
+  "replaced_images": 6,
+  "removed_markers": 6,
+  "figures": [
+    {
+      "original": "image-20260913170701792.png",
+      "svg": "21_addrlib_interface.svg",
+      "title": "AddrLib：输入参数与地址输出",
+      "original_sha256": "a63aff483ce5abf8dd6b8b9672a2ba3611d2419d4d478252587e910223def33a"
+    },
+    {
+      "original": "image-20260913171528469.png",
+      "svg": "22_texture_sample_reuse.svg",
+      "title": "采样密度与纹理邻点复用",
+      "original_sha256": "464f6fe8a846da72b7ee7da0d25303260fd79e4cf5e5bc2b9f6cc13477ea1181"
+    },
+    {
+      "original": "image-20260913172742516.png",
+      "svg": "23_mipmap_tail_packing.svg",
+      "title": "mipmap tail：共享空间与内存顺序",
+      "original_sha256": "c3ffb8aeadde6ea7566aa5df606d6d2b3e144cd0c3bbf0f062d3bb110c4c8d6d"
+    },
+    {
+      "original": "image-20260914203649543.png",
+      "svg": "24_swizzle_mode_decode.svg",
+      "title": "swizzle 模式解码",
+      "original_sha256": "346548dd72b5606e8a8d0aab21055a7238e4f5fb6c9a402539df09f6e166d190"
+    },
+    {
+      "original": "image-20260914203740508.png",
+      "svg": "25_macro_block_size.svg",
+      "title": "宏块大小、对数与掩码",
+      "original_sha256": "da3e49a42cbcc228f8bab4ce49daa659896a7986f98d06f4984e4bc9ffa3c4f0"
+    },
+    {
+      "original": "image-20260914202847708.png",
+      "svg": "26_macro_block_dimensions.svg",
+      "title": "宏块宽高深计算",
+      "original_sha256": "231d960724c985e88369a5017a13e2a8ee7bb40190870bf378522c71f19a070f"
+    }
+  ]
+}

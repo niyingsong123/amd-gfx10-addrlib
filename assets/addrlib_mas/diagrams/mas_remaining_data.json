@@ -1,0 +1,274 @@
+{
+  "sampling": [
+    {
+      "sample_positions": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          4.5,
+          0.5
+        ],
+        [
+          0.5,
+          4.5
+        ],
+        [
+          4.5,
+          4.5
+        ]
+      ],
+      "neighbor_accesses": 16,
+      "distinct_texels": 16,
+      "reuse_counts": [
+        {
+          "x": 0,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "count": 1
+        },
+        {
+          "x": 4,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 5,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 4,
+          "y": 1,
+          "count": 1
+        },
+        {
+          "x": 5,
+          "y": 1,
+          "count": 1
+        },
+        {
+          "x": 0,
+          "y": 4,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 4,
+          "count": 1
+        },
+        {
+          "x": 0,
+          "y": 5,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 5,
+          "count": 1
+        },
+        {
+          "x": 4,
+          "y": 4,
+          "count": 1
+        },
+        {
+          "x": 5,
+          "y": 4,
+          "count": 1
+        },
+        {
+          "x": 4,
+          "y": 5,
+          "count": 1
+        },
+        {
+          "x": 5,
+          "y": 5,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "sample_positions": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          1.5,
+          0.5
+        ],
+        [
+          0.5,
+          1.5
+        ],
+        [
+          1.5,
+          1.5
+        ]
+      ],
+      "neighbor_accesses": 16,
+      "distinct_texels": 9,
+      "reuse_counts": [
+        {
+          "x": 0,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "count": 2
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "count": 2
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "count": 4
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "count": 1
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "count": 2
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "count": 1
+        },
+        {
+          "x": 1,
+          "y": 2,
+          "count": 2
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "tail": {
+    "input": {
+      "mode": "SW_4KB_2D",
+      "W": 256,
+      "H": 256,
+      "D": 1,
+      "e": 0,
+      "s": 0,
+      "maxmip": 8
+    },
+    "macro_dimensions": [
+      64,
+      64,
+      1
+    ],
+    "macro_bytes": 4096,
+    "first_tail_mip": 3,
+    "tail_capacity": 8,
+    "tail_mips": [
+      {
+        "mip": 3,
+        "side": 32,
+        "origin": [
+          32,
+          0
+        ],
+        "origin_code": 2048,
+        "origin_bytes": 2048
+      },
+      {
+        "mip": 4,
+        "side": 16,
+        "origin": [
+          16,
+          32
+        ],
+        "origin_code": 1536,
+        "origin_bytes": 1536
+      },
+      {
+        "mip": 5,
+        "side": 8,
+        "origin": [
+          0,
+          48
+        ],
+        "origin_code": 1280,
+        "origin_bytes": 1280
+      },
+      {
+        "mip": 6,
+        "side": 4,
+        "origin": [
+          0,
+          32
+        ],
+        "origin_code": 1024,
+        "origin_bytes": 1024
+      },
+      {
+        "mip": 7,
+        "side": 2,
+        "origin": [
+          16,
+          16
+        ],
+        "origin_code": 768,
+        "origin_bytes": 768
+      },
+      {
+        "mip": 8,
+        "side": 1,
+        "origin": [
+          16,
+          0
+        ],
+        "origin_code": 512,
+        "origin_bytes": 512
+      }
+    ],
+    "tail_texel_bytes": 1365,
+    "tail_address_collisions": 0,
+    "chain_blocks": 22,
+    "chain_bytes": 90112,
+    "separately_aligned_tail_bytes": 24576,
+    "shared_tail_bytes": 4096,
+    "source_sha256": {
+      "ADDRLIB.md": "537cfa6d9fafbaf3601b219b686d94caa4b7c69fdfe89005dff36a0b4cb6d3bb",
+      "scripts/mipmap_compare/document.cjs": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78"
+    },
+    "assumptions": [
+      "MAXMIP=17; integer arithmetic has sufficient width",
+      "zero base and swizzle seed",
+      "micro block 16x16x1; origin generation uses 20-bit offset field"
+    ],
+    "verification": "single illustrative configuration; tail addresses enumerated; not RTL or a random regression"
+  }
+}

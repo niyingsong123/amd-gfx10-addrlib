@@ -1,0 +1,68 @@
+{
+  "source_before_sha256": "fa72960c9e6ea44ec07c7869e65adfba242fbda81ad214ffce1c18924f97dc1f",
+  "source_after_sha256": "b2684b07bf68818993ec3a237d44515601fe9dc8a2f33b596d1f4c2df55296ab",
+  "marker_count": 10,
+  "scope": "Only selected image markdown references and marker text changed",
+  "figures": [
+    {
+      "original": "assets/addrlib_mas/original/image-20260913171630996.png",
+      "original_sha256": "038d839732fabe0fa6499a100852a5ee299654c474d19e2ec92e35f80a7015f7",
+      "svg": "assets/addrlib_mas/diagrams/09_texture_magnification.svg",
+      "title": "低分辨率纹理放大"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260913171654415.png",
+      "original_sha256": "ea83311611582fb50a1f35e625acbf993f71fd56ef54bd1fd42e1ae34bedf7b0",
+      "svg": "assets/addrlib_mas/diagrams/10_texture_minification.svg",
+      "title": "高分辨率纹理缩小"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260914200151169.png",
+      "original_sha256": "deafd1af1544528aee444debc714229e3ea89a2e1ecebef2afbb7cca9e19014c",
+      "svg": "assets/addrlib_mas/diagrams/11_standard_block_layout.svg",
+      "title": "Standard：宏块、微块与元素排布"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260914201059328.png",
+      "original_sha256": "0a6b698b42e08e9357c094431d589e551987ac7e2767436148fee50936730d1e",
+      "svg": "assets/addrlib_mas/diagrams/12_zorder_block_layout.svg",
+      "title": "Z-order：宏块内元素级 Morton 排布"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260914205805703.png",
+      "original_sha256": "3ac00b01b91be7a9a968ff34def4705d08430b7e703228657ac814d39151fb7c",
+      "svg": "assets/addrlib_mas/diagrams/13_macro_256b_alignment.svg",
+      "title": "256B 对齐与偏移单位"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260915082435084.png",
+      "original_sha256": "78fefd7272b641447e121df3a179fcab2df7ff9f6f6070b27b909a18b1e0f254",
+      "svg": "assets/addrlib_mas/diagrams/14_tail_capacity.svg",
+      "title": "tail 容量计算"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260915083349580.png",
+      "original_sha256": "fcfed74fd4550d28913b551f3fedf97098f3e847dc3fe135137e53c7491f0f80",
+      "svg": "assets/addrlib_mas/diagrams/15_tail_count_check.svg",
+      "title": "tail 层级数量检查"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260915092249060.png",
+      "original_sha256": "dd0bccf4910aa614bd34b6c04f43cd0cae04c5814225df222abe36c6baebfa2f",
+      "svg": "assets/addrlib_mas/diagrams/16_per_mip_blocks.svg",
+      "title": "各 mip 的对齐块数"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260915090911322.png",
+      "original_sha256": "6a09991ff44a9754f4a3cbbe5e0ed3679e6f6baab9dce441fff1f96286116f78",
+      "svg": "assets/addrlib_mas/diagrams/17_tail_size_check.svg",
+      "title": "tail 尺寸检查"
+    },
+    {
+      "original": "assets/addrlib_mas/original/image-20260915092306709.png",
+      "original_sha256": "a49d6304ca5bcf2c602546c0fe301fe129a949fbad9f874f9ca91573282a12f2",
+      "svg": "assets/addrlib_mas/diagrams/18_tail_id_and_size.svg",
+      "title": "首个 tail mip 与块贡献"
+    }
+  ]
+}

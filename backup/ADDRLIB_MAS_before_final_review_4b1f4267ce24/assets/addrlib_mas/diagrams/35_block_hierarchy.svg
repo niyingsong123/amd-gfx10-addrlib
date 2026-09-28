@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="535" viewBox="0 0 1600 535" role="img">
+<title>纹理、宏块、微块与元素的包含关系</title><desc>从一张mip纹理逐层展开到宏块、微块与元素；只表达包含关系，不规定访问顺序。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1600" height="535" fill="white"/>
+<text x="64" y="26" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">BLOCK HIERARCHY</text>
+<text x="64" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="38" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">先认识四层对象，再看各层怎样排列</text>
+<text x="64" y="125" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每次展开一个对象，查看它包含的下一层；块的容量与几何尺寸是两个不同的量。</text>
+<rect x="64" y="235" width="300" height="170" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="64" y="235" width="300" height="5" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="84" y="258" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">一张 mip 纹理</text>
+<text x="84" y="314" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">由多个宏块组成</text>
+<text x="84" y="359" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">具有有效宽、高、深</text>
+<line x1="376" y1="326" x2="440" y2="326" stroke="#516577" stroke-width="2"/>
+<line x1="440" y1="326" x2="430.9955289764732" y2="330.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="440" y1="326" x2="430.9955289764732" y2="321.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="408" y="283" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">展开</text>
+<rect x="454" y="235" width="300" height="170" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="454" y="235" width="300" height="5" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="474" y="258" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块 · macro</text>
+<text x="474" y="314" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">具有固定字节容量</text>
+<text x="474" y="359" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">包含若干微块</text>
+<line x1="766" y1="326" x2="830" y2="326" stroke="#516577" stroke-width="2"/>
+<line x1="830" y1="326" x2="820.9955289764732" y2="330.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="830" y1="326" x2="820.9955289764732" y2="321.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="798" y="283" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">展开</text>
+<rect x="844" y="235" width="300" height="170" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="844" y="235" width="300" height="5" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="864" y="258" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">微块 · micro</text>
+<text x="864" y="314" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">较小的布局单位</text>
+<text x="864" y="359" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">本文采用 256 B 微块</text>
+<line x1="1156" y1="326" x2="1220" y2="326" stroke="#516577" stroke-width="2"/>
+<line x1="1220" y1="326" x2="1210.9955289764732" y2="330.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="1220" y1="326" x2="1210.9955289764732" y2="321.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="1188" y="283" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">展开</text>
+<rect x="1234" y="235" width="300" height="170" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1234" y="235" width="300" height="5" fill="#7552B2" stroke="none" stroke-width="1"/>
+<text x="1254" y="258" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">元素 · element</text>
+<text x="1254" y="314" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">实际存储的数据单位</text>
+<text x="1254" y="359" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每个元素占 BPE 字节</text>
+<rect x="64" y="447" width="1472" height="61" fill="#F3F6F9" stroke="none" stroke-width="1"/>
+<text x="84" y="465" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">包含关系确定对象的层次；排序规则确定同一层对象在内存中的先后位置。</text>
+</svg>

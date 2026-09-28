@@ -1,0 +1,151 @@
+{
+  "scope": "Conceptual 2D layouts in figures 11/12 and the containment diagram 35; no RTL or upstream validation.",
+  "sources": {
+    "ADDRLIB.md": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+    "scripts/redraw_mas_marked_diagrams.py": "7ab99930075f740be41fa93b22dc5d194fd100fb66de9bbab01fb66a838b8594",
+    "scripts/render_mas_block_concepts.py": "098ffd7896f57c540f20ab1341aae518d62e68eeb1f0c18d32f78efa5a37cdcb"
+  },
+  "input": {
+    "texture_xy": [
+      256,
+      256
+    ],
+    "bytes_per_element": 1,
+    "samples": 1,
+    "macro_xy": [
+      64,
+      64
+    ],
+    "macro_bytes": 4096,
+    "micro_xy": [
+      16,
+      16
+    ],
+    "micro_bytes": 256
+  },
+  "morton_4x4": [
+    [
+      0,
+      1,
+      4,
+      5
+    ],
+    [
+      2,
+      3,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      12,
+      13
+    ],
+    [
+      10,
+      11,
+      14,
+      15
+    ]
+  ],
+  "zorder_visible_8x8": [
+    [
+      0,
+      1,
+      4,
+      5,
+      16,
+      17,
+      20,
+      21
+    ],
+    [
+      2,
+      3,
+      6,
+      7,
+      18,
+      19,
+      22,
+      23
+    ],
+    [
+      8,
+      9,
+      12,
+      13,
+      24,
+      25,
+      28,
+      29
+    ],
+    [
+      10,
+      11,
+      14,
+      15,
+      26,
+      27,
+      30,
+      31
+    ],
+    [
+      32,
+      33,
+      36,
+      37,
+      48,
+      49,
+      52,
+      53
+    ],
+    [
+      34,
+      35,
+      38,
+      39,
+      50,
+      51,
+      54,
+      55
+    ],
+    [
+      40,
+      41,
+      44,
+      45,
+      56,
+      57,
+      60,
+      61
+    ],
+    [
+      42,
+      43,
+      46,
+      47,
+      58,
+      59,
+      62,
+      63
+    ]
+  ],
+  "checks": {
+    "micro_ids": 16,
+    "standard_macro_offsets": 4096,
+    "zorder_macro_offsets": 4096,
+    "morton_2_1": 6
+  },
+  "units": {
+    "coordinates": "elements or explicitly labelled block coordinates",
+    "diagram_numbers": "local order at the displayed level; not complete addresses",
+    "KB": "1024 bytes"
+  },
+  "assumptions": [
+    "Unsigned coordinates within the drawn grids; enough-width Python integers.",
+    "Morton interleaves x into even bits and y into odd bits.",
+    "Standard is the depicted micro-Morton / intra-micro-raster teaching layout.",
+    "Specific SW_256KB_3D ordering remains defined by the separate source bit table."
+  ]
+}

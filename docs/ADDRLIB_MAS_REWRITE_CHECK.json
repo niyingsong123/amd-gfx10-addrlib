@@ -1,0 +1,545 @@
+{
+  "source_sha256": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+  "model_sha256": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+  "stage_only_change_verified": true,
+  "input": {
+    "mode": "SW_4KB_2D",
+    "W": 256,
+    "H": 256,
+    "D": 1,
+    "e": 0,
+    "s": 0,
+    "maxmip": 8
+  },
+  "primary": {
+    "ordinary": {
+      "mip": 1,
+      "xyz": [
+        69,
+        70,
+        0
+      ],
+      "origin": {
+        "relative": 17,
+        "reverse": -10,
+        "reverse7": 118,
+        "code": "0",
+        "microLogs": [
+          4,
+          4,
+          0
+        ],
+        "microCoordinates": [
+          0,
+          0
+        ],
+        "xyz": [
+          0,
+          0,
+          0
+        ]
+      },
+      "sheet": [
+        69,
+        70,
+        0
+      ],
+      "pitch": "128",
+      "slice": "90112",
+      "mip_offset_b": "32",
+      "pitch_b": "2",
+      "slice_b": "22",
+      "xb": "1",
+      "yb": "1",
+      "zb": "0",
+      "slice_times_z_l": "0",
+      "slice_times_z_h": "0",
+      "pitch_times_y": "2",
+      "blk_index_pitch": "3",
+      "blk_index_slice": "0",
+      "blk_index": "12288",
+      "baseAddr256B": "3145728",
+      "ms_mask_128B": "31",
+      "ms_mask_256B": "15",
+      "swizzle_bits_256B": "0",
+      "baseAddr256B_out": "3145728",
+      "mipoffset_BaseAddr256B_out": "3145760",
+      "blk_offset": "57",
+      "blk_offset_final": "57",
+      "swizzle_bits": "0",
+      "addr_offset": "12345",
+      "address_final": "805326905",
+      "mipid_in_tail": 0
+    },
+    "tail": {
+      "mip": 4,
+      "xyz": [
+        5,
+        6,
+        0
+      ],
+      "origin": {
+        "relative": 1,
+        "reverse": 6,
+        "reverse7": 6,
+        "code": "1536",
+        "microLogs": [
+          4,
+          4,
+          0
+        ],
+        "microCoordinates": [
+          1,
+          2
+        ],
+        "xyz": [
+          16,
+          32,
+          0
+        ]
+      },
+      "sheet": [
+        21,
+        38,
+        0
+      ],
+      "pitch": "64",
+      "slice": "90112",
+      "mip_offset_b": "0",
+      "pitch_b": "1",
+      "slice_b": "22",
+      "xb": "0",
+      "yb": "0",
+      "zb": "0",
+      "slice_times_z_l": "0",
+      "slice_times_z_h": "0",
+      "pitch_times_y": "0",
+      "blk_index_pitch": "0",
+      "blk_index_slice": "0",
+      "blk_index": "0",
+      "baseAddr256B": "3145728",
+      "ms_mask_128B": "31",
+      "ms_mask_256B": "15",
+      "swizzle_bits_256B": "0",
+      "baseAddr256B_out": "3145728",
+      "mipoffset_BaseAddr256B_out": "3145728",
+      "blk_offset": "1593",
+      "blk_offset_final": "57",
+      "swizzle_bits": "6",
+      "addr_offset": "1593",
+      "address_final": "805307961",
+      "mipid_in_tail": 1
+    },
+    "mips": [
+      {
+        "mip": 0,
+        "side": 256,
+        "pitch": 256,
+        "blocks": "16",
+        "offsetBytes": "24576",
+        "origin": {
+          "relative": 17,
+          "reverse": -10,
+          "reverse7": 118,
+          "code": "0",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            0,
+            0
+          ],
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 1,
+        "side": 128,
+        "pitch": 128,
+        "blocks": "4",
+        "offsetBytes": "8192",
+        "origin": {
+          "relative": 17,
+          "reverse": -10,
+          "reverse7": 118,
+          "code": "0",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            0,
+            0
+          ],
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 2,
+        "side": 64,
+        "pitch": 64,
+        "blocks": "1",
+        "offsetBytes": "4096",
+        "origin": {
+          "relative": 17,
+          "reverse": -10,
+          "reverse7": 118,
+          "code": "0",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            0,
+            0
+          ],
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 3,
+        "side": 32,
+        "pitch": 64,
+        "blocks": "1",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 0,
+          "reverse": 7,
+          "reverse7": 7,
+          "code": "2048",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            2,
+            0
+          ],
+          "xyz": [
+            32,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 4,
+        "side": 16,
+        "pitch": 64,
+        "blocks": "0",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 1,
+          "reverse": 6,
+          "reverse7": 6,
+          "code": "1536",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            1,
+            2
+          ],
+          "xyz": [
+            16,
+            32,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 5,
+        "side": 8,
+        "pitch": 64,
+        "blocks": "0",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 2,
+          "reverse": 5,
+          "reverse7": 5,
+          "code": "1280",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            0,
+            3
+          ],
+          "xyz": [
+            0,
+            48,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 6,
+        "side": 4,
+        "pitch": 64,
+        "blocks": "0",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 3,
+          "reverse": 4,
+          "reverse7": 4,
+          "code": "1024",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            0,
+            2
+          ],
+          "xyz": [
+            0,
+            32,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 7,
+        "side": 2,
+        "pitch": 64,
+        "blocks": "0",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 4,
+          "reverse": 3,
+          "reverse7": 3,
+          "code": "768",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            1,
+            1
+          ],
+          "xyz": [
+            16,
+            16,
+            0
+          ]
+        }
+      },
+      {
+        "mip": 8,
+        "side": 1,
+        "pitch": 64,
+        "blocks": "0",
+        "offsetBytes": "0",
+        "origin": {
+          "relative": 5,
+          "reverse": 2,
+          "reverse7": 2,
+          "code": "512",
+          "microLogs": [
+            4,
+            4,
+            0
+          ],
+          "microCoordinates": [
+            1,
+            0
+          ],
+          "xyz": [
+            16,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "firstTail": 3,
+    "capacity": 8,
+    "slice": "90112",
+    "chainBytes": "90112",
+    "outputs_mip1": [
+      128,
+      "90112",
+      17,
+      "32",
+      12,
+      6,
+      6,
+      0,
+      6
+    ],
+    "outputs_mip4": [
+      64,
+      "90112",
+      1,
+      "0",
+      12,
+      6,
+      6,
+      0,
+      6
+    ],
+    "enumeratedTexels": 87381,
+    "addressCollisions": 0,
+    "unusedBytes": 2731
+  },
+  "classic3d": {
+    "input": {
+      "mode": "SW_256KB_3D",
+      "W": 256,
+      "H": 256,
+      "D": 256,
+      "e": 0,
+      "s": 0,
+      "maxmip": 12
+    },
+    "ordinary": {
+      "mip": 0,
+      "xyz": [
+        69,
+        134,
+        195
+      ],
+      "origin": {
+        "relative": 17,
+        "reverse": -7,
+        "reverse7": 121,
+        "code": "0",
+        "microLogs": [
+          3,
+          2,
+          3
+        ],
+        "microCoordinates": [
+          0,
+          0
+        ],
+        "xyz": [
+          0,
+          0,
+          0
+        ]
+      },
+      "sheet": [
+        69,
+        134,
+        195
+      ],
+      "pitch": "256",
+      "slice": "90112",
+      "mip_offset_b": "6144",
+      "pitch_b": "4",
+      "slice_b": "22",
+      "xb": "1",
+      "yb": "2",
+      "zb": "3",
+      "slice_times_z_l": "66",
+      "slice_times_z_h": "0",
+      "pitch_times_y": "8",
+      "blk_index_pitch": "9",
+      "blk_index_slice": "66",
+      "blk_index": "19660800",
+      "baseAddr256B": "3145728",
+      "ms_mask_128B": "2047",
+      "ms_mask_256B": "1023",
+      "swizzle_bits_256B": "0",
+      "baseAddr256B_out": "3145728",
+      "mipoffset_BaseAddr256B_out": "3151872",
+      "blk_offset": "373",
+      "blk_offset_final": "117",
+      "swizzle_bits": "1",
+      "addr_offset": "19661173",
+      "address_final": "826540405",
+      "mipid_in_tail": 0
+    },
+    "tail": {
+      "mip": 4,
+      "xyz": [
+        5,
+        6,
+        3
+      ],
+      "origin": {
+        "relative": 1,
+        "reverse": 9,
+        "reverse7": 9,
+        "code": "8192",
+        "microLogs": [
+          3,
+          2,
+          3
+        ],
+        "microCoordinates": [
+          4,
+          0
+        ],
+        "xyz": [
+          32,
+          0,
+          0
+        ]
+      },
+      "sheet": [
+        37,
+        6,
+        3
+      ],
+      "pitch": "64",
+      "slice": "90112",
+      "mip_offset_b": "0",
+      "pitch_b": "1",
+      "slice_b": "22",
+      "xb": "0",
+      "yb": "0",
+      "zb": "0",
+      "slice_times_z_l": "0",
+      "slice_times_z_h": "0",
+      "pitch_times_y": "0",
+      "blk_index_pitch": "0",
+      "blk_index_slice": "0",
+      "blk_index": "0",
+      "baseAddr256B": "3145728",
+      "ms_mask_128B": "2047",
+      "ms_mask_256B": "1023",
+      "swizzle_bits_256B": "0",
+      "baseAddr256B_out": "3145728",
+      "mipoffset_BaseAddr256B_out": "3145728",
+      "blk_offset": "33141",
+      "blk_offset_final": "117",
+      "swizzle_bits": "129",
+      "addr_offset": "33141",
+      "address_final": "805339509",
+      "mipid_in_tail": 1
+    }
+  },
+  "assumptions": [
+    "BPE1, one sample, zero swizzle seed, selected modes only",
+    "MAXMIP=17; reverse is signed 7 bits; origin code is 20 bits; origins are masked to 10 bits",
+    "Byte address 48 bits, base field 40 bits, low base field 12 bits; selected values do not overflow",
+    "BigInt products and addresses; no truncation of unspecified intermediate widths",
+    "Stage tags document ownership only; no sequential execution or register model"
+  ],
+  "scope": "Finite primary texture address enumeration and two 3D accesses; not upstream C++ comparison, RTL simulation, or timing verification"
+}

@@ -1,0 +1,59 @@
+{
+  "document_sha256": "eb37d6dbb9161bed0108aa17602d91bf9b3efbde0d018e6cf72c213508351e50",
+  "backup": "backup/ADDRLIB_MAS_before_final_review_91f907042489",
+  "backup_files_verified": 30,
+  "unchanged_formula_code_blocks": 28,
+  "protected_files_unchanged": {
+    "ADDRLIB.md": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+    "ADDRLIB_GFX12.md": "a6864bd26943078add333142bb40b87a9600b106572928f8b94621522ccacd8c",
+    "docs/TRUSTED_BASELINE.json": "9a917e89a6c234cafb5e9974f87dd79b1c25bfc6c1f4b88e1391f2c8dd7b8a33",
+    "case/case0_mip4_xyz_5_6_3.md": "54449b421ae88232c5faf3e90dad9516327845ca591a2d931c899c4c6cba84ea",
+    "case/case0_mip4_xyz_5_6_3_GFX12.md": "b7ccde8268ba7df02dff44a9fc8ac5727cf369861dade47a66a200e81ee8af39",
+    "case/case1_mip0_xyz_69_134_195.md": "dc282d50a42228afa35b6700ec45e5f31538f32cc9cc47f145cedfaa62fff407",
+    "case/case1_mip0_xyz_69_134_195_GFX12.md": "7e80fbc64aab0808f94c514d579eff4c7202dd6673b3fa3ba28ead392d29037f",
+    "case/case2_mip6_xyz_1_1_17.md": "002411a68b46ec8c1891946ab810d7955a530bff736a9038e9316dd835e769e0",
+    "case/case2_mip6_xyz_1_1_17_GFX12.md": "1fbb1aaacfdefe625f5356e716fb09b442551ce827ef77109764b0c48df2fcaf",
+    "case/case3_mip0_xyz_0_0_0.md": "f23084410ce61135758f1e2546254ad9d2d251e2c7cd43ae430b48881d9bb713",
+    "case/case3_mip0_xyz_0_0_0_GFX12.md": "b2796f7b26971753cde8c4cfd4210230284a6e1de8e4c57e6a96197f79ae4866",
+    "case/case4_mip1_xyz_0_0_0.md": "cabf5d2022c5da771bda403761f4b3300dde5a62d79c3f2c9e29ba9b2b21e104",
+    "case/case4_mip1_xyz_0_0_0_GFX12.md": "00f3a0cbb6cd50fe68cc3cf1f2812faa570b3104abcb1636c9eb3f7ddc174046",
+    "case/README.md": "46955164d0811957161ac9976308df6c62b0b537f0c7201b67cf632c8f019b4e"
+  },
+  "image_references_unchanged": 13,
+  "changed_images": [
+    "assets/addrlib_mas/diagrams/32_macro_micro_swizzle.svg",
+    "assets/addrlib_mas/diagrams/32_macro_micro_swizzle.png",
+    "assets/addrlib_mas/diagrams/33_tail_packing_3d.svg",
+    "assets/addrlib_mas/diagrams/33_tail_packing_3d.png",
+    "assets/addrlib_mas/diagrams/30_teaching_stages.svg",
+    "assets/addrlib_mas/diagrams/30_teaching_stages.png",
+    "assets/addrlib_mas/diagrams/34_address_compose.svg",
+    "assets/addrlib_mas/diagrams/34_address_compose.png"
+  ],
+  "corrections": [
+    "明确 BPE/bpp 的换算方向及 KB 的数值约定",
+    "明确逻辑 mip 尺寸向下取整，与布局块数向上取整区分",
+    "补充 swizzle 的含义",
+    "区分 Zμ 微块层和 z 元素平面",
+    "修复 pitch 单位前后矛盾",
+    "明确 mip 区域倒序的原因，区分 tail 内部排列",
+    "结合用户新增的 S0 输入和 S8 输出标记明确 8 拍计数口径",
+    "区分原始编码 bit13 和十二位字段 bit5",
+    "明确 0x7FF 掩码的 128 B 单位",
+    "拆开地址单位转换段落",
+    "明确公式表达形式及位拼接顺序",
+    "补齐 al_num_mips_inside_tail 与已展开公式及表项的对应关系",
+    "图32区分微块层与元素平面",
+    "图33统一容量为KB",
+    "图34精确说明重复OR会重新置1的风险"
+  ],
+  "visual_check": {
+    "rawMarkdownMarkers": [],
+    "wideTables": [],
+    "svgTextOutsideViewBox": [],
+    "checkedSvgs": 13
+  },
+  "numerical_check": "ADDRLIB_MAS_3D_WALKTHROUGH_CHECK.json",
+  "trusted_baseline_note": "Original three cases unchanged; ADDRLIB.md has the pre-existing stage-annotation hash difference.",
+  "scope": "Documentation and selected single-case functional check; no broad random, upstream C++, RTL or timing validation."
+}

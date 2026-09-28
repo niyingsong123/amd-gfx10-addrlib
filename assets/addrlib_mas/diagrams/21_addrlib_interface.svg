@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="840" viewBox="0 0 1440 840" role="img">
+<title>AddrLib：输入参数与地址输出</title><desc>逻辑坐标、元素格式、采样数、表面参数和mip层级经过地址计算，输出字节地址和tail标志。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="840" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRESS INTERFACE</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">AddrLib：从逻辑坐标到纹理存储地址</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">坐标和布局参数共同决定访问位置；当前 mip 的局部坐标直接参与寻址。</text>
+<rect x="56" y="190" width="446" height="96" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="190" width="5" height="96" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="77" y="203" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">访问点</text>
+<text x="77" y="238" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">x / y / z / s</text>
+<line x1="502" y1="238.0" x2="555" y2="238.0" stroke="#516577" stroke-width="1.5"/>
+<rect x="56" y="302" width="446" height="110" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="302" width="5" height="110" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="77" y="315" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">格式与采样</text>
+<text x="77" y="350" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">log2_element_bytes</text>
+<text x="77" y="379" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">log2_num_samples</text>
+<line x1="502" y1="357.0" x2="555" y2="357.0" stroke="#516577" stroke-width="1.5"/>
+<rect x="56" y="428" width="446" height="134" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="428" width="5" height="134" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="77" y="441" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">表面描述</text>
+<text x="77" y="476" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">sw_mode / baseAddr256B</text>
+<text x="77" y="505" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip0 宽、高、深（减一编码）</text>
+<line x1="502" y1="495.0" x2="555" y2="495.0" stroke="#516577" stroke-width="1.5"/>
+<rect x="56" y="578" width="446" height="98" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="578" width="5" height="98" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="77" y="591" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">层级选择</text>
+<text x="77" y="626" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip_level / maxmip</text>
+<line x1="502" y1="627.0" x2="555" y2="627.0" stroke="#516577" stroke-width="1.5"/>
+<line x1="555" y1="238" x2="555" y2="627" stroke="#516577" stroke-width="1.5"/>
+<line x1="555" y1="432" x2="630" y2="432" stroke="#516577" stroke-width="2"/>
+<line x1="630" y1="432" x2="620.9955289764732" y2="436.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="630" y1="432" x2="620.9955289764732" y2="427.6503446588877" stroke="#516577" stroke-width="2"/>
+<rect x="649" y="290" width="357" height="275" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="649" y="290" width="357" height="5" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="679" y="321" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="37" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">AddrLib</text>
+<text x="679" y="397" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mipmap 参数 / tail 原点</text>
+<text x="679" y="443" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">块内 swizzle / 宏块索引</text>
+<text x="679" y="489" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">基址与各级偏移合成</text>
+<line x1="1024" y1="432" x2="1100" y2="432" stroke="#516577" stroke-width="2"/>
+<line x1="1100" y1="432" x2="1090.9955289764732" y2="436.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="1100" y1="432" x2="1090.9955289764732" y2="427.6503446588877" stroke="#516577" stroke-width="2"/>
+<rect x="1115" y="333" width="269" height="213" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1115" y="333" width="269" height="5" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="1137" y="361" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">address_final</text>
+<text x="1137" y="399" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">当前元素的字节地址</text>
+<text x="1137" y="450" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mipid_in_tail</text>
+<text x="1137" y="490" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">当前 mip 是否位于 tail</text>
+<line x1="56" y1="716" x2="1384" y2="716" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="740" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">输入描述“访问哪个元素、采用什么布局”，输出给出存储地址。</text>
+<text x="56" y="782" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">baseAddr256B 的单位为 256 B；address_final 的单位为字节。</text>
+</svg>

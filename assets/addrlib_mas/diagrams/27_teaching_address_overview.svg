@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="690" viewBox="0 0 1440 690" role="img">
+<title>从访问请求到字节地址</title><desc>布局参数描述资源，局部坐标描述本次访问；布局、宏块位置和块内位映射在地址合成处汇合。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="690" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  ADDRESS WALKTHROUGH</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">给定 mip 和局部坐标，找到一个字节地址</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">主例：256×256 · 1 BPE · 1X · SW_4KB_2D · mip0…8</text>
+<rect x="56" y="198" width="300" height="140" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="74" y="218" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">资源参数</text>
+<text x="74" y="253" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">尺寸、格式、模式</text>
+<text x="74" y="288" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip 总数与基址</text>
+<rect x="448" y="198" width="350" height="140" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="466" y="218" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">布局</text>
+<text x="466" y="253" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">pitch、mip 偏移</text>
+<text x="466" y="288" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">块尺寸、tail 位置</text>
+<rect x="56" y="402" width="300" height="140" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="74" y="422" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">一次访问</text>
+<text x="74" y="457" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip1 · (69,70,0)</text>
+<text x="74" y="492" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">sample s=0</text>
+<rect x="448" y="402" width="350" height="140" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="466" y="422" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">本次元素的位置</text>
+<text x="466" y="455" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">宏块位置 + 块内位映射</text>
+<text x="466" y="488" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">tail 时先加坐标原点</text>
+<rect x="934" y="294" width="450" height="176" fill="#FBE4EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="952" y="314" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">地址合成</text>
+<text x="952" y="349" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">字节地址 address_final</text>
+<text x="952" y="384" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">tail 标志 mipid_in_tail</text>
+<line x1="364" y1="268" x2="435" y2="268" stroke="#516577" stroke-width="1.5"/>
+<line x1="435" y1="268" x2="425.9955289764732" y2="272.3496553411123" stroke="#516577" stroke-width="1.5"/>
+<line x1="435" y1="268" x2="425.9955289764732" y2="263.6503446588877" stroke="#516577" stroke-width="1.5"/>
+<line x1="364" y1="472" x2="435" y2="472" stroke="#516577" stroke-width="1.5"/>
+<line x1="435" y1="472" x2="425.9955289764732" y2="476.3496553411123" stroke="#516577" stroke-width="1.5"/>
+<line x1="435" y1="472" x2="425.9955289764732" y2="467.6503446588877" stroke="#516577" stroke-width="1.5"/>
+<line x1="622" y1="346" x2="622" y2="390" stroke="#516577" stroke-width="1.5"/>
+<line x1="622" y1="390" x2="617.6503446588877" y2="380.9955289764732" stroke="#516577" stroke-width="1.5"/>
+<line x1="622" y1="390" x2="626.3496553411123" y2="380.9955289764732" stroke="#516577" stroke-width="1.5"/>
+<line x1="810" y1="268" x2="918" y2="338" stroke="#516577" stroke-width="1.5"/>
+<line x1="918" y1="338" x2="908.0781134806629" y2="336.75253541236754" stroke="#516577" stroke-width="1.5"/>
+<line x1="918" y1="338" x2="912.8096290158296" y2="329.4524828723961" stroke="#516577" stroke-width="1.5"/>
+<line x1="810" y1="472" x2="918" y2="420" stroke="#516577" stroke-width="1.5"/>
+<line x1="918" y1="420" x2="911.7739049957585" y2="427.8253268940127" stroke="#516577" stroke-width="1.5"/>
+<line x1="918" y1="420" x2="908.0000081492515" y2="419.9872334435751" stroke="#516577" stroke-width="1.5"/>
+<line x1="56" y1="587" x2="1384" y2="587" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="612" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip 与坐标在输入时已经确定；这里不计算 LOD，也不生成纹理过滤权重。</text>
+</svg>

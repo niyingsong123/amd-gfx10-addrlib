@@ -524,6 +524,8 @@ slice_b = (slice_input_en[16] ? mipsize[16] : 'd0) +
 
 ​		 (slice_input_en[6] ? mipsize[6] : 'd0) ;
 
+//S2 ->S3
+
 mip_offset_in_blks = mip_offset_in_blks + 
 
 ​					(mip_off_input_en[1] ? mipsize[1] : 'd0) + 
@@ -580,6 +582,8 @@ l2_block_ms_128B = l2_ms - 7;
 
 ////////////////////////module definition///////////////////////////
 
+//s4 stage
+
 module calc_mip_inside_tail_xyz_orig
 
 input l2_ms_odd;
@@ -594,11 +598,11 @@ input sw_type;
 
 input l2_block_ms_128B;
 
-output x_mip_in_tail_orig;
+output x_mip_in_tail_orig; //s5 stage
 
-output y_mip_in_tail_orig;
+output y_mip_in_tail_orig; //s5 stage
 
-output z_mip_in_tail_orig;
+output z_mip_in_tail_orig; //s5 stage
 
 
 
@@ -700,16 +704,16 @@ z_mip_in_tail_orig = 'd0;
 
 return;
 
-x_in_sheet = x_mip_in_tail_orig + x;
+x_in_sheet = x_mip_in_tail_orig + x; //s5 stage
 
-y_in_sheet = y_mip_in_tail_orig + y;
+y_in_sheet = y_mip_in_tail_orig + y; //s5 stage
 
-z_in_sheet = z_mip_in_tail_orig + z;
+z_in_sheet = z_mip_in_tail_orig + z;  //s5 stage
 
 
 // blk_offset[6:0] table 这个表格里的x,y,z都使用x_in_sheet，y_in_sheet，z_in_sheet
 
-| {sw_mode, log2_ns, log2_eb}   | blk_offset                                 |      |
+| {sw_mode, log2_ns, log2_eb}   | blk_offset //s6 stage                      |      |
 | ----------------------------- | ------------------------------------------ | ---- |
 | {`SW_LINEAR, AA_1X, BPE_1} | {x[6], x[5], x[4], x[3], x[2], x[1], x[0]} |      |
 | {`SW_LINEAR, AA_1X, BPE_2} | {x[5], x[4], x[3], x[2], x[1], x[0], 1'b0} |      |
@@ -850,7 +854,7 @@ input pitch;
 
 input slice;
 
-output blk_index;
+output blk_index; //s7 stage
 
 
 
@@ -906,7 +910,7 @@ micro_offset_linear[6:0] = x[6:0] << l2_eb;
 
 ///////////////////////////////////////////////////////
 
-
+//s7 stage 
 
 ms_mask_256B = ms_mask_128B >> 1;
 
@@ -918,7 +922,7 @@ swizzle_bits = blk_offset[DATA_BLK_OFFSET_WIDTH-1:8] & ms_mask_256B[DATA_BLK_OFF
 
 addr_offset = blk_index[47:0] | (swizzle_bits <<8)[19:0] | blk_offset_final[45:0];
 
-
+//s8 stage
 
 address_final = ({mipoffset_BaseAddr256B_out, 8'd0}) + addr_offset;
 

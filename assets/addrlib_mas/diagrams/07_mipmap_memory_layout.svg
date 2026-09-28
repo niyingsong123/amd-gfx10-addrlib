@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1320" viewBox="0 0 1440 1320" role="img">
+<title>多 mipmap 的内存排布：mip、z 与对齐</title><desc>每个z宏块分组链步长18个宏块。组内顺序tail、mip2、mip1、mip0。三维宏块含64层，最后宏块有效58乘52乘2。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="1320" fill="white"/>
+<text x="56" y="34" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  MEMORY ATLAS</text>
+<text x="1384" y="34" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">01 / 02</text>
+<text x="56" y="72" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="42" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">多 mipmap 的内存排布</text>
+<text x="56" y="134" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">先看线性地址，再展开 Z 深度分组与宏块边界。所有地址偏移单位为字节。</text>
+<rect x="56" y="181" width="1328" height="72" fill="#F3F6F9" stroke="none" stroke-width="1"/>
+<text x="76" y="194" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">250 × 180 × 130    ·    mip0…7    ·    SW_256KB_3D    ·    1 B/元素    ·    单采样</text>
+<text x="76" y="225" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">macro = 64 × 64 × 64 = 256 KiB    |    B 为字节基址，swizzle seed = 0</text>
+<text x="56" y="280" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">01  线性地址：同一 Z 分组内，tail → mip2 → mip1 → mip0</text>
+<text x="56" y="319" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">zb = z &gt;&gt; 6（mip 内坐标）</text>
+<text x="284" y="331" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">+0</text>
+<text x="414" y="331" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">+0x040000</text>
+<text x="544" y="331" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">+0x080000</text>
+<text x="804" y="331" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">+0x180000</text>
+<text x="1384" y="331" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">+0x480000</text>
+<text x="56" y="372" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">zb=0 · z=0…63</text>
+<text x="56" y="402" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">组基址 B+0x000000</text>
+<rect x="284" y="370" width="130" height="57" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="349.0" y="388" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">tail · m3…7</text>
+<rect x="414" y="370" width="130" height="57" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="479.0" y="388" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip2 · 1块</text>
+<rect x="544" y="370" width="260" height="57" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="674.0" y="388" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip1 · 4块</text>
+<rect x="804" y="370" width="580" height="57" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1094.0" y="388" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip0 · 12块</text>
+<text x="349" y="432" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">共享1块</text>
+<text x="56" y="465" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">zb=1 · z=64…127</text>
+<text x="56" y="495" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">组基址 B+0x480000</text>
+<rect x="284" y="463" width="130" height="57" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<text x="349.0" y="481" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">无有效 mip</text>
+<rect x="414" y="463" width="130" height="57" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<text x="479.0" y="481" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">无有效 mip</text>
+<rect x="544" y="463" width="260" height="57" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="674.0" y="481" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip1 · 仅 z=64 有效</text>
+<rect x="804" y="463" width="580" height="57" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1094.0" y="481" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip0 · z=64…127</text>
+<text x="349" y="525" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge"></text>
+<text x="56" y="558" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">zb=2 · z=128…191</text>
+<text x="56" y="588" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">组基址 B+0x900000</text>
+<rect x="284" y="556" width="130" height="57" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<text x="349.0" y="574" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">无有效 mip</text>
+<rect x="414" y="556" width="130" height="57" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<text x="479.0" y="574" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">无有效 mip</text>
+<rect x="544" y="556" width="260" height="57" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<text x="674.0" y="574" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">无有效 mip</text>
+<rect x="804" y="556" width="580" height="57" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1094.0" y="574" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip0 · 仅 z=128、129 有效</text>
+<text x="349" y="618" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge"></text>
+<text x="56" y="657" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">链步长 = (1 + 1 + 4 + 12) × 256 KiB = 0x480000 B = 4.5 MiB</text>
+<text x="56" y="698" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">斜线槽位没有本 mip 的有效数据；这里画统一步长覆盖的地址区间，不宣称精确资源分配总量。段宽已压缩。</text>
+<line x1="56" y1="745" x2="1384" y2="745" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="777" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">02  一个宏块内的不同 z 平面</text>
+<rect x="150" y="843" width="370" height="92" fill="#E0EDF9" stroke="#246BB0" stroke-width="1.5"/>
+<text x="168" y="857" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">z_local=63</text>
+<rect x="126" y="886" width="370" height="92" fill="#E0EDF9" stroke="#246BB0" stroke-width="1.5"/>
+<text x="144" y="900" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">z_local=1</text>
+<rect x="102" y="929" width="370" height="92" fill="#E0EDF9" stroke="#246BB0" stroke-width="1.5"/>
+<text x="120" y="943" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">z_local=0</text>
+<text x="548" y="839" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">… z=2…62 …</text>
+<text x="548" y="880" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每面 64×64</text>
+<text x="548" y="914" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">共 64 层</text>
+<text x="56" y="1048" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">同一宏块内，z 位参与 swizzle，平面字节并非连续。</text>
+<text x="56" y="1087" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(0,0,0) → 0x0   ·   (0,0,1) → 0x4   ·   (0,0,2) → 0x20</text>
+<text x="56" y="1122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">到 z=64 才换到下一个 Z 分组；中间各层用 … 省略。</text>
+<line x1="738" y1="785" x2="738" y2="1158" stroke="#D5DFE6" stroke-width="1"/>
+<text x="782" y="777" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">03  最后一个宏块：边缘补齐</text>
+<rect x="792" y="850" width="240" height="240" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="792" y="850" width="217.5" height="195.0" fill="#E0EDF9" stroke="#246BB0" stroke-width="1"/>
+<text x="804" y="908" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">有效 XY：58×52</text>
+<text x="804" y="945" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">x=192…249</text>
+<text x="804" y="976" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">y=128…179</text>
+<text x="912.0" y="1058.0" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">12 行补齐</text>
+<text x="908" y="820" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">对齐宽 64</text>
+<text x="1062" y="841" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">块坐标 (3,2,2)</text>
+<text x="1062" y="880" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">原点 (192,128,128)</text>
+<text x="1062" y="918" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">有效 58×52×2</text>
+<text x="1062" y="955" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">→ 对齐到 64×64×64</text>
+<rect x="1062" y="1001" width="270" height="35" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1062" y="1001" width="8.4375" height="35" fill="#E0EDF9" stroke="#246BB0" stroke-width="1"/>
+<text x="1062" y="1050" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">Z：2 层有效 + 62 层补齐</text>
+<text x="792" y="1123" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">X 尾部补齐 6 列；Y 尾部补齐 12 行。</text>
+<line x1="56" y1="1175" x2="1384" y2="1175" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="1202" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">最后宏块 [B+0xD40000, B+0xD80000)：边界按 256 KiB 对齐。</text>
+<text x="56" y="1244" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">补齐区是 X/Y/Z 坐标空间的边缘，经 swizzle 后可能分散；不能一律画成末尾一段连续字节。</text>
+<text x="56" y="1283" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">共享 tail 占 1 个宏块；尾内各级通过不同 orig 定位。</text>
+</svg>

@@ -1,0 +1,18 @@
+{
+  "source_before_sha256": "da02a6057c2c09259489eaea3df4e3adc25d1e52309eedbef0d5c9487f062a28",
+  "source_after_sha256": "52d5c5aa9596f2cc771dbed6b121fa89bfc540deea8f70c242d6a497da35d52d",
+  "replaced_figures": 2,
+  "removed_markers": 2,
+  "sources": [
+    {
+      "original": "image-20260913172212926.png",
+      "original_sha256": "71d03ea1f78caa46376f2e9218e3a31e3284e893311bc7624bb96afba511c29c",
+      "svg": "19_mipmap_volume_memory.svg"
+    },
+    {
+      "original": "image-20260913172222181.png",
+      "original_sha256": "ed67ddc5b3ee015ebe19ee2ef2d519203fa3096ec3d0e221dab57f1762878da0",
+      "svg": "20_mipmap_2d_chain.svg"
+    }
+  ]
+}

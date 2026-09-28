@@ -1,0 +1,256 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1290" viewBox="0 0 1680 1290" role="img">
+<title>宏块、微块与元素的地址位层次</title><desc>三维256KiB模式中，宏块为64x64x64，微块为8x4x8。坐标切片中的编号按实际位映射生成。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1680" height="1290" fill="white"/>
+<text x="64" y="26" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">BLOCKS AND ADDRESS BITS</text>
+<text x="64" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="39" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">由宏块到微块，再到一个元素</text>
+<text x="64" y="124" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SW_256KB_3D · 1 BPE / 1X · 宏块 64×64×64 · 微块 8×4×8</text>
+<text x="64" y="197" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">01</text>
+<text x="64" y="234" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">一个 mip 的宏块网格</text>
+<text x="610" y="197" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">02</text>
+<text x="610" y="234" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">一个宏块中的微块</text>
+<text x="1156" y="197" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">03</text>
+<text x="1156" y="234" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">一个微块中的元素</text>
+<text x="64" y="284" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip0 · 固定一个 Z 分组</text>
+<text x="610" y="284" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">固定 Zμ=0，显示前 4 行 Yμ</text>
+<text x="1156" y="284" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">固定微块内 z=0，显示 XY 平面</text>
+<rect x="90" y="371" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="133.5" y="398.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<rect x="177" y="371" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="220.5" y="398.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">1</text>
+<rect x="264" y="371" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="307.5" y="398.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">2</text>
+<rect x="351" y="371" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="394.5" y="398.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">3</text>
+<rect x="90" y="458" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="133.5" y="485.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">4</text>
+<rect x="177" y="458" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="220.5" y="485.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">5</text>
+<rect x="264" y="458" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="307.5" y="485.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">6</text>
+<rect x="351" y="458" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="394.5" y="485.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">7</text>
+<rect x="90" y="545" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="133.5" y="572.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">8</text>
+<rect x="177" y="545" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="220.5" y="572.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">9</text>
+<rect x="264" y="545" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="307.5" y="572.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">10</text>
+<rect x="351" y="545" width="87" height="87" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="394.5" y="572.5" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">11</text>
+<text x="90" y="334" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块在本 mip 区域内的编号</text>
+<text x="90" y="662" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">X：4 块  ·  Y：3 块</text>
+<text x="90" y="710" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">沿 X 递增，再进入下一行 Y。</text>
+<text x="90" y="750" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每块容纳 256 KiB 的地址空间。</text>
+<line x1="471" y1="481" x2="574" y2="481" stroke="#516577" stroke-width="2"/>
+<line x1="574" y1="481" x2="564.9955289764732" y2="485.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="574" y1="481" x2="564.9955289764732" y2="476.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="525" y="439" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">展开</text>
+<rect x="634" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="659.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<rect x="684" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="709.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">2</text>
+<rect x="734" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="759.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">16</text>
+<rect x="784" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="809.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">18</text>
+<rect x="834" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="859.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">128</text>
+<rect x="884" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="909.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">130</text>
+<rect x="934" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="959.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">144</text>
+<rect x="984" y="371" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1009.0" y="385.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">146</text>
+<rect x="634" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="659.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">1</text>
+<rect x="684" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="709.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">3</text>
+<rect x="734" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="759.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">17</text>
+<rect x="784" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="809.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">19</text>
+<rect x="834" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="859.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">129</text>
+<rect x="884" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="909.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">131</text>
+<rect x="934" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="959.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">145</text>
+<rect x="984" y="421" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1009.0" y="435.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">147</text>
+<rect x="634" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="659.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">8</text>
+<rect x="684" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="709.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">10</text>
+<rect x="734" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="759.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">24</text>
+<rect x="784" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="809.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">26</text>
+<rect x="834" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="859.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">136</text>
+<rect x="884" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="909.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">138</text>
+<rect x="934" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="959.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">152</text>
+<rect x="984" y="471" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1009.0" y="485.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">154</text>
+<rect x="634" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="659.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">9</text>
+<rect x="684" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="709.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">11</text>
+<rect x="734" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="759.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">25</text>
+<rect x="784" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="809.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">27</text>
+<rect x="834" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="859.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">137</text>
+<rect x="884" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="909.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">139</text>
+<rect x="934" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="959.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">153</text>
+<rect x="984" y="521" width="50" height="50" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1009.0" y="535.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">155</text>
+<text x="634" y="334" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">微块编号：块内偏移的高 10 位</text>
+<text x="834" y="585" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">…  其余 Y 行与 Z 平面省略  …</text>
+<text x="634" y="620" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">横向 Xμ=0…7；纵向 Yμ=0…3</text>
+<text x="634" y="662" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">8×16×8 = 1024 个微块</text>
+<text x="634" y="710" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每个微块占 256 B。</text>
+<text x="634" y="750" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">编号由坐标位交织生成。</text>
+<line x1="1058" y1="481" x2="1125" y2="481" stroke="#516577" stroke-width="2"/>
+<line x1="1125" y1="481" x2="1115.9955289764732" y2="485.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="1125" y1="481" x2="1115.9955289764732" y2="476.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="1092" y="439" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">展开</text>
+<rect x="1180" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1205.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<rect x="1230" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1255.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">1</text>
+<rect x="1280" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1305.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">2</text>
+<rect x="1330" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1355.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">3</text>
+<rect x="1380" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1405.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">64</text>
+<rect x="1430" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1455.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">65</text>
+<rect x="1480" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1505.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">66</text>
+<rect x="1530" y="371" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1555.0" y="385.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">67</text>
+<rect x="1180" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1205.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">8</text>
+<rect x="1230" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1255.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">9</text>
+<rect x="1280" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1305.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">10</text>
+<rect x="1330" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1355.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">11</text>
+<rect x="1380" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1405.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">72</text>
+<rect x="1430" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1455.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">73</text>
+<rect x="1480" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1505.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">74</text>
+<rect x="1530" y="421" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1555.0" y="435.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">75</text>
+<rect x="1180" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1205.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">16</text>
+<rect x="1230" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1255.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">17</text>
+<rect x="1280" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1305.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">18</text>
+<rect x="1330" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1355.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">19</text>
+<rect x="1380" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1405.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">80</text>
+<rect x="1430" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1455.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">81</text>
+<rect x="1480" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1505.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">82</text>
+<rect x="1530" y="471" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1555.0" y="485.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">83</text>
+<rect x="1180" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1205.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">24</text>
+<rect x="1230" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1255.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">25</text>
+<rect x="1280" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1305.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">26</text>
+<rect x="1330" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1355.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">27</text>
+<rect x="1380" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1405.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">88</text>
+<rect x="1430" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1455.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">89</text>
+<rect x="1480" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1505.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">90</text>
+<rect x="1530" y="521" width="50" height="50" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1555.0" y="535.0" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">91</text>
+<text x="1180" y="334" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">字节偏移：块内偏移的低 8 位</text>
+<text x="1380" y="585" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">…  其余 7 个 Z 平面省略  …</text>
+<text x="1180" y="620" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">横向 x=0…7；纵向 y=0…3</text>
+<text x="1180" y="662" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">8×4×8 = 256 个元素</text>
+<text x="1180" y="710" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">每元素 1 B，偏移范围 0…255。</text>
+<text x="1180" y="750" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">同一行不一定是连续字节。</text>
+<line x1="64" y1="819" x2="1616" y2="819" stroke="#D5DFE6" stroke-width="1"/>
+<text x="64" y="857" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">18 位块内字节偏移：高位选择微块，低位选择微块内字节</text>
+<rect x="100" y="919" width="800" height="43" fill="#EEE5FC" stroke="none" stroke-width="1"/>
+<rect x="900" y="919" width="640" height="43" fill="#DEF2EF" stroke="none" stroke-width="1"/>
+<text x="500" y="928" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">高 10 位 · 0…1023</text>
+<text x="1220" y="928" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">低 8 位 · 0…255</text>
+<text x="140.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">17</text>
+<rect x="100" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="140.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y5</text>
+<text x="220.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">16</text>
+<rect x="180" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="220.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z5</text>
+<text x="300.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">15</text>
+<rect x="260" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="300.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x5</text>
+<text x="380.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">14</text>
+<rect x="340" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="380.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y4</text>
+<text x="460.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">13</text>
+<rect x="420" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="460.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z4</text>
+<text x="540.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">12</text>
+<rect x="500" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="540.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x4</text>
+<text x="620.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">11</text>
+<rect x="580" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="620.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y3</text>
+<text x="700.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">10</text>
+<rect x="660" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="700.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z3</text>
+<text x="780.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">9</text>
+<rect x="740" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="780.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x3</text>
+<text x="860.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">8</text>
+<rect x="820" y="1022" width="80" height="68" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="860.0" y="1040" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y2</text>
+<text x="940.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">7</text>
+<rect x="900" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="940.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z2</text>
+<text x="1020.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">6</text>
+<rect x="980" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1020.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x2</text>
+<text x="1100.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">5</text>
+<rect x="1060" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1100.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z1</text>
+<text x="1180.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">4</text>
+<rect x="1140" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1180.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y1</text>
+<text x="1260.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">3</text>
+<rect x="1220" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1260.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">y0</text>
+<text x="1340.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">2</text>
+<rect x="1300" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1340.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">z0</text>
+<text x="1420.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">1</text>
+<rect x="1380" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1420.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x1</text>
+<text x="1500.0" y="986" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="middle" dominant-baseline="text-before-edge">0</text>
+<rect x="1460" y="1022" width="80" height="68" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1500.0" y="1040" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">x0</text>
+<text x="64" y="1134" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">X / Y / Z 先按块尺寸拆分；各层内部再按对应位序排列。</text>
+<text x="64" y="1184" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">编号和偏移都从 0 开始；方格表达 XY 坐标，沿格子逐行阅读不等于沿字节地址递增。</text>
+<text x="64" y="1230" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">这里的高 / 低位分界适用于所列模式与格式；其他组合使用各自的位映射。</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="670" viewBox="0 0 1440 670" role="img">
+<title>swizzle 解码：把一个模式拆成独立的布局属性</title><desc>块类别决定容量；布局类型区分 Linear、2D 与 3D。；输入、处理和输出分开显示。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="670" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  MIPMAP PARAMETERS</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">swizzle 解码：把一个模式拆成独立的布局属性</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">块类别决定容量；布局类型区分 Linear、2D 与 3D。</text>
+<rect x="56" y="200" width="308" height="308" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="200" width="308" height="5" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="78" y="225" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">输入</text>
+<rect x="460" y="200" width="566" height="308" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="460" y="200" width="566" height="5" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="482" y="225" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">处理</text>
+<rect x="1122" y="200" width="262" height="308" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1122" y="200" width="262" height="5" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="1144" y="225" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">输出</text>
+<line x1="382" y1="354" x2="441" y2="354" stroke="#516577" stroke-width="2"/>
+<line x1="441" y1="354" x2="431.9955289764732" y2="358.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="441" y1="354" x2="431.9955289764732" y2="349.6503446588877" stroke="#516577" stroke-width="2"/>
+<line x1="1042" y1="354" x2="1103" y2="354" stroke="#516577" stroke-width="2"/>
+<line x1="1103" y1="354" x2="1093.9955289764732" y2="358.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="1103" y1="354" x2="1093.9955289764732" y2="349.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="78" y="282" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">sw_mode</text>
+<text x="482" y="280" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">① 解码块类别 blk_type</text>
+<text x="482" y="309" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">② 解码布局类型 sw_type</text>
+<text x="482" y="338" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">③ 派生 linear = (sw_type == SW_L)</text>
+<text x="482" y="367" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">例：SW_4KB_3D</text>
+<text x="482" y="396" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">→ SZ_4KB + SW_S_3D；linear=0</text>
+<text x="1144" y="282" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">blk_type</text>
+<text x="1144" y="320" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">sw_type</text>
+<text x="1144" y="358" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">派生 linear</text>
+<line x1="56" y1="532" x2="1384" y2="532" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="556" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">同一个块大小，可以对应不同的二维或三维布局。</text>
+<text x="56" y="598" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SW_LINEAR 对应 SZ_LIN / SW_L；普通 tiled 模式的 linear 为 0。</text>
+</svg>

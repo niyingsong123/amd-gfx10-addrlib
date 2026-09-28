@@ -1,0 +1,79 @@
+{
+  "document_sha256": "33a3191d78b37ad16ae0e348d0c949dcb38b37d191efcbfd77448f4fd2efe61b",
+  "source_sha256": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+  "chapters": 6,
+  "subsection_counts": [
+    3,
+    3,
+    4,
+    3,
+    4,
+    4
+  ],
+  "section22_subsections": [
+    "2.2.1",
+    "2.2.2",
+    "2.2.3",
+    "2.2.4"
+  ],
+  "appendices": 4,
+  "swizzle_rows": 100,
+  "block_dimension_rows": 15,
+  "mip_layout_rows": 11,
+  "images": [
+    {
+      "path": "assets/addrlib_mas/diagrams/10_texture_minification.svg",
+      "sha256": "bbd249814505f0dfbd66e33ebdeb089e46631726623b63b40167ba1ce1e6e307"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/22_texture_sample_reuse.svg",
+      "sha256": "c1c24498156522691acceebaf43daa9a94fc6b050c92de81234d4ac882799180"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/09_texture_magnification.svg",
+      "sha256": "c5f749e7902f91489245aebed9c8a65c7dca742e35f1bed64f4369318b49cc51"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/21_addrlib_interface.svg",
+      "sha256": "12226db3e7276869656a7a2afabc902f44bcf9b01309ed7524255a2dc833ff83"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/35_block_hierarchy.svg",
+      "sha256": "e50184eacb28993cb5043ce3f2c30b184071028546f63a96e3b12f0dbcae5c46"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/11_standard_block_layout.svg",
+      "sha256": "392c3ffa5c777c559b43dd2f96f81124ab0839fb29127615076fe804a6fa6580"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/12_zorder_block_layout.svg",
+      "sha256": "c51d646e107452d59a5c19dafcc4412b312a44e81640cd7182644890d044f420"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/32_macro_micro_swizzle.svg",
+      "sha256": "6dc021c2e763cc74e7864fe2f59412851eca9d115f206a7cf1b25c7f9956a85f"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/19_mipmap_volume_memory.svg",
+      "sha256": "92a6b936ab8a3fca569fd45747bf7f26f443b1693cb7c576326756af843dfbf5"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/33_tail_packing_3d.svg",
+      "sha256": "e30438e46cb26ad262f3cceee08c5bb8928871d304304e4430dd15b6408dec94"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/30_teaching_stages.svg",
+      "sha256": "d9933c145c9750a59064bad903f12a8c495fb8e9f9ab59e346d0b8edf861e6d5"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/31_teaching_3d_tail_access.svg",
+      "sha256": "4494e3f30861cc731228c10a207961dd5d8ef7a76222428c2956df699d098268"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/34_address_compose.svg",
+      "sha256": "b0975bc7ece4ea17580f9ee3730f9473a7d4024c316ce08a646ce39297b07c24"
+    }
+  ],
+  "source_annotations_in_body_or_images": 0,
+  "scope": "Document structure, exact source table comparison, checked mip data, links and visible image labels; numerical scope is in the walkthrough check JSON"
+}

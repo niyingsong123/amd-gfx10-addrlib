@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="670" viewBox="0 0 1440 670" role="img">
+<title>宏块大小：生成对数指数与地址掩码</title><desc>l2_ms 描述字节大小的 log2；ms_mask_128B 描述相应低位范围。；输入、处理和输出分开显示。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="670" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  MIPMAP PARAMETERS</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">宏块大小：生成对数指数与地址掩码</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">l2_ms 描述字节大小的 log2；ms_mask_128B 描述相应低位范围。</text>
+<rect x="56" y="200" width="308" height="308" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="200" width="308" height="5" fill="#246BB0" stroke="none" stroke-width="1"/>
+<text x="78" y="225" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">输入</text>
+<rect x="460" y="200" width="566" height="308" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="460" y="200" width="566" height="5" fill="#A56A13" stroke="none" stroke-width="1"/>
+<text x="482" y="225" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">处理</text>
+<rect x="1122" y="200" width="262" height="308" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="1122" y="200" width="262" height="5" fill="#15867D" stroke="none" stroke-width="1"/>
+<text x="1144" y="225" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">输出</text>
+<line x1="382" y1="354" x2="441" y2="354" stroke="#516577" stroke-width="2"/>
+<line x1="441" y1="354" x2="431.9955289764732" y2="358.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="441" y1="354" x2="431.9955289764732" y2="349.6503446588877" stroke="#516577" stroke-width="2"/>
+<line x1="1042" y1="354" x2="1103" y2="354" stroke="#516577" stroke-width="2"/>
+<line x1="1103" y1="354" x2="1093.9955289764732" y2="358.3496553411123" stroke="#516577" stroke-width="2"/>
+<line x1="1103" y1="354" x2="1093.9955289764732" y2="349.6503446588877" stroke="#516577" stroke-width="2"/>
+<text x="78" y="282" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_type</text>
+<text x="482" y="280" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">输出次序：l2_ms / l2_ms_128B / mask</text>
+<text x="482" y="309" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SZ_LIN → 7 / 0 / 0x0</text>
+<text x="482" y="338" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SZ_256B → 8 / 1 / 0x1</text>
+<text x="482" y="367" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SZ_4KB → 12 / 5 / 0x1F</text>
+<text x="482" y="396" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SZ_64KB → 16 / 9 / 0x1FF</text>
+<text x="482" y="425" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">SZ_256KB → 18 / 11 / 0x7FF</text>
+<text x="1144" y="282" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">l2_ms</text>
+<text x="1144" y="320" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">l2_ms_128B</text>
+<text x="1144" y="358" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ms_mask_128B</text>
+<line x1="56" y1="532" x2="1384" y2="532" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="556" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">字节大小、相对 128B 的指数和位掩码是三个不同的量。</text>
+<text x="56" y="598" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">例如 4 KiB = 2^12 B，包含 2^5 个 128B 单位，对应 5 位掩码 0x1F。</text>
+</svg>

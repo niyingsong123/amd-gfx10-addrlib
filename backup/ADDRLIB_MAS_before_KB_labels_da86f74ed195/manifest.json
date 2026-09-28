@@ -1,0 +1,22 @@
+[
+  {
+    "path": "ADDRLIB_MAS.md",
+    "sha256": "da86f74ed19543dfb9418aa26ca2a6c577ec0802b9525f1dca78c2bc277ab704"
+  },
+  {
+    "path": "assets/addrlib_mas/diagrams/32_macro_micro_swizzle.svg",
+    "sha256": "845de811cfef4f9c3df1a49441463231ca9aa225fff9df0ebe99276526d7dcf8"
+  },
+  {
+    "path": "assets/addrlib_mas/diagrams/32_macro_micro_swizzle.png",
+    "sha256": "8d79f2e8f17b099b4d6f45b573059f62e8d9938971664e25285160e4c8799f4b"
+  },
+  {
+    "path": "assets/addrlib_mas/diagrams/33_tail_packing_3d.svg",
+    "sha256": "817610cfd45f7a87940cb77965bd9d72c85d9325fa6bf847365c9b8a143b77b3"
+  },
+  {
+    "path": "assets/addrlib_mas/diagrams/33_tail_packing_3d.png",
+    "sha256": "2b9cf57f766ccd2deb2fcc1ae7b45cf1118878fad5b144636b976c80dc6ee42b"
+  }
+]

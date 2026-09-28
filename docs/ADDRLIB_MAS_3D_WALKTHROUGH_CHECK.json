@@ -1,0 +1,581 @@
+{
+  "status": "derived teaching example; not a trusted baseline",
+  "sources": {
+    "ADDRLIB.md": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+    "scripts/mipmap_compare/document.cjs": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+    "scripts/verify_mas_examples.cjs": "ed3438e891dc498a2e6be383abea0bed9f077f5e2c146581f0635ae54cb8ea56",
+    "scripts/verify_mas_3d_walkthrough.cjs": "e9a3de87dd84240eca4fc2bb48d267006de637600361174e04407f0406ee93c5"
+  },
+  "input": {
+    "mode": "SW_256KB_3D",
+    "W": 250,
+    "H": 180,
+    "D": 1537,
+    "e": 0,
+    "s": 0,
+    "maxmip": 10
+  },
+  "base_bytes": "0x30000000",
+  "seed": 0,
+  "macro_dimensions": [
+    64,
+    64,
+    64
+  ],
+  "macro_bytes": 262144,
+  "micro_dimensions": [
+    8,
+    4,
+    8
+  ],
+  "first_tail_mip": 3,
+  "tail_capacity": 11,
+  "chain_blocks_per_z_group": 18,
+  "chain_stride_bytes": 4718592,
+  "slice_raw": 73728,
+  "mips": [
+    {
+      "mip": 0,
+      "logical_dimensions": [
+        250,
+        180,
+        1537
+      ],
+      "block_xy": [
+        4,
+        3
+      ],
+      "z_groups": 25,
+      "aligned_dimensions": [
+        256,
+        192,
+        1600
+      ],
+      "pitch": 256,
+      "contribution": 12,
+      "macro_offset_256B": 6144,
+      "macro_offset_bytes": 1572864,
+      "in_tail": false,
+      "relative_tail": 17,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "reverse": -7,
+      "code": 0,
+      "micro_coordinates": [
+        0,
+        0
+      ]
+    },
+    {
+      "mip": 1,
+      "logical_dimensions": [
+        125,
+        90,
+        768
+      ],
+      "block_xy": [
+        2,
+        2
+      ],
+      "z_groups": 12,
+      "aligned_dimensions": [
+        128,
+        128,
+        768
+      ],
+      "pitch": 128,
+      "contribution": 4,
+      "macro_offset_256B": 2048,
+      "macro_offset_bytes": 524288,
+      "in_tail": false,
+      "relative_tail": 17,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "reverse": -7,
+      "code": 0,
+      "micro_coordinates": [
+        0,
+        0
+      ]
+    },
+    {
+      "mip": 2,
+      "logical_dimensions": [
+        62,
+        45,
+        384
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 6,
+      "aligned_dimensions": [
+        64,
+        64,
+        384
+      ],
+      "pitch": 64,
+      "contribution": 1,
+      "macro_offset_256B": 1024,
+      "macro_offset_bytes": 262144,
+      "in_tail": false,
+      "relative_tail": 17,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "reverse": -7,
+      "code": 0,
+      "micro_coordinates": [
+        0,
+        0
+      ]
+    },
+    {
+      "mip": 3,
+      "logical_dimensions": [
+        31,
+        22,
+        192
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 3,
+      "aligned_dimensions": [
+        64,
+        64,
+        192
+      ],
+      "pitch": 64,
+      "contribution": 1,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 0,
+      "origin": [
+        0,
+        32,
+        0
+      ],
+      "reverse": 10,
+      "code": 16384,
+      "micro_coordinates": [
+        0,
+        8
+      ]
+    },
+    {
+      "mip": 4,
+      "logical_dimensions": [
+        15,
+        11,
+        96
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 2,
+      "aligned_dimensions": [
+        64,
+        64,
+        128
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 1,
+      "origin": [
+        32,
+        0,
+        0
+      ],
+      "reverse": 9,
+      "code": 8192,
+      "micro_coordinates": [
+        4,
+        0
+      ]
+    },
+    {
+      "mip": 5,
+      "logical_dimensions": [
+        7,
+        5,
+        48
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 2,
+      "origin": [
+        0,
+        16,
+        0
+      ],
+      "reverse": 8,
+      "code": 4096,
+      "micro_coordinates": [
+        0,
+        4
+      ]
+    },
+    {
+      "mip": 6,
+      "logical_dimensions": [
+        3,
+        2,
+        24
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 3,
+      "origin": [
+        16,
+        0,
+        0
+      ],
+      "reverse": 7,
+      "code": 2048,
+      "micro_coordinates": [
+        2,
+        0
+      ]
+    },
+    {
+      "mip": 7,
+      "logical_dimensions": [
+        1,
+        1,
+        12
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 4,
+      "origin": [
+        8,
+        8,
+        0
+      ],
+      "reverse": 6,
+      "code": 1536,
+      "micro_coordinates": [
+        1,
+        2
+      ]
+    },
+    {
+      "mip": 8,
+      "logical_dimensions": [
+        1,
+        1,
+        6
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 5,
+      "origin": [
+        0,
+        12,
+        0
+      ],
+      "reverse": 5,
+      "code": 1280,
+      "micro_coordinates": [
+        0,
+        3
+      ]
+    },
+    {
+      "mip": 9,
+      "logical_dimensions": [
+        1,
+        1,
+        3
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 6,
+      "origin": [
+        0,
+        8,
+        0
+      ],
+      "reverse": 4,
+      "code": 1024,
+      "micro_coordinates": [
+        0,
+        2
+      ]
+    },
+    {
+      "mip": 10,
+      "logical_dimensions": [
+        1,
+        1,
+        1
+      ],
+      "block_xy": [
+        1,
+        1
+      ],
+      "z_groups": 1,
+      "aligned_dimensions": [
+        64,
+        64,
+        64
+      ],
+      "pitch": 64,
+      "contribution": 0,
+      "macro_offset_256B": 0,
+      "macro_offset_bytes": 0,
+      "in_tail": true,
+      "relative_tail": 7,
+      "origin": [
+        8,
+        4,
+        0
+      ],
+      "reverse": 3,
+      "code": 768,
+      "micro_coordinates": [
+        1,
+        1
+      ]
+    }
+  ],
+  "visit": {
+    "mip": 4,
+    "xyz": [
+      5,
+      6,
+      69
+    ],
+    "origin": {
+      "relative": 1,
+      "reverse": 9,
+      "reverse7": 9,
+      "code": "8192",
+      "microLogs": [
+        3,
+        2,
+        3
+      ],
+      "microCoordinates": [
+        4,
+        0
+      ],
+      "xyz": [
+        32,
+        0,
+        0
+      ]
+    },
+    "sheet": [
+      37,
+      6,
+      69
+    ],
+    "pitch": "64",
+    "slice": "73728",
+    "mip_offset_b": "0",
+    "pitch_b": "1",
+    "slice_b": "18",
+    "xb": "0",
+    "yb": "0",
+    "zb": "1",
+    "slice_times_z_l": "18",
+    "slice_times_z_h": "0",
+    "pitch_times_y": "0",
+    "blk_index_pitch": "0",
+    "blk_index_slice": "18",
+    "blk_index": "4718592",
+    "baseAddr256B": "3145728",
+    "ms_mask_128B": "2047",
+    "ms_mask_256B": "1023",
+    "swizzle_bits_256B": "0",
+    "baseAddr256B_out": "3145728",
+    "mipoffset_BaseAddr256B_out": "3145728",
+    "blk_offset": "33237",
+    "blk_offset_final": "213",
+    "swizzle_bits": "129",
+    "addr_offset": "4751829",
+    "address_final": "810058197",
+    "mipid_in_tail": 1
+  },
+  "boundary": {
+    "macro_index": [
+      3,
+      2,
+      24
+    ],
+    "origin": [
+      192,
+      128,
+      1536
+    ],
+    "effective_dimensions": [
+      58,
+      52,
+      1
+    ],
+    "aligned_dimensions": [
+      64,
+      64,
+      64
+    ],
+    "padding": [
+      6,
+      12,
+      63
+    ]
+  },
+  "selected_outputs": [
+    64,
+    "73728",
+    1,
+    "0",
+    18,
+    6,
+    6,
+    6,
+    6
+  ],
+  "bit_mapping_msb_first": [
+    "y5",
+    "z5",
+    "x5",
+    "y4",
+    "z4",
+    "x4",
+    "y3",
+    "z3",
+    "x3",
+    "y2",
+    "z2",
+    "x2",
+    "z1",
+    "y1",
+    "y0",
+    "z0",
+    "x1",
+    "x0"
+  ],
+  "checks": {
+    "tail_texels": 148630,
+    "tail_address_collisions": 0,
+    "tail_texels_per_z_group": {
+      "0": 56054,
+      "1": 48928,
+      "2": 43648
+    },
+    "ordinary_macro_slots": 354,
+    "ordinary_corners": 2784,
+    "bit_mapping_is_permutation": true,
+    "z_boundary": [
+      {
+        "z": 63,
+        "zb": "0",
+        "address": "805414389"
+      },
+      {
+        "z": 64,
+        "zb": "1",
+        "address": "810058065"
+      }
+    ],
+    "scope": "Every valid tail texel and ordinary macro corners of this configuration; no upstream C++, RTL, timing or broad random comparison"
+  },
+  "units": {
+    "coordinates": "elements local to selected mip",
+    "slice": "XY element positions of the mip chain",
+    "mip_offset_b": "256 bytes",
+    "blk_index": "bytes",
+    "blk_offset": "bytes"
+  },
+  "assumptions": [
+    "MAXMIP=17; finite requested mip0..10; positive ordinary uncompressed dimensions",
+    "Logical dimensions max(1,floor(base/2^m)); layout still uses Wb0/Hb0 recurrence",
+    "Layout ignores depth; depth bounds accesses, not upstream exact allocation size",
+    "BPE1, one sample, zero seed, selected base low field zero",
+    "Signed 7-bit reverse, 20-bit origin code, 10-bit X/Y origins; 48-bit byte address, 40-bit base, 12-bit low base field",
+    "Unspecified intermediate widths use sufficient integers; products and addresses use BigInt",
+    "Stage ownership only; no register scheduling model"
+  ]
+}

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img">
+<title>mipmap tail：共享空间与内存顺序</title><desc>二维256乘256纹理的mip3至8进入同一个4KiB tail，六个小mip共1365字节；整链低地址依次tail、mip2、mip1、mip0，共22块。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="980" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  MIPMAP TAIL</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">小 mip 共享一个 tail，避免逐级占满整个宏块</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">示例：256×256、mip0…8、SW_4KB_2D、1 BPE / 1X；macro = 64×64 = 4 KiB。</text>
+<text x="56" y="196" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">如果每级分别按块分配</text>
+<text x="56" y="240" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">6 个宏块 = 24 KiB</text>
+<rect x="56" y="295" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="295" width="56.0" height="56.0" fill="#EEE5FC" stroke="#7552B2" stroke-width="1"/>
+<text x="56" y="421" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip3 · 32×32</text>
+<rect x="232" y="295" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="232" y="295" width="28.0" height="28.0" fill="#FBE4EF" stroke="#BB477D" stroke-width="1"/>
+<text x="232" y="421" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4 · 16×16</text>
+<rect x="408" y="295" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="408" y="295" width="14.0" height="14.0" fill="#E5F2DE" stroke="#398443" stroke-width="1"/>
+<text x="408" y="421" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip5 · 8×8</text>
+<rect x="56" y="466" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="466" width="7.0" height="7.0" fill="#FFF2BB" stroke="#9B7415" stroke-width="1"/>
+<text x="56" y="592" fill="#9B7415" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip6 · 4×4</text>
+<rect x="232" y="466" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="232" y="466" width="3.5" height="3.5" fill="#E2F2FB" stroke="#407CA5" stroke-width="1"/>
+<text x="232" y="592" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip7 · 2×2</text>
+<rect x="408" y="466" width="112" height="112" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="408" y="466" width="1.75" height="1.75" fill="#E0EDF9" stroke="#246BB0" stroke-width="1"/>
+<text x="408" y="592" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip8 · 1×1</text>
+<text x="56" y="651" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">有效数据合计仅 1365 B</text>
+<line x1="601" y1="447" x2="742" y2="447" stroke="#7552B2" stroke-width="2"/>
+<line x1="742" y1="447" x2="732.9955289764732" y2="451.3496553411123" stroke="#7552B2" stroke-width="2"/>
+<line x1="742" y1="447" x2="732.9955289764732" y2="442.6503446588877" stroke="#7552B2" stroke-width="2"/>
+<text x="672" y="402" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">共享 tail</text>
+<text x="791" y="196" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">满足条件后打包进一个宏块</text>
+<text x="791" y="240" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">1 个宏块 = 4 KiB</text>
+<rect x="791" y="295" width="352.0" height="352.0" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="967.0" y="295.0" width="176.0" height="176.0" fill="#EEE5FC" stroke="#7552B2" stroke-width="1.5"/>
+<circle cx="967.0" cy="295.0" r="3" fill="#7552B2"/>
+<rect x="879.0" y="471.0" width="88.0" height="88.0" fill="#FBE4EF" stroke="#BB477D" stroke-width="1.5"/>
+<circle cx="879.0" cy="471.0" r="3" fill="#BB477D"/>
+<rect x="791.0" y="559.0" width="44.0" height="44.0" fill="#E5F2DE" stroke="#398443" stroke-width="1.5"/>
+<circle cx="791.0" cy="559.0" r="3" fill="#398443"/>
+<rect x="791.0" y="471.0" width="22.0" height="22.0" fill="#FFF2BB" stroke="#9B7415" stroke-width="1.5"/>
+<circle cx="791.0" cy="471.0" r="3" fill="#9B7415"/>
+<rect x="879.0" y="383.0" width="11.0" height="11.0" fill="#E2F2FB" stroke="#407CA5" stroke-width="1.5"/>
+<circle cx="879.0" cy="383.0" r="3" fill="#407CA5"/>
+<rect x="879.0" y="295.0" width="5.5" height="5.5" fill="#E0EDF9" stroke="#246BB0" stroke-width="1.5"/>
+<circle cx="879.0" cy="295.0" r="3" fill="#246BB0"/>
+<text x="987.0" y="340" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="28" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip3</text>
+<text x="887.0" y="495.0" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4</text>
+<text x="1170" y="311" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m3  (32, 0)</text>
+<text x="1170" y="360" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m4  (16, 32)</text>
+<text x="1170" y="409" fill="#398443" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m5  (0, 48)</text>
+<text x="1170" y="458" fill="#9B7415" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m6  (0, 32)</text>
+<text x="1170" y="507" fill="#407CA5" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m7  (16, 16)</text>
+<text x="1170" y="556" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">m8  (16, 0)</text>
+<text x="1166" y="275" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">orig (X,Y)</text>
+<text x="791" y="665" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">填色为有效 texel；斜线为未使用坐标区。</text>
+<line x1="56" y1="708" x2="1384" y2="708" stroke="#D5DFE6" stroke-width="1"/>
+<text x="56" y="732" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="26" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">整条 mip 链的低→高地址顺序：22 个宏块 = 88 KiB</text>
+<rect x="56" y="787" width="138" height="60" fill="#EEE5FC" stroke="#D5DFE6" stroke-width="1"/>
+<text x="125.0" y="805" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">Tail · 1块</text>
+<text x="56" y="861" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">偏移 0</text>
+<rect x="194" y="787" width="138" height="60" fill="#FFF0CF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="263.0" y="805" fill="#A56A13" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip2 · 1块</text>
+<text x="194" y="861" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">0x1000</text>
+<rect x="332" y="787" width="296" height="60" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="480.0" y="805" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip1 · 4块</text>
+<text x="332" y="861" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">0x2000</text>
+<rect x="628" y="787" width="756" height="60" fill="#E0EDF9" stroke="#D5DFE6" stroke-width="1"/>
+<text x="1006.0" y="805" fill="#246BB0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="700" text-anchor="middle" dominant-baseline="text-before-edge">mip0 · 16块</text>
+<text x="628" y="861" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">0x6000</text>
+<text x="1384" y="861" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="end" dominant-baseline="text-before-edge">末端 0x16000 B</text>
+<text x="56" y="914" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">是否进入 tail 必须同时满足尺寸和层级容量限制，不能只凭有效数据量之和判断。</text>
+<text x="56" y="952" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">XY 坐标布局与字节地址条分别显示；地址条各段宽度不按容量比例绘制。</text>
+</svg>

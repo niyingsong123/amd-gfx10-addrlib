@@ -1,0 +1,49 @@
+{
+  "document_sha256": "c3a2602e8baecc9e6ecdf153bffde7502d22e70539f18f5acffb56474e4e9a95",
+  "files": [
+    {
+      "path": "ADDRLIB_MAS.md",
+      "sha256": "c3a2602e8baecc9e6ecdf153bffde7502d22e70539f18f5acffb56474e4e9a95"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/09_texture_magnification.svg",
+      "sha256": "c5f749e7902f91489245aebed9c8a65c7dca742e35f1bed64f4369318b49cc51"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/09_texture_magnification.png",
+      "sha256": "ef25ea4b617d5d2b092d0f704882b9b021611ba305650248ae71db59a84ff73f"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/10_texture_minification.svg",
+      "sha256": "bbd249814505f0dfbd66e33ebdeb089e46631726623b63b40167ba1ce1e6e307"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/10_texture_minification.png",
+      "sha256": "0fac10ef7a53aeaeb4455176b8698f84cbbdfe2c83592324480242b2442e428f"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/19_mipmap_volume_memory.svg",
+      "sha256": "92a6b936ab8a3fca569fd45747bf7f26f443b1693cb7c576326756af843dfbf5"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/19_mipmap_volume_memory.png",
+      "sha256": "a9532c358d2d761f2cb71c162a1dd6ed8bab2adca01e372455111831d2eef4d3"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/30_teaching_stages.svg",
+      "sha256": "1616a3a0e17d4456cf01f6322c003b3006eb47a8a0e9b733903df8b00f2456f1"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/30_teaching_stages.png",
+      "sha256": "c20e034a54abdf918d2dfce80e08ad9e45a0b6aa91c10723ee1e2ce0b79a5d12"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/31_teaching_3d_tail_access.svg",
+      "sha256": "4494e3f30861cc731228c10a207961dd5d8ef7a76222428c2956df699d098268"
+    },
+    {
+      "path": "assets/addrlib_mas/diagrams/31_teaching_3d_tail_access.png",
+      "sha256": "f7816b8c8940e574c5cfb79c0ad4c93343c15078352b3044ad67816b966f49be"
+    }
+  ]
+}

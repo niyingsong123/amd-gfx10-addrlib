@@ -4,7 +4,7 @@ flowchart TB
   S["从输入基址提取的<br/>swizzle_bits_256B"] --> X["XOR"]
   H --> X
   X --> SH["左移 8 位<br/>放回块内高位位置"]
-  B["block_index_calc 输出<br/>blk_index，单位：字节"] --> R["OR 合成 addr_offset<br/>保持主文档字段截取"]
+  B["block_index_calc 输出<br/>blk_index，单位：字节"] --> R["OR 合成 addr_offset<br/>按字段位宽截取"]
   SH --> R
   L --> R
   BASE["清理基址 + mip_offset_b<br/>整体左移 8"] --> F["加上 addr_offset<br/>address_final"]

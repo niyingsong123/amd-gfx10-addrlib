@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1030" viewBox="0 0 1440 1030" role="img">
+<title>tail原点和两条访问路径</title><desc>mip4局部坐标5,6加原点16,32得到21,38，位映射结果为0x639；普通mip1访问结果为0x30005039。</desc>
+<defs><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#F3F6F9"/><path d="M-3,3 L3,-3 M0,12 L12,0 M9,15 L15,9" stroke="#D5DFE6" stroke-width="1"/></pattern></defs>
+<rect width="1440" height="1030" fill="white"/>
+<text x="56" y="28" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">ADDRLIB  /  TAIL ORIGIN &amp; ADDRESS</text>
+<text x="56" y="65" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="36" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4 的 (5,6)，在共享 tail 中位于哪里</text>
+<text x="56" y="122" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">共享宏块 = 64×64；不同 mip 有不同 orig。坐标单位为元素，地址单位为字节。</text>
+<rect x="90" y="238" width="384.0" height="384.0" fill="url(#hatch)" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="282.0" y="238.0" width="192.0" height="192.0" fill="#EEE5FC" stroke="#7552B2" stroke-width="2"/>
+<circle cx="282.0" cy="238.0" r="3" fill="#7552B2"/>
+<rect x="186.0" y="430.0" width="96.0" height="96.0" fill="#FBE4EF" stroke="#BB477D" stroke-width="2"/>
+<circle cx="186.0" cy="430.0" r="3" fill="#BB477D"/>
+<rect x="90.0" y="526.0" width="48.0" height="48.0" fill="#E5F2DE" stroke="#398443" stroke-width="2"/>
+<circle cx="90.0" cy="526.0" r="3" fill="#398443"/>
+<rect x="90.0" y="430.0" width="24.0" height="24.0" fill="#FFF2BB" stroke="#9B7415" stroke-width="2"/>
+<circle cx="90.0" cy="430.0" r="3" fill="#9B7415"/>
+<rect x="186.0" y="334.0" width="12.0" height="12.0" fill="#E2F2FB" stroke="#407CA5" stroke-width="2"/>
+<circle cx="186.0" cy="334.0" r="3" fill="#407CA5"/>
+<rect x="186.0" y="238.0" width="6.0" height="6.0" fill="#E0EDF9" stroke="#246BB0" stroke-width="2"/>
+<circle cx="186.0" cy="238.0" r="3" fill="#246BB0"/>
+<text x="324.0" y="310.0" fill="#7552B2" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip3</text>
+<text x="192.0" y="490.0" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">mip4</text>
+<circle cx="216.0" cy="466.0" r="6" fill="#183248"/>
+<line x1="216.0" y1="466.0" x2="500" y2="466.0" stroke="#183248" stroke-width="1.5"/>
+<text x="90" y="649" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="24" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">黑点：查表坐标 (21,38)</text>
+<text x="90" y="688" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">彩色点：各级 orig；斜线：未使用坐标区</text>
+<text x="566" y="236" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">相对 tail 编号</text>
+<text x="566" y="269" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">mip4 − mip3 = 1</text>
+<text x="566" y="314" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">原点编码</text>
+<text x="566" y="347" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">reverse = 8−(1+1) = 6；code = 0x600</text>
+<text x="566" y="392" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">拆成微块坐标</text>
+<text x="566" y="425" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(1,2)；micro = 16×16</text>
+<text x="566" y="470" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">得到 orig</text>
+<text x="566" y="503" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(1×16, 2×16) = (16,32)</text>
+<text x="566" y="548" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">平移局部坐标</text>
+<text x="566" y="581" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">(5,6) + (16,32) = (21,38)</text>
+<text x="566" y="626" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">查 swizzle 位表</text>
+<text x="566" y="659" fill="#516577" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="21" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">blk_offset = 0x639</text>
+<line x1="56" y1="754" x2="1384" y2="754" stroke="#D5DFE6" stroke-width="1"/>
+<rect x="56" y="784" width="632" height="140" fill="#DEF2EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="74" y="804" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">普通 mip1</text>
+<text x="74" y="839" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">0x30000000 + 0x2000 + 0x3000 + 0x39</text>
+<text x="74" y="874" fill="#15867D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">= 0x30005039</text>
+<rect x="720" y="784" width="664" height="140" fill="#FBE4EF" stroke="#D5DFE6" stroke-width="1"/>
+<text x="738" y="804" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">tail mip4</text>
+<text x="738" y="839" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">0x30000000 + 0 + 0 + 0x639</text>
+<text x="738" y="874" fill="#BB477D" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="400" text-anchor="start" dominant-baseline="text-before-edge">= 0x30000639</text>
+<text x="56" y="959" fill="#183248" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="25" font-weight="700" text-anchor="start" dominant-baseline="text-before-edge">0x639 已包含 orig 的影响；不能再把原点编码 0x600 加入最终地址。</text>
+</svg>

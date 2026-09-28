@@ -1,0 +1,161 @@
+{
+  "status": "candidate for one continuous teaching example; not a trusted case",
+  "source_sha256": "bf72a3e1d5088e1e2c9cdf8f0ad5f207179dc752730ecd4f1371566138d5687a",
+  "model_sha256": "f15ffba64a73558c4bc37002be4bcabb34c5d4bd9bd26440c7fc1d7181007e78",
+  "input": {
+    "mode": "SW_256KB_3D",
+    "W": 250,
+    "H": 180,
+    "D": 1537,
+    "e": 0,
+    "s": 0,
+    "maxmip": 10
+  },
+  "byte_base": "0x30000000",
+  "swizzle_seed": 0,
+  "logical_dimensions": [
+    15,
+    11,
+    96
+  ],
+  "first_tail_mip": 3,
+  "tail_capacity": 11,
+  "block_logs": [
+    6,
+    6,
+    6
+  ],
+  "slice_raw": "73728",
+  "slice_blocks": "18",
+  "outputs": [
+    64,
+    "73728",
+    1,
+    "0",
+    18,
+    6,
+    6,
+    6,
+    6
+  ],
+  "access": {
+    "mip": 4,
+    "xyz": [
+      5,
+      6,
+      69
+    ],
+    "origin": {
+      "relative": 1,
+      "reverse": 9,
+      "reverse7": 9,
+      "code": "8192",
+      "microLogs": [
+        3,
+        2,
+        3
+      ],
+      "microCoordinates": [
+        4,
+        0
+      ],
+      "xyz": [
+        32,
+        0,
+        0
+      ]
+    },
+    "sheet": [
+      37,
+      6,
+      69
+    ],
+    "pitch": "64",
+    "slice": "73728",
+    "mip_offset_b": "0",
+    "pitch_b": "1",
+    "slice_b": "18",
+    "xb": "0",
+    "yb": "0",
+    "zb": "1",
+    "slice_times_z_l": "18",
+    "slice_times_z_h": "0",
+    "pitch_times_y": "0",
+    "blk_index_pitch": "0",
+    "blk_index_slice": "18",
+    "blk_index": "4718592",
+    "baseAddr256B": "3145728",
+    "ms_mask_128B": "2047",
+    "ms_mask_256B": "1023",
+    "swizzle_bits_256B": "0",
+    "baseAddr256B_out": "3145728",
+    "mipoffset_BaseAddr256B_out": "3145728",
+    "blk_offset": "33237",
+    "blk_offset_final": "213",
+    "swizzle_bits": "129",
+    "addr_offset": "4751829",
+    "address_final": "810058197",
+    "mipid_in_tail": 1
+  },
+  "hex": {
+    "blk_index": "0x480000",
+    "blk_offset": "0x81d5",
+    "address_final": "0x304881d5"
+  },
+  "original_figure_tail_mips": [
+    {
+      "mip": 3,
+      "dimensions": [
+        31,
+        22,
+        16
+      ]
+    },
+    {
+      "mip": 4,
+      "dimensions": [
+        15,
+        11,
+        8
+      ]
+    },
+    {
+      "mip": 5,
+      "dimensions": [
+        7,
+        5,
+        4
+      ]
+    },
+    {
+      "mip": 6,
+      "dimensions": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "mip": 7,
+      "dimensions": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "units": {
+    "xyz": "elements, local to selected mip",
+    "mip_offset_b": "256-byte units",
+    "blk_index": "bytes",
+    "blk_offset": "bytes",
+    "slice": "XY element positions"
+  },
+  "assumptions": [
+    "BPE1, one sample, zero seed",
+    "48-bit byte address, 40-bit base, 12-bit low base field; its selected value is zero",
+    "7-bit signed reverse, 20-bit origin code, 10-bit X/Y origins",
+    "BigInt addresses; unspecified widths not truncated"
+  ],
+  "validation": "one selected access; coordinate bounds, complete logical mip chain, tail membership and nonzero macro offset checked; no upstream C++, RTL or broad regression"
+}
